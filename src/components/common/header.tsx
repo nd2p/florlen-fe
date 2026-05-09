@@ -1,0 +1,32 @@
+import { IconShoppingBag, IconUser } from "@tabler/icons-react";
+
+export default function Header() {
+    return (
+        <nav className="fixed top-0 z-50 h-16 w-full bg-surface/80 backdrop-blur-md nocturnal-shadow">
+            <div className="flex w-full items-center justify-between px-8 h-full">
+                <div className="flex items-center gap-8">
+                    <a
+                        href="/"
+                        className="font-headline text-3xl font-extrabold  tracking-tight text-primary"
+                    >
+                        Florlen
+                    </a>
+                    <div className="hidden items-center gap-6 md:flex">
+                        <a href="/shop" className="font-headline font-bold text-secondary transition-colors hover:text-primary">Shop All</a>
+                        <a href="/ai-studio" className="font-headline font-bold text-secondary transition-colors hover:text-primary">AI Studio</a>
+                        <a href="/collections" className="font-headline font-bold text-secondary transition-colors hover:text-primary">Collections</a>
+                        <a href="/blog" className="font-headline font-bold text-secondary transition-colors hover:text-primary">Blog</a>
+                    </div>
+                </div>
+                <div className="flex items-center gap-3">
+                    <button className="rounded-full p-2 transition-all duration-200 hover:bg-surface-container-highest active:scale-95" aria-label="Open cart">
+                        <IconShoppingBag className="h-5 w-5 text-primary" stroke={2} />
+                    </button>
+                    <button className="rounded-full p-2 transition-all duration-200 hover:bg-surface-container-highest active:scale-95" aria-label="Open profile">
+                        <IconUser className="h-5 w-5 text-primary" stroke={2} />
+                    </button>
+                </div>
+            </div>
+        </nav>
+    );
+}
