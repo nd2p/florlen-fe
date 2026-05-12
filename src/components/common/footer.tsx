@@ -1,6 +1,6 @@
 export default function Footer() {
     return (
-        <footer className="w-full rounded-t-[3rem] bg-surface-container-low">
+        <footer className="w-full rounded-t-2xl bg-surface-container-low">
             <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-12 py-16 md:grid-cols-4">
                 <div className="space-y-6">
                     <a href="#" className="font-headline text-xl font-black text-on-surface">Florlen</a>

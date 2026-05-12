@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
-import Header from "@/components/common/header";
-import Footer from "@/components/common/footer";
+import AppShell from "../components/common/app-shell";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -29,10 +28,8 @@ export default function RootLayout({
       lang="en"
       className={`${plusJakarta.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-on-background">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+      <body className="flex min-h-full flex-col bg-background text-on-background">
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

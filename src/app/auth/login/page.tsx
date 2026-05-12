@@ -3,8 +3,8 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Button from "@/components/common/button";
-import Input from "@/components/common/input";
+import { Button } from "@/components/ui/button";
+import Input from "@/components/ui/input";
 import AuthLayout from "@/components/common/auth-layout";
 
 const LoginSchema = z.object({
@@ -68,9 +68,9 @@ export default function Login() {
                     </div>
 
                     <div className="relative flex items-center py-4">
-                        <div className="flex-grow border-t border-surface-container-high"></div>
-                        <span className="flex-shrink mx-4 text-secondary text-xs font-headline font-bold uppercase tracking-widest">or use email</span>
-                        <div className="flex-grow border-t border-surface-container-high"></div>
+                        <div className="grow border-t border-surface-container-high"></div>
+                        <span className="shrink mx-4 text-secondary text-xs font-headline font-bold uppercase tracking-widest">or use email</span>
+                        <div className="grow border-t border-surface-container-high"></div>
                     </div>
 
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">

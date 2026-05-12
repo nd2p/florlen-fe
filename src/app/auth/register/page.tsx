@@ -3,14 +3,14 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Button from "@/components/common/button";
-import Input from "@/components/common/input";
+import { Button } from "@/components/ui/button";
+import Input from "@/components/ui/input";
 import AuthLayout from "@/components/common/auth-layout";
 
 const RegisterSchema = z
     .object({
         fullName: z.string().min(2, { message: "Full name is required" }),
-        email: z.string().email({ message: "Invalid email address" }),
+        email: z.email({ message: "Invalid email address" }),
         password: z.string().min(8, { message: "Password must be at least 8 characters" }),
         confirmPassword: z.string().min(8),
     })
@@ -71,9 +71,9 @@ export default function Register() {
                     </div>
 
                     <div className="relative flex items-center py-4">
-                        <div className="flex-grow border-t border-surface-container-high"></div>
-                        <span className="mx-4 flex-shrink font-headline text-xs font-bold uppercase tracking-widest text-secondary">or register with email</span>
-                        <div className="flex-grow border-t border-surface-container-high"></div>
+                        <div className="grow border-t border-surface-container-high"></div>
+                        <span className="mx-4 shrink font-headline text-xs font-bold uppercase tracking-widest text-secondary">or register with email</span>
+                        <div className="grow border-t border-surface-container-high"></div>
                     </div>
 
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
