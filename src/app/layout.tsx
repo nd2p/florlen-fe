@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import AppShell from "../components/common/app-shell";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -30,6 +31,7 @@ export default function RootLayout({
     >
       <body className="flex min-h-full flex-col bg-background text-on-background">
         <AppShell>{children}</AppShell>
+        <Toaster />
       </body>
     </html>
   );

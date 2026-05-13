@@ -1,11 +1,15 @@
 "use client";
 
 import { z } from "zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import AuthLayout from "@/components/common/auth-layout";
+import { login } from "@/lib/api/auth.api";
+import { setTokens, setCachedUser } from "@/lib/auth";
 
 const LoginSchema = z.object({
     email: z.string().email({ message: "Invalid email address" }),
@@ -15,6 +19,7 @@ const LoginSchema = z.object({
 type LoginValues = z.infer<typeof LoginSchema>;
 
 export default function Login() {
+    const router = useRouter();
     const {
         register,
         handleSubmit,
@@ -23,10 +28,38 @@ export default function Login() {
 
     const onSubmit = async (values: LoginValues) => {
         try {
-            console.log("Login values:", values);
-            // TODO: call auth service (Supabase)
-        } catch (err) {
-            console.error(err);
+            toast.loading("Signing in...", { id: "login" });
+
+            const response = await login({
+                email: values.email,
+                password: values.password,
+            });
+
+            // Save tokens to localStorage
+            setTokens({
+                accessToken: response.accessToken,
+                refreshToken: response.refreshToken,
+                expiresIn: response.expiresIn,
+            });
+
+            // Cache user data without role; authorization is checked from server
+            const { role: _role, ...safeUser } = response.user;
+            setCachedUser(safeUser);
+
+            toast.success("Welcome back! Redirecting to your profile...", { id: "login" });
+
+            // Redirect to profile
+            setTimeout(() => router.push("/"), 500);
+        } catch (err: any) {
+            console.error("Login error:", err);
+            // Extract error message from response or use fallback
+            let errorMessage = "Login failed. Please try again.";
+            if (err?.response?.data?.message) {
+                errorMessage = err.response.data.message;
+            } else if (err?.message) {
+                errorMessage = err.message;
+            }
+            toast.error(errorMessage, { id: "login" });
         }
     };
 

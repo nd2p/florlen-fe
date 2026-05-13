@@ -1,15 +1,66 @@
-import type { ReactNode } from "react";
-import { IconId, IconLock, IconShieldLock, IconUserShield } from "@tabler/icons-react";
+"use client";
 
-function FieldIcon({ children }: { children: ReactNode }) {
-    return (
-        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-secondary">
-            {children}
-        </span>
-    );
-}
+import { z } from "zod";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Form from "next/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { IconShieldLock, IconUserShield } from "@tabler/icons-react";
+import Input from "@/components/ui/input";
+import Checkbox from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { login } from "@/lib/api/auth.api";
+import { setTokens, setCachedUser } from "@/lib/auth";
+import { ADMIN_ROLES } from "@/lib/role-constants";
+
+
+const AdminLoginSchema = z.object({
+    adminId: z.string().min(1, { message: "Admin ID or email is required" }),
+    password: z.string().min(8, { message: "Password must be at least 8 characters" }),
+});
+
+type AdminLoginValues = z.infer<typeof AdminLoginSchema>;
 
 export default function AdminLoginPage() {
+    const router = useRouter();
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+    } = useForm<AdminLoginValues>({ resolver: zodResolver(AdminLoginSchema) });
+
+    const onSubmit = async (values: AdminLoginValues) => {
+        try {
+            const response = await login({ email: values.adminId, password: values.password });
+
+            const role = response.user?.role || null;
+            if (!role || !ADMIN_ROLES.includes(role as any)) {
+                toast.error("Unauthorized: admin access required");
+                return;
+            }
+
+            // Save tokens
+            setTokens({ accessToken: response.accessToken, refreshToken: response.refreshToken, expiresIn: response.expiresIn });
+
+            // Cache user without role; authorization is checked from server
+            const { role: _role, ...safeUser } = response.user;
+            setCachedUser(safeUser);
+
+            toast.success("Welcome back, admin! Redirecting...");
+
+            router.push("/admin/orders");
+        } catch (err: any) {
+            console.error("Admin login error:", err);
+            let message = "Login failed. Please try again.";
+            if (err?.response?.data?.message) message = err.response.data.message;
+            else if (err?.message) message = err.message;
+            toast.error(message);
+        }
+    };
+
     return (
         <main className="relative min-h-screen overflow-hidden bg-background px-4 py-8 text-on-background sm:px-6 lg:px-8">
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -21,9 +72,9 @@ export default function AdminLoginPage() {
 
             <div className="relative mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-105 flex-col items-center justify-between gap-8 py-4 sm:py-8">
                 <header className="pt-2 text-center">
-                    <a href="/" className="font-headline text-4xl font-extrabold tracking-tight text-primary sm:text-5xl">
+                    <Link href="/" className="font-headline text-4xl font-extrabold tracking-tight text-primary sm:text-5xl">
                         Florlen
-                    </a>
+                    </Link>
                     <p className="mt-1 text-[0.7rem] uppercase tracking-[0.4em] text-secondary sm:text-[0.75rem]">
                         Administrative Access
                     </p>
@@ -36,120 +87,57 @@ export default function AdminLoginPage() {
                     </div>
 
                     <div className="mt-6 space-y-2">
-                        <h1 className="font-headline text-3xl font-extrabold tracking-tight text-on-surface sm:text-[2rem]">
-                            Welcome Back
-                        </h1>
-                        <p className="text-sm text-secondary sm:text-[0.95rem]">
-                            Please authenticate to manage the collection
-                        </p>
+                        <h1 className="font-headline text-3xl font-extrabold tracking-tight text-on-surface sm:text-[2rem]">Welcome Back</h1>
+                        <p className="text-sm text-secondary sm:text-[0.95rem]">Please authenticate to manage the collection</p>
                     </div>
 
-                    <form className="mt-8 space-y-4 text-left">
+                    <Form action="#" onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-4 text-left">
                         <div className="space-y-2">
-                            <label htmlFor="admin-id" className="ml-1 text-sm font-medium text-on-surface">
-                                Admin ID or Email
-                            </label>
+                            <label htmlFor="admin-id" className="ml-1 text-sm font-medium text-on-surface">Admin ID or Email</label>
                             <div className="relative">
-                                <FieldIcon>
-                                    <IconId className="h-4 w-4" stroke={1.9} />
-                                </FieldIcon>
-                                <input
-                                    id="admin-id"
-                                    name="admin-id"
-                                    type="text"
-                                    defaultValue=""
-                                    placeholder="Enter credentials"
-                                    className="h-11 w-full rounded-2xl bg-surface-container-highest px-12 text-sm text-on-surface outline-none transition-all placeholder:text-secondary/55 focus-visible:ring-2 focus-visible:ring-primary"
-                                />
+                                <Input id="admin-id" placeholder="Enter credentials" {...register('adminId')} error={errors.adminId?.message as any} />
                             </div>
                         </div>
 
                         <div className="space-y-2">
                             <div className="flex items-center justify-between gap-4">
-                                <label htmlFor="admin-password" className="ml-1 text-sm font-medium text-on-surface">
-                                    Password
-                                </label>
-                                <a href="#" className="text-xs font-semibold text-primary transition-colors hover:text-primary-hover">
-                                    Forgot?
-                                </a>
+                                <label htmlFor="admin-password" className="ml-1 text-sm font-medium text-on-surface">Password</label>
+                                <Link href="/auth/forgot-password" className="text-xs font-semibold text-primary transition-colors hover:text-primary-hover">Forgot?</Link>
                             </div>
                             <div className="relative">
-                                <FieldIcon>
-                                    <IconLock className="h-4 w-4" stroke={1.9} />
-                                </FieldIcon>
-                                <input
-                                    id="admin-password"
-                                    name="admin-password"
-                                    type="password"
-                                    defaultValue=""
-                                    placeholder="••••••••"
-                                    className="h-11 w-full rounded-2xl bg-surface-container-highest px-12 text-sm tracking-[0.22em] text-on-surface outline-none transition-all placeholder:tracking-normal placeholder:text-secondary/55 focus-visible:ring-2 focus-visible:ring-primary"
-                                />
+                                <Input id="admin-password" type="password" placeholder="••••••••" {...register('password')} error={errors.password?.message as any} />
                             </div>
                         </div>
 
                         <label className="flex cursor-pointer items-center gap-3 px-1 pt-1 text-sm text-secondary">
                             <span className="relative flex h-4 w-4 items-center justify-center rounded-sm bg-surface-container-highest">
-                                <input
-                                    type="checkbox"
-                                    name="remember-session"
-                                    className="peer sr-only"
-                                    defaultChecked
-                                />
+                                <Checkbox name="remember-session" defaultChecked />
                                 <span className="absolute inset-0 rounded-sm bg-surface-container-highest ring-1 ring-transparent transition peer-checked:bg-primary-fixed peer-checked:ring-primary-fixed" />
-                                <svg
-                                    aria-hidden="true"
-                                    viewBox="0 0 12 10"
-                                    className="relative h-3 w-3 opacity-0 transition peer-checked:opacity-100"
-                                    fill="none"
-                                >
+                                <svg aria-hidden="true" viewBox="0 0 12 10" className="relative h-3 w-3 opacity-0 transition peer-checked:opacity-100" fill="none">
                                     <path d="M1 5L4.2 8L11 1.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
                             </span>
                             <span>Keep session active for 8 hours</span>
                         </label>
 
-                        <button
-                            type="button"
-                            className="mt-2 h-12 w-full rounded-full bg-primary px-6 font-headline text-base font-extrabold text-on-primary shadow-[0_18px_34px_-18px_rgba(164,0,21,0.8)] transition-all duration-200 hover:bg-primary-hover active:scale-[0.99]"
-                        >
-                            Authorize Entry
-                        </button>
-                    </form>
+                        <div className="pt-4">
+                            <Button variant="primary" size="lg" type="submit" disabled={isSubmitting}>
+                                {isSubmitting ? "Authorizing..." : "Authorize Entry"}
+                            </Button>
+                        </div>
+                    </Form>
 
                     <div className="mt-8 h-px w-full bg-surface-container-high/80" />
 
-                    <p className="mx-auto mt-7 max-w-xs text-center text-xs leading-6 text-secondary">
-                        Authorized personnel only. All access attempts are logged and monitored. IP address tracking is active.
-                    </p>
+                    <p className="mx-auto mt-7 max-w-xs text-center text-xs leading-6 text-secondary">Authorized personnel only. All access attempts are logged and monitored. IP address tracking is active.</p>
                 </section>
 
                 <footer className="flex flex-col items-center gap-4 pb-2 text-sm text-secondary sm:flex-row sm:gap-5">
-                    <a href="#" className="inline-flex items-center gap-2 transition-colors hover:text-primary">
+                    <Link href="/support" className="inline-flex items-center gap-2 transition-colors hover:text-primary">
                         <IconUserShield className="h-4 w-4" stroke={1.8} />
                         <span>Contact System Administrator</span>
-                    </a>
+                    </Link>
                 </footer>
-
-                <div className="fixed inset-x-0 bottom-0 z-0 border-t border-surface-container-high/80 bg-surface-container-low px-5 py-4 text-sm text-secondary sm:px-8">
-                    <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 md:flex-row md:justify-between">
-                        <a href="/" className="font-headline font-extrabold text-on-surface">
-                            Florlen
-                        </a>
-                        <p className="text-center text-xs sm:text-sm">© 2024 Florlen. Artfully Crocheted AI Designs.</p>
-                        <div className="flex items-center gap-4 sm:gap-6">
-                            <a href="#" className="transition-colors hover:text-primary">
-                                Privacy Policy
-                            </a>
-                            <a href="#" className="transition-colors hover:text-primary">
-                                Terms of Service
-                            </a>
-                            <a href="#" className="transition-colors hover:text-primary">
-                                Contact Support
-                            </a>
-                        </div>
-                    </div>
-                </div>
             </div>
         </main>
     );

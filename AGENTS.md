@@ -36,3 +36,5 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Keep components small and focused; prefer composition over large monolith components.
 - Do not introduce new dependencies without approval.
 - Keep lint clean and match existing formatting rules.
+- Use react-hook-form and Zod
+- Use Next components includes: Link,Form, Image when edit/create (a) file(s)
