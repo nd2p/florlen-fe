@@ -37,6 +37,7 @@ export default function AdminLoginPage() {
             const response = await login({ email: values.adminId, password: values.password });
 
             const role = response.user?.role || null;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             if (!role || !ADMIN_ROLES.includes(role as any)) {
                 toast.error("Unauthorized: admin access required");
                 return;
@@ -46,12 +47,14 @@ export default function AdminLoginPage() {
             setTokens({ accessToken: response.accessToken, refreshToken: response.refreshToken, expiresIn: response.expiresIn });
 
             // Cache user without role; authorization is checked from server
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { role: _role, ...safeUser } = response.user;
             setCachedUser(safeUser);
 
             toast.success("Welcome back, admin! Redirecting...");
 
             router.push("/admin/orders");
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             console.error("Admin login error:", err);
             let message = "Login failed. Please try again.";
@@ -95,7 +98,7 @@ export default function AdminLoginPage() {
                         <div className="space-y-2">
                             <label htmlFor="admin-id" className="ml-1 text-sm font-medium text-on-surface">Admin ID or Email</label>
                             <div className="relative">
-                                <Input id="admin-id" placeholder="Enter credentials" {...register('adminId')} error={errors.adminId?.message as any} />
+                                <Input id="admin-id" placeholder="Enter credentials" {...register('adminId')} error={errors.adminId?.message as string | undefined} />
                             </div>
                         </div>
 
@@ -105,7 +108,7 @@ export default function AdminLoginPage() {
                                 <Link href="/auth/forgot-password" className="text-xs font-semibold text-primary transition-colors hover:text-primary-hover">Forgot?</Link>
                             </div>
                             <div className="relative">
-                                <Input id="admin-password" type="password" placeholder="••••••••" {...register('password')} error={errors.password?.message as any} />
+                                <Input id="admin-password" type="password" placeholder="••••••••" {...register('password')} error={errors.password?.message as string | undefined} />
                             </div>
                         </div>
 

@@ -4,13 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import ProductDialog from "@/components/admin/product-dialog";
 import {
     IconChartBar,
     IconChevronLeft,
     IconChevronRight,
     IconDiscount,
     IconFolder,
-    IconPlus,
     IconLogout2,
     IconPackage,
     IconSettings,
@@ -92,15 +92,7 @@ export default function Sidebar() {
             </div>
 
             <div className="mt-auto space-y-4 pt-8">
-                <Button
-                    variant="primary"
-                    size="md"
-                    type="button"
-                    className={`w-full rounded-full py-3 text-sm transition-colors ${collapsed ? "justify-center px-3" : "gap-3 px-4"}`}
-                >
-                    <IconPlus className="h-5 w-5 shrink-0" stroke={2} />
-                    {collapsed ? null : "Add New Product"}
-                </Button>
+                <ProductDialog compact={collapsed} />
 
                 <Button
                     asChild

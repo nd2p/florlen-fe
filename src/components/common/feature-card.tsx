@@ -6,7 +6,7 @@ interface FeatureCardProps {
     description: string;
 }
 
-export default function FeatureCard({ icon, title, description }: FeatureCardProps) {
+export default function FeatureCard({ title, description }: FeatureCardProps) {
     return (
         <div className="flex items-center gap-4 bg-primary-container/20 p-4 rounded-xl backdrop-blur-md">
             <IconBrandCraft stroke={2} color='white' />

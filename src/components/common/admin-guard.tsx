@@ -32,6 +32,7 @@ export default function AdminGuard({ children }: AdminGuardProps) {
             try {
                 const response = await getMe();
                 const role = response.user?.role;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const hasAdminRole = role ? ADMIN_ROLES.includes(role as any) : false;
 
                 if (!hasAdminRole) {

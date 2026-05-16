@@ -43,6 +43,7 @@ export default function Login() {
             });
 
             // Cache user data without role; authorization is checked from server
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { role: _role, ...safeUser } = response.user;
             setCachedUser(safeUser);
 
@@ -50,6 +51,7 @@ export default function Login() {
 
             // Redirect to profile
             setTimeout(() => router.push("/"), 500);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             console.error("Login error:", err);
             // Extract error message from response or use fallback

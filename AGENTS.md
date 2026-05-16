@@ -38,3 +38,4 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Keep lint clean and match existing formatting rules.
 - Use react-hook-form and Zod
 - Use Next components includes: Link,Form, Image when edit/create (a) file(s)
+- When implementing or modifying API-related logic in florlen-frontend, ensure consistency between the type returned by the backend and the get method, or between the type in the payload body and the post and patchcheck methods. (folder: florlen-backend/).

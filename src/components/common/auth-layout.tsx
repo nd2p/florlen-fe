@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import Image from "next/image";
 import FeatureCard from "./feature-card";
 
 interface AuthLayoutProps {
@@ -37,9 +38,11 @@ export default function AuthLayout({ children, showBranding = true }: AuthLayout
 
                     {/* Background Image */}
                     <div className="absolute inset-0 z-0 opacity-40 mix-blend-overlay">
-                        <img
+                        <Image
                             alt="Macro close-up of crimson red crochet patterns"
-                            className="w-full h-full object-cover"
+                            className="object-cover"
+                            fill
+                            sizes="50vw"
                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCW5bw7l6hIU0oRtOSZFh5WSY1R4iDyTdDhnQg7tbtYjS4VHPodJR4EOV5AUFX1w0p4646GZoXkh8w6LoH5zm_SAVyyTxCoxfTuY-dsb10Q1CrmXCbFQPsjJnJyVn5mfKVXEewm41c_iWhhgfZExQCtSOHZmczCRsRMrusD9P9mY5WfUCnqurT9JOt3J8Dcqe3dtRfj71P3YEtfRS86kk7CjQRPil4Q4dneNtW_V_jKVPcm76A4l9lTEMZASLv2UfNqw0c0QTQxlU"
                         />
                     </div>

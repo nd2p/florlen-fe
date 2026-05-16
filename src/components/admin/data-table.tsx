@@ -14,15 +14,16 @@ import {
 export type TableColumn<T> = {
     key: keyof T;
     label: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     render?: (value: any, row: T) => React.ReactNode;
     align?: 'left' | 'right' | 'center';
 };
 
 export type TableAction<T> = {
-    label: string;
-    icon: React.ReactNode;
+    label: string | ((row: T) => string);
+    icon: React.ReactNode | ((row: T) => React.ReactNode);
     onClick: (row: T) => void;
-    className?: string;
+    className?: string | ((row: T) => string);
 };
 
 export type DataTableProps<T> = {
@@ -171,20 +172,37 @@ export default function DataTable<T extends { id: string }>({
                                         <td className="px-6 py-5">
                                             <div className="flex items-center justify-end gap-2">
                                                 {actions.map((action, idx) => (
-                                                    <Button
-                                                        key={idx}
-                                                        type="button"
-                                                        variant="secondary"
-                                                        size="sm"
-                                                        onClick={() => action.onClick(row)}
-                                                        className={
-                                                            action.className ||
-                                                            'h-9 w-9 rounded-full bg-surface-container-high px-0 py-0 text-secondary hover:bg-surface-container-highest hover:text-primary'
-                                                        }
-                                                        aria-label={action.label}
-                                                    >
-                                                        {action.icon}
-                                                    </Button>
+                                                    (() => {
+                                                        const resolvedLabel =
+                                                            typeof action.label === 'function'
+                                                                ? action.label(row)
+                                                                : action.label;
+                                                        const resolvedIcon =
+                                                            typeof action.icon === 'function'
+                                                                ? action.icon(row)
+                                                                : action.icon;
+                                                        const resolvedClassName =
+                                                            typeof action.className === 'function'
+                                                                ? action.className(row)
+                                                                : action.className;
+
+                                                        return (
+                                                            <Button
+                                                                key={idx}
+                                                                type="button"
+                                                                variant="secondary"
+                                                                size="sm"
+                                                                onClick={() => action.onClick(row)}
+                                                                className={
+                                                                    resolvedClassName ||
+                                                                    'h-9 w-9 rounded-full bg-surface-container-high px-0 py-0 text-secondary hover:bg-surface-container-highest hover:text-primary'
+                                                                }
+                                                                aria-label={resolvedLabel}
+                                                            >
+                                                                {resolvedIcon}
+                                                            </Button>
+                                                        );
+                                                    })()
                                                 ))}
                                             </div>
                                         </td>

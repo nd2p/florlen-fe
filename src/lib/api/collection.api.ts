@@ -1,0 +1,94 @@
+import client from '@/lib/api/client';
+
+export type Collection = {
+  id: string;
+  name: string;
+  slug?: string;
+  description?: string | null;
+  collection_type?: string;
+  is_active: boolean;
+  is_featured?: boolean;
+  starts_at?: string | null;
+  ends_at?: string | null;
+  cover_image_url?: string | null;
+  banner_image_url?: string | null;
+  sort_order?: number;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type CollectionImageUpload = {
+  bucket: string;
+  url: string;
+  storage_path: string;
+  original_name?: string;
+  mime_type?: string;
+  size?: number;
+};
+
+export type ListCollectionsParams = {
+  cursor?: string;
+  limit?: number;
+  type?: string;
+  is_featured?: boolean;
+  sort_by?: string;
+};
+
+export type ListCollectionsResponse = {
+  collections: Collection[];
+  hasMore: boolean;
+  nextCursor: string | null;
+};
+
+export type CreateCollectionInput = {
+  name: string;
+  slug: string;
+  description?: string;
+  collection_type: string;
+  is_active?: boolean;
+  is_featured?: boolean;
+  starts_at?: string;
+  ends_at?: string;
+  cover_image_url?: string;
+  banner_image_url?: string;
+};
+
+export async function listCollections(
+  params: ListCollectionsParams = {}
+): Promise<ListCollectionsResponse> {
+  const response = await client.get<ListCollectionsResponse>('/collections', { params });
+  return response.data;
+}
+
+export async function uploadCollectionImages(files: File[]): Promise<CollectionImageUpload[]> {
+  const formData = new FormData();
+  files.forEach((file) => formData.append('images', file));
+
+  const response = await client.post<{ images: CollectionImageUpload[] }>('/uploads', formData, {
+    params: {
+      type: 'collection',
+    },
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+  return response.data.images;
+}
+
+export async function createCollection(
+  data: CreateCollectionInput
+): Promise<{ collection: Collection }> {
+  const response = await client.post<{ collection: Collection }>('/collections', data);
+  return response.data;
+}
+
+export async function deleteCollection(id: string): Promise<{
+  message?: string;
+  collection: Collection;
+}> {
+  const response = await client.delete<{ message?: string; collection: Collection }>(
+    `/collections/${id}`
+  );
+  return response.data;
+}
