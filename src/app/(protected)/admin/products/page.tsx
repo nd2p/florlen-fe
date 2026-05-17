@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { IconCircleCheck, IconDownload, IconEdit, IconTrash } from '@tabler/icons-react';
+import { toast } from 'sonner';
 import DataTable, { TableColumn, TableAction } from '@/components/admin/data-table';
 import ProductDialog from '@/components/admin/product-dialog';
 import {
@@ -242,15 +243,18 @@ export default function ProductsPage() {
         if (!productToDelete) return;
 
         setIsDeleting(true);
+        const toastId = toast.loading('Deleting product...');
 
         try {
             await deleteProduct(productToDelete.id);
             await loadProducts();
             setProductToDelete(null);
+            toast.success('Product deleted.', { id: toastId });
         } catch (error) {
             console.error('Delete product error:', error);
             const message = error instanceof Error ? error.message : 'Failed to delete product.';
             setErrorMessage(message);
+            toast.error(message, { id: toastId });
         } finally {
             setIsDeleting(false);
         }
@@ -260,6 +264,7 @@ export default function ProductsPage() {
         if (!productToActivate) return;
 
         setIsActivating(true);
+        const toastId = toast.loading('Activating product...');
 
         try {
             await updateProduct(productToActivate.id, {
@@ -269,10 +274,12 @@ export default function ProductsPage() {
             });
             await loadProducts();
             setProductToActivate(null);
+            toast.success('Product activated.', { id: toastId });
         } catch (error) {
             console.error('Activate product error:', error);
             const message = error instanceof Error ? error.message : 'Failed to activate product.';
             setErrorMessage(message);
+            toast.error(message, { id: toastId });
         } finally {
             setIsActivating(false);
         }

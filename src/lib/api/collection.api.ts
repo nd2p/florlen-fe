@@ -49,8 +49,8 @@ export type CreateCollectionInput = {
   is_featured?: boolean;
   starts_at?: string;
   ends_at?: string;
-  cover_image_url?: string;
-  banner_image_url?: string;
+  cover_image_url?: string | null;
+  banner_image_url?: string | null;
 };
 
 export async function listCollections(
@@ -80,6 +80,24 @@ export async function createCollection(
   data: CreateCollectionInput
 ): Promise<{ collection: Collection }> {
   const response = await client.post<{ collection: Collection }>('/collections', data);
+  return response.data;
+}
+
+export async function updateCollection(
+  id: string,
+  data: Partial<CreateCollectionInput>
+): Promise<{ collection: Collection }> {
+  const response = await client.patch<{ collection: Collection }>(`/collections/${id}`, data);
+  return response.data;
+}
+
+export async function syncCollectionProducts(
+  id: string,
+  productIds: string[]
+): Promise<{ items: any[] }> {
+  const response = await client.put<{ items: any[] }>(`/collections/${id}/products`, {
+    product_ids: productIds,
+  });
   return response.data;
 }
 

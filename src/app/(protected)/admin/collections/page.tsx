@@ -2,13 +2,24 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { IconEdit, IconTrash } from '@tabler/icons-react';
+import { IconEdit, IconTrash, IconPlus } from '@tabler/icons-react';
 import { toast } from 'sonner';
 
-import CreateCollectionDialog from '@/components/admin/create-collection-dialog';
+import CollectionDialog from '@/components/admin/collection-dialog';
+import {
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogAction,
+    AlertDialogCancel,
+} from '@/components/ui/alert-dialog';
 import DataTable, { TableAction, TableColumn } from '@/components/admin/data-table';
 import {
     deleteCollection,
+    updateCollection,
     listCollections,
     type Collection,
 } from '@/lib/api/collection.api';
@@ -19,6 +30,7 @@ type CollectionRow = {
     starts_at: string | null;
     ends_at: string | null;
     is_active: boolean;
+    _raw: Collection;
 };
 
 const formatDate = (value?: string | null) => {
@@ -37,6 +49,11 @@ export default function CollectionsPage() {
     const [collections, setCollections] = useState<CollectionRow[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [editingCollection, setEditingCollection] = useState<Collection | null>(null);
+    const [collectionToDelete, setCollectionToDelete] = useState<CollectionRow | null>(null);
+    const [collectionToActivate, setCollectionToActivate] = useState<CollectionRow | null>(null);
+    const [isDeletingCollection, setIsDeletingCollection] = useState(false);
+    const [isActivatingCollection, setIsActivatingCollection] = useState(false);
 
     const loadCollections = async () => {
         setIsLoading(true);
@@ -50,6 +67,7 @@ export default function CollectionsPage() {
                 starts_at: collection.starts_at ?? null,
                 ends_at: collection.ends_at ?? null,
                 is_active: Boolean(collection.is_active),
+                _raw: collection,
             }));
             setCollections(rows);
         } catch (error) {
@@ -68,19 +86,61 @@ export default function CollectionsPage() {
     }, []);
 
     const handleDelete = async (row: CollectionRow) => {
-        const confirmed = window.confirm(`Delete collection "${row.name}"?`);
-        if (!confirmed) return;
+        setCollectionToDelete(row);
+    };
 
+    const confirmDelete = async () => {
+        if (!collectionToDelete) return;
+        setIsDeletingCollection(true);
         const toastId = toast.loading('Deleting collection...');
-
         try {
-            await deleteCollection(row.id);
-            setCollections((current) => current.filter((item) => item.id !== row.id));
+            await deleteCollection(collectionToDelete.id);
+            setCollections((current) =>
+                current.map((item) =>
+                    item.id === collectionToDelete.id
+                        ? {
+                            ...item,
+                            is_active: false,
+                            _raw: {
+                                ...item._raw,
+                                is_active: false,
+                            },
+                        }
+                        : item
+                )
+            );
             toast.success('Collection deleted.', { id: toastId });
+            setCollectionToDelete(null);
         } catch (error) {
             console.error('Delete collection error:', error);
             const message = error instanceof Error ? error.message : 'Failed to delete collection.';
             toast.error(message, { id: toastId });
+        } finally {
+            setIsDeletingCollection(false);
+        }
+    };
+
+    const handleActivate = async (row: CollectionRow) => {
+        setCollectionToActivate(row);
+    };
+
+    const confirmActivate = async () => {
+        if (!collectionToActivate) return;
+        setIsActivatingCollection(true);
+        const toastId = toast.loading('Activating collection...');
+
+        try {
+            await updateCollection(collectionToActivate.id, { is_active: true });
+            setCollections((current) => current.map((c) => (c.id === collectionToActivate.id ? { ...c, is_active: true } : c)));
+            toast.success('Collection activated.', { id: toastId });
+            setCollectionToActivate(null);
+            loadCollections();
+        } catch (error) {
+            console.error('Activate collection error:', error);
+            const message = error instanceof Error ? error.message : 'Failed to activate collection.';
+            toast.error(message, { id: toastId });
+        } finally {
+            setIsActivatingCollection(false);
         }
     };
 
@@ -129,16 +189,18 @@ export default function CollectionsPage() {
         {
             label: 'Edit',
             icon: <IconEdit className="h-4 w-4" stroke={2} />,
-            onClick: (row) => router.push(`/admin/collections/${row.id}/edit`),
+            onClick: (row) => setEditingCollection(row._raw),
             className:
                 'flex h-9 w-9 items-center justify-center rounded-full bg-surface-container-high text-secondary transition-colors hover:bg-surface-container-highest hover:text-primary',
         },
         {
-            label: 'Delete',
-            icon: <IconTrash className="h-4 w-4" stroke={2} />,
-            onClick: handleDelete,
-            className:
-                'flex h-9 w-9 items-center justify-center rounded-full bg-surface-container-high text-secondary transition-colors hover:bg-surface-container-highest hover:text-error',
+            label: (row) => (row.is_active ? 'Delete' : 'Activate'),
+            icon: (row) => (row.is_active ? <IconTrash className="h-4 w-4" stroke={2} /> : <IconPlus className="h-4 w-4" stroke={2} />),
+            onClick: (row) => (row.is_active ? handleDelete(row) : handleActivate(row)),
+            className: (row) =>
+                row.is_active
+                    ? 'flex h-9 w-9 items-center justify-center rounded-full bg-surface-container-high text-secondary transition-colors hover:bg-surface-container-highest hover:text-error'
+                    : 'flex h-9 w-9 items-center justify-center rounded-full bg-surface-container-high text-secondary transition-colors hover:bg-surface-container-highest hover:text-primary',
         },
     ];
 
@@ -156,8 +218,22 @@ export default function CollectionsPage() {
                     </div>
                 </div>
 
-                <CreateCollectionDialog onCreated={loadCollections} />
+                <CollectionDialog onSaved={loadCollections} />
             </section>
+
+            {editingCollection && (
+                <CollectionDialog
+                    collection={editingCollection}
+                    open={!!editingCollection}
+                    onOpenChange={(isOpen) => {
+                        if (!isOpen) setEditingCollection(null);
+                    }}
+                    onSaved={() => {
+                        setEditingCollection(null);
+                        loadCollections();
+                    }}
+                />
+            )}
 
             {errorMessage ? (
                 <section className="rounded-[1.5rem] bg-surface-container-low p-4 text-sm text-error">
@@ -175,6 +251,76 @@ export default function CollectionsPage() {
                     itemsPerPage={10}
                 />
             </section>
+
+            <AlertDialog
+                open={Boolean(collectionToDelete)}
+                onOpenChange={(open) => {
+                    if (!open && !isDeletingCollection) setCollectionToDelete(null);
+                }}
+            >
+                <AlertDialogContent size="sm">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Delete collection?</AlertDialogTitle>
+                        <div className="text-sm leading-6 text-secondary">
+                            This will delete <span className="font-semibold text-on-surface">{collectionToDelete?.name}</span> and remove it from listings.
+                        </div>
+                    </AlertDialogHeader>
+
+                    <AlertDialogFooter>
+                        <AlertDialogCancel
+                            disabled={isDeletingCollection}
+                            className="rounded-full border-none bg-surface-container-high px-5 py-3 text-sm font-bold text-on-surface hover:bg-surface-container-highest"
+                        >
+                            Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={(e) => {
+                                e.preventDefault();
+                                void confirmDelete();
+                            }}
+                            disabled={isDeletingCollection}
+                            className="rounded-full bg-error px-5 py-3 text-sm font-bold text-on-error shadow-[0_10px_20px_-5px_rgba(164,0,21,0.3)] hover:bg-error/90"
+                        >
+                            {isDeletingCollection ? 'Deleting...' : 'Delete'}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            <AlertDialog
+                open={Boolean(collectionToActivate)}
+                onOpenChange={(open) => {
+                    if (!open && !isActivatingCollection) setCollectionToActivate(null);
+                }}
+            >
+                <AlertDialogContent size="sm">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Activate collection?</AlertDialogTitle>
+                        <div className="text-sm leading-6 text-secondary">
+                            This will activate <span className="font-semibold text-on-surface">{collectionToActivate?.name}</span> and make it visible again in listings.
+                        </div>
+                    </AlertDialogHeader>
+
+                    <AlertDialogFooter>
+                        <AlertDialogCancel
+                            disabled={isActivatingCollection}
+                            className="rounded-full border-none bg-surface-container-high px-5 py-3 text-sm font-bold text-on-surface hover:bg-surface-container-highest"
+                        >
+                            Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={(e) => {
+                                e.preventDefault();
+                                void confirmActivate();
+                            }}
+                            disabled={isActivatingCollection}
+                            className="rounded-full bg-primary px-5 py-3 text-sm font-bold text-on-primary shadow-[0_10px_20px_-5px_rgba(0,104,74,0.3)] hover:bg-primary-container"
+                        >
+                            {isActivatingCollection ? 'Activating...' : 'Activate'}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
 
             {isLoading ? (
                 <div className="text-sm text-secondary">Loading collections...</div>

@@ -72,6 +72,7 @@ export type ListProductsParams = {
   type?: ProductType;
   tag?: string;
   collection?: string;
+  q?: string;
 };
 
 export type ListProductsResponse = {
