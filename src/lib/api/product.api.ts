@@ -60,6 +60,7 @@ export type ProductListItem = {
   production_days_min?: number;
   production_days_max?: number;
   product_type?: ProductType;
+  collection_id?: string | null;
   is_active?: boolean;
   available_stock?: number | null;
   product_images?: ProductImage[];

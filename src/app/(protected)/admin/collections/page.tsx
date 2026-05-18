@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { IconEdit, IconTrash, IconPlus } from '@tabler/icons-react';
 import { toast } from 'sonner';
 
@@ -11,7 +10,6 @@ import {
     AlertDialogContent,
     AlertDialogHeader,
     AlertDialogTitle,
-    AlertDialogDescription,
     AlertDialogFooter,
     AlertDialogAction,
     AlertDialogCancel,
@@ -45,7 +43,6 @@ const formatDate = (value?: string | null) => {
 };
 
 export default function CollectionsPage() {
-    const router = useRouter();
     const [collections, setCollections] = useState<CollectionRow[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);

@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { IconPlus, IconTrash, IconSearch, IconX } from "@tabler/icons-react";
 import { toast } from "sonner";
 
@@ -24,6 +24,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import {
+    type Collection,
     createCollection,
     updateCollection,
     uploadCollectionImages,
@@ -55,8 +56,7 @@ type CreateCollectionValues = z.infer<typeof CreateCollectionSchema>;
 
 type CreateCollectionDialogProps = {
     compact?: boolean;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    collection?: any | null;
+    collection?: Collection | null;
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
     onSaved?: () => void | Promise<void>;
@@ -108,15 +108,14 @@ export default function CollectionDialog({
     const [isSearching, setIsSearching] = useState(false);
 
     // For disabling save if no changes
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [editSnapshot, setEditSnapshot] = useState<any>(null);
+    const [editSnapshot, setEditSnapshot] = useState<Record<string, unknown> | null>(null);
 
     const {
         register,
         handleSubmit,
         setValue,
         reset,
-        watch,
+        control,
         formState: { errors, isSubmitting },
     } = useForm<CreateCollectionValues>({
         resolver: zodResolver(CreateCollectionSchema),
@@ -133,50 +132,52 @@ export default function CollectionDialog({
 
     useEffect(() => {
         if (!collection) {
-            setEditSnapshot(null);
-            reset();
-            setExistingCover(null);
-            setExistingBanner(null);
-            setSelectedProducts([]);
-            setCoverFile(null);
-            setBannerFile(null);
-            setSearchQuery("");
+            queueMicrotask(() => {
+                setEditSnapshot(null);
+                reset();
+                setExistingCover(null);
+                setExistingBanner(null);
+                setSelectedProducts([]);
+                setCoverFile(null);
+                setBannerFile(null);
+                setSearchQuery("");
+            });
             return;
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const initialProducts = collection.collection_products?.map((cp: any) => cp.products).filter(Boolean) || [];
+        const initialProducts = collection.collection_products?.map((cp) => cp.products).filter(Boolean) || [];
 
-        setValue("name", collection.name || "");
-        setValue("slug", collection.slug || "");
-        setValue("description", collection.description || "");
-        setValue("collection_type", collection.collection_type || "seasonal");
-        setValue("starts_at", collection.starts_at ? new Date(collection.starts_at).toISOString().slice(0, 16) : "");
-        setValue("ends_at", collection.ends_at ? new Date(collection.ends_at).toISOString().slice(0, 16) : "");
-        setValue("is_featured", collection.is_featured ?? false);
+        queueMicrotask(() => {
+            setValue("name", collection.name || "");
+            setValue("slug", collection.slug || "");
+            setValue("description", collection.description || "");
+            setValue("collection_type", (collection.collection_type as import("@/lib/api/collection.api").CollectionType) || "seasonal");
+            setValue("starts_at", collection.starts_at ? new Date(collection.starts_at).toISOString().slice(0, 16) : "");
+            setValue("ends_at", collection.ends_at ? new Date(collection.ends_at).toISOString().slice(0, 16) : "");
+            setValue("is_featured", collection.is_featured ?? false);
 
-        setExistingCover(collection.cover_image_url || null);
-        setExistingBanner(collection.banner_image_url || null);
-        setSelectedProducts(initialProducts);
-        setCoverFile(null);
-        setBannerFile(null);
-        setSearchQuery("");
+            setExistingCover(collection.cover_image_url || null);
+            setExistingBanner(collection.banner_image_url || null);
+            setSelectedProducts(initialProducts);
+            setCoverFile(null);
+            setBannerFile(null);
+            setSearchQuery("");
 
-        setEditSnapshot({
-            name: collection.name || "",
-            description: collection.description || "",
-            collection_type: collection.collection_type || "seasonal",
-            starts_at: collection.starts_at ? new Date(collection.starts_at).toISOString().slice(0, 16) : "",
-            ends_at: collection.ends_at ? new Date(collection.ends_at).toISOString().slice(0, 16) : "",
-            is_featured: collection.is_featured ?? false,
-            existingCover: collection.cover_image_url || null,
-            existingBanner: collection.banner_image_url || null,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            productIds: initialProducts.map((p: any) => p.id),
+            setEditSnapshot({
+                name: collection.name || "",
+                description: collection.description || "",
+                collection_type: collection.collection_type || "seasonal",
+                starts_at: collection.starts_at ? new Date(collection.starts_at).toISOString().slice(0, 16) : "",
+                ends_at: collection.ends_at ? new Date(collection.ends_at).toISOString().slice(0, 16) : "",
+                is_featured: collection.is_featured ?? false,
+                existingCover: collection.cover_image_url || null,
+                existingBanner: collection.banner_image_url || null,
+                productIds: initialProducts.map((p) => p.id),
+            });
         });
     }, [collection, reset, setValue]);
 
-    const watchedValues = watch();
+    const watchedValues = useWatch({ control });
 
     // Auto-generate slug when name changes for new collections
     const nameValue = watchedValues.name;
@@ -213,7 +214,9 @@ export default function CollectionDialog({
 
     useEffect(() => {
         if (!debouncedSearchQuery.trim()) {
-            setSearchResults([]);
+            queueMicrotask(() => {
+                setSearchResults([]);
+            });
             return;
         }
 

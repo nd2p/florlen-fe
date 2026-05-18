@@ -1,11 +1,12 @@
 import client from '@/lib/api/client';
+export type CollectionType = 'seasonal' | 'fandom' | 'event_drop' | 'permanent';
 
 export type Collection = {
   id: string;
   name: string;
   slug?: string;
   description?: string | null;
-  collection_type?: string;
+  collection_type?: CollectionType;
   is_active: boolean;
   is_featured?: boolean;
   starts_at?: string | null;
@@ -15,6 +16,12 @@ export type Collection = {
   sort_order?: number;
   created_at?: string;
   updated_at?: string;
+  collection_products?: {
+    id: string;
+    collection_id: string;
+    product_id: string;
+    products: import('./product.api').ProductListItem;
+  }[];
 };
 
 export type CollectionImageUpload = {
@@ -31,6 +38,7 @@ export type ListCollectionsParams = {
   limit?: number;
   type?: string;
   is_featured?: boolean;
+  search?: string;
   sort_by?: string;
 };
 
@@ -94,8 +102,8 @@ export async function updateCollection(
 export async function syncCollectionProducts(
   id: string,
   productIds: string[]
-): Promise<{ items: any[] }> {
-  const response = await client.put<{ items: any[] }>(`/collections/${id}/products`, {
+): Promise<{ items: unknown[] }> {
+  const response = await client.put<{ items: unknown[] }>(`/collections/${id}/products`, {
     product_ids: productIds,
   });
   return response.data;

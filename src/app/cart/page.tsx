@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { IconMinus, IconPlus, IconTrash, IconTruck } from '@tabler/icons-react';
+import { formatCurrency } from '@/lib/utils';
 
 interface CartItem {
     id: string;
@@ -119,7 +120,7 @@ export default function CartPage() {
                                                     </div>
                                                 </div>
                                                 <span className="text-xl font-black text-primary">
-                                                    ${item.price.toFixed(2)}
+                                                    {formatCurrency(item.price)}
                                                 </span>
                                             </div>
 
@@ -176,19 +177,19 @@ export default function CartPage() {
                                     <div className="flex justify-between text-secondary">
                                         <span>Subtotal</span>
                                         <span className="font-semibold text-on-surface">
-                                            ${subtotal.toFixed(2)}
+                                            {formatCurrency(subtotal)}
                                         </span>
                                     </div>
                                     <div className="flex justify-between text-secondary">
                                         <span>Shipping</span>
                                         <span className="font-semibold text-on-surface">
-                                            ${shipping.toFixed(2)}
+                                            {formatCurrency(shipping)}
                                         </span>
                                     </div>
                                     <div className="flex justify-between text-secondary">
                                         <span>Handmade Fee</span>
                                         <span className="font-semibold text-on-surface">
-                                            ${handmadeFee.toFixed(2)}
+                                            {formatCurrency(handmadeFee)}
                                         </span>
                                     </div>
 
@@ -196,7 +197,7 @@ export default function CartPage() {
 
                                     <div className="flex justify-between text-xl font-black text-on-surface">
                                         <span>Total</span>
-                                        <span className="text-primary">${total.toFixed(2)}</span>
+                                        <span className="text-primary">{formatCurrency(total)}</span>
                                     </div>
                                 </div>
 

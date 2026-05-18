@@ -90,4 +90,12 @@
   .nocturnal-shadow {
     box-shadow: 0 40px 60px -15px rgba(27, 28, 28, 0.04);
   }
+
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
 }

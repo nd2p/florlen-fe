@@ -6,6 +6,7 @@ import {
     IconDownload,
     IconFilter,
 } from "@tabler/icons-react";
+import { formatCurrency } from "@/lib/utils";
 
 type OrderStatus = "Processing" | "Stitched" | "Shipped";
 
@@ -15,7 +16,7 @@ type OrderItem = {
     date: string;
     items: number;
     status: OrderStatus;
-    total: string;
+    total: number;
     avatars: string[];
 };
 
@@ -26,7 +27,7 @@ const orders: OrderItem[] = [
         date: "Oct 24, 2023",
         items: 2,
         status: "Processing",
-        total: "$145.00",
+        total: 145000,
         avatars: ["ES", "PT"],
     },
     {
@@ -35,7 +36,7 @@ const orders: OrderItem[] = [
         date: "Oct 23, 2023",
         items: 1,
         status: "Stitched",
-        total: "$85.00",
+        total: 85000,
         avatars: ["CA"],
     },
     {
@@ -44,7 +45,7 @@ const orders: OrderItem[] = [
         date: "Oct 22, 2023",
         items: 3,
         status: "Shipped",
-        total: "$320.00",
+        total: 320000,
         avatars: ["TA", "MJ", "KA"],
     },
 ];
@@ -137,7 +138,7 @@ export default function OrdersPage() {
                                     </span>
                                     <div>
                                         <p className="text-sm text-secondary">Total</p>
-                                        <p className="text-2xl font-black text-on-surface">{order.total}</p>
+                                        <p className="text-2xl font-black text-on-surface">{formatCurrency(order.total)}</p>
                                     </div>
                                 </div>
                             </div>
