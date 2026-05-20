@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import AppShell from "../components/common/app-shell";
+import MagicMouse from "../components/common/magic-mouse";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -30,6 +31,7 @@ export default function RootLayout({
       className={`${plusJakarta.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-on-background">
+        <MagicMouse />
         <AppShell>{children}</AppShell>
         <Toaster />
       </body>

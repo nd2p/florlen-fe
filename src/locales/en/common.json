@@ -1,0 +1,30 @@
+{
+  "header": {
+    "brand": "Florlen",
+    "nav": {
+      "shopAll": "Shop All",
+      "aiStudio": "AI Studio",
+      "collections": "Collections",
+      "blog": "Blog"
+    },
+    "search": {
+      "placeholder": "Search products, collections...",
+      "searching": "Searching for matches...",
+      "collectionsTitle": "Collections",
+      "collectionLabel": "Collection",
+      "productsTitle": "Products",
+      "viewAllResults": "View all results for \"{{query}}\"",
+      "noResults": "No results found for \"{{query}}\""
+    },
+    "actions": {
+      "searchMobile": "Search mobile",
+      "openCart": "Open cart",
+      "openProfile": "Open profile"
+    },
+    "language": {
+      "label": "Language",
+      "en": "English",
+      "vi": "Vietnamese"
+    }
+  }
+}

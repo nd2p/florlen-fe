@@ -1,3 +1,5 @@
+'use client';
+
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { IconSearch, IconShoppingCart, IconUser, IconLoader2 } from "@tabler/icons-react";
@@ -8,9 +10,20 @@ import { listProducts, type ProductListItem } from "@/lib/api/product.api";
 import { listCollections, type Collection } from "@/lib/api/collection.api";
 import { formatCurrency } from "@/lib/utils";
 import Image from "next/image";
+import { useTranslation } from "react-i18next";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuLabel,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Header() {
     const router = useRouter();
+    const { t, i18n } = useTranslation("common");
     const [searchQuery, setSearchQuery] = useState("");
     const [results, setResults] = useState<{ products: ProductListItem[], collections: Collection[] }>({ products: [], collections: [] });
     const { fetchCart, totalQuantity } = useCartStore();
@@ -21,6 +34,13 @@ export default function Header() {
     const [isSearching, setIsSearching] = useState(false);
     const [showResults, setShowResults] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const activeLanguage = i18n.resolvedLanguage?.startsWith("vi") ? "vi" : "en";
+
+    const handleLanguageChange = (value: string) => {
+        if (value !== activeLanguage) {
+            void i18n.changeLanguage(value);
+        }
+    };
 
     const handleProfileClick = () => {
         const accessToken = getAccessToken();
@@ -101,13 +121,13 @@ export default function Header() {
                         href="/"
                         className="font-headline text-3xl font-extrabold tracking-tight text-primary whitespace-nowrap"
                     >
-                        Florlen
+                        {t("header.brand")}
                     </Link>
                     <div className="relative hidden lg:block w-full max-w-[320px]" ref={dropdownRef}>
                         <form onSubmit={handleSearch} className="relative w-full">
                             <input
                                 type="text"
-                                placeholder="Search products, collections..."
+                                placeholder={t("header.search.placeholder")}
                                 className="w-full rounded-full bg-surface-container-high px-10 py-2.5 text-sm text-on-surface outline-none transition-all placeholder:text-secondary focus:ring-2 focus:ring-primary/20"
                                 value={searchQuery}
                                 onChange={(e) => {
@@ -129,13 +149,13 @@ export default function Header() {
                                 {isSearching && results.products.length === 0 && results.collections.length === 0 ? (
                                     <div className="p-8 text-center text-secondary">
                                         <IconLoader2 className="mx-auto mb-2 h-6 w-6 animate-spin" />
-                                        <p className="text-sm">Searching for matches...</p>
+                                        <p className="text-sm">{t("header.search.searching")}</p>
                                     </div>
                                 ) : (results.products.length > 0 || results.collections.length > 0) ? (
                                     <div className="max-h-[70vh] overflow-y-auto p-2">
                                         {results.collections.length > 0 && (
                                             <div className="mb-2">
-                                                <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-secondary">Collections</div>
+                                                <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-secondary">{t("header.search.collectionsTitle")}</div>
                                                 {results.collections.map((col) => (
                                                     <Link
                                                         key={col.id}
@@ -148,7 +168,7 @@ export default function Header() {
                                                         </div>
                                                         <div className="flex-1 overflow-hidden">
                                                             <div className="truncate text-sm font-bold text-on-surface">{col.name}</div>
-                                                            <div className="text-[11px] text-secondary">Collection</div>
+                                                            <div className="text-[11px] text-secondary">{t("header.search.collectionLabel")}</div>
                                                         </div>
                                                     </Link>
                                                 ))}
@@ -157,7 +177,7 @@ export default function Header() {
 
                                         {results.products.length > 0 && (
                                             <div>
-                                                <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-secondary">Products</div>
+                                                <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-secondary">{t("header.search.productsTitle")}</div>
                                                 {results.products.map((prod) => (
                                                     <Link
                                                         key={prod.id}
@@ -182,12 +202,12 @@ export default function Header() {
                                             className="mt-2 block w-full rounded-xl bg-primary/5 p-3 text-center text-xs font-bold text-primary transition-colors hover:bg-primary/10"
                                             onClick={() => setShowResults(false)}
                                         >
-                                            View all results for &quot;{searchQuery}&quot;
+                                            {t("header.search.viewAllResults", { query: searchQuery })}
                                         </Link>
                                     </div>
                                 ) : !isSearching ? (
                                     <div className="p-8 text-center text-secondary italic">
-                                        <p className="text-sm">No results found for &quot;{searchQuery}&quot;</p>
+                                        <p className="text-sm">{t("header.search.noResults", { query: searchQuery })}</p>
                                     </div>
                                 ) : null}
                             </div>
@@ -197,21 +217,55 @@ export default function Header() {
 
                 {/* Center Section: Menu Items */}
                 <div className="hidden flex-1 items-center justify-center gap-8 md:flex">
-                    <Link href="/shop" className="font-headline font-bold text-secondary transition-colors hover:text-primary">Shop All</Link>
-                    <Link href="/ai-studio" className="font-headline font-bold text-secondary transition-colors hover:text-primary">AI Studio</Link>
-                    <Link href="/collections" className="font-headline font-bold text-secondary transition-colors hover:text-primary">Collections</Link>
-                    <Link href="/blog" className="font-headline font-bold text-secondary transition-colors hover:text-primary">Blog</Link>
+                    <Link href="/shop" className="font-headline font-bold text-secondary transition-colors hover:text-primary">{t("header.nav.shopAll")}</Link>
+                    <Link href="/ai-studio" className="font-headline font-bold text-secondary transition-colors hover:text-primary">{t("header.nav.aiStudio")}</Link>
+                    <Link href="/collections" className="font-headline font-bold text-secondary transition-colors hover:text-primary">{t("header.nav.collections")}</Link>
+                    <Link href="/blog" className="font-headline font-bold text-secondary transition-colors hover:text-primary">{t("header.nav.blog")}</Link>
                 </div>
 
                 {/* Right Section: Actions */}
                 <div className="flex flex-1 items-center justify-end gap-3">
-                    <button className="md:hidden rounded-full p-2 hover:bg-surface-container-highest" aria-label="Search mobile">
+                    <button className="md:hidden rounded-full p-2 hover:bg-surface-container-highest" aria-label={t("header.actions.searchMobile")}>
                         <IconSearch className="h-5 w-5 text-primary" stroke={2} />
                     </button>
+                    <DropdownMenu modal={false}>
+                        <DropdownMenuTrigger asChild>
+                            <button
+                                type="button"
+                                className="rounded-full border border-primary px-3 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-primary transition-all duration-200 hover:bg-primary/10 active:scale-95"
+                                aria-label={t("header.language.label")}
+                            >
+                                {activeLanguage.toUpperCase()}
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                            align="end"
+                            className="rounded-lg border-0 bg-primary text-on-primary shadow-2xl"
+                        >
+                            <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-widest text-on-primary/80">
+                                {t("header.language.label")}
+                            </DropdownMenuLabel>
+                            <DropdownMenuSeparator className="bg-on-primary/20" />
+                            <DropdownMenuRadioGroup value={activeLanguage} onValueChange={handleLanguageChange}>
+                                <DropdownMenuRadioItem
+                                    value="en"
+                                    className="text-on-primary focus:bg-on-primary/10 focus:text-on-primary"
+                                >
+                                    {t("header.language.en")}
+                                </DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem
+                                    value="vi"
+                                    className="text-on-primary focus:bg-on-primary/10 focus:text-on-primary"
+                                >
+                                    {t("header.language.vi")}
+                                </DropdownMenuRadioItem>
+                            </DropdownMenuRadioGroup>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                     <Link
                         href="/cart"
                         className="relative rounded-full p-2 transition-all duration-200 hover:bg-surface-container-highest active:scale-95"
-                        aria-label="Open cart"
+                        aria-label={t("header.actions.openCart")}
                     >
                         <IconShoppingCart className="h-5 w-5 text-primary" stroke={2} />
                         {totalQuantity > 0 && (
@@ -220,7 +274,7 @@ export default function Header() {
                             </span>
                         )}
                     </Link>
-                    <button type="button" onClick={handleProfileClick} className="rounded-full p-2 transition-all duration-200 hover:bg-surface-container-highest active:scale-95" aria-label="Open profile">
+                    <button type="button" onClick={handleProfileClick} className="rounded-full p-2 transition-all duration-200 hover:bg-surface-container-highest active:scale-95" aria-label={t("header.actions.openProfile")}>
                         <IconUser className="h-5 w-5 text-primary" stroke={2} />
                     </button>
                 </div>

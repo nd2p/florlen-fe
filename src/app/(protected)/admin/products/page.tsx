@@ -49,7 +49,9 @@ const formatCurrency = (value: number) =>
 
 const formatType = (value?: ProductType | null) => {
     if (!value) return 'Unassigned';
-    return value === 'ai_base' ? 'AI Base' : 'Normal';
+    if (value === 'ai_base') return 'AI Base';
+    if (value === 'add_ons') return 'Add-ons';
+    return 'Normal';
 };
 
 const formatStatus = (isActive: boolean) =>

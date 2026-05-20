@@ -1,0 +1,30 @@
+{
+  "header": {
+    "brand": "Florlen",
+    "nav": {
+      "shopAll": "Tất cả sản phẩm",
+      "aiStudio": "AI Studio",
+      "collections": "Bộ sưu tập",
+      "blog": "Blog"
+    },
+    "search": {
+      "placeholder": "Tìm kiếm sản phẩm, bộ sưu tập...",
+      "searching": "Đang tìm kết quả phù hợp...",
+      "collectionsTitle": "Bộ sưu tập",
+      "collectionLabel": "Bộ sưu tập",
+      "productsTitle": "Sản phẩm",
+      "viewAllResults": "Xem tất cả kết quả cho \"{{query}}\"",
+      "noResults": "Không tìm thấy kết quả cho \"{{query}}\""
+    },
+    "actions": {
+      "searchMobile": "Tìm kiếm (di động)",
+      "openCart": "Mở giỏ hàng",
+      "openProfile": "Mở hồ sơ"
+    },
+    "language": {
+      "label": "Ngôn ngữ",
+      "en": "Tiếng Anh",
+      "vi": "Tiếng Việt"
+    }
+  }
+}
