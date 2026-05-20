@@ -39,3 +39,11 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Use react-hook-form and Zod
 - Use Next components includes: Link,Form, Image when edit/create (a) file(s)
 - When implementing or modifying API-related logic in florlen-frontend, ensure consistency between the type returned by the backend and the get method, or between the type in the payload body and the post and patchcheck methods. (folder: florlen-backend/).
+
+# CODING GUIDELINES
+
+- Always write modular, reusable, and maintainable code.
+- Strictly follow the DRY (Don't Repeat Yourself) principle.
+- Before generating a large block of code or a full page, independently identify UI elements or logic that can be extracted into reusable components (e.g., Cards, Buttons, Inputs, Layout wrappers). If it is already exist, use it or add variance if necessary
+- Extract these components into separate functions or files automatically.
+- Keep components small and focused on a single responsibility.

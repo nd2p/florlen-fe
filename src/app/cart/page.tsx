@@ -1,61 +1,18 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import Badge from '@/components/ui/badge';
 import { IconMinus, IconPlus, IconTrash, IconTruck } from '@tabler/icons-react';
-import { formatCurrency } from '@/lib/utils';
-
-interface CartItem {
-    id: string;
-    name: string;
-    price: number;
-    image: string;
-    tags: string[];
-    customization: string;
-    quantity: number;
-}
-
-const initialCartItems: CartItem[] = [
-    {
-        id: '1',
-        name: 'Rosie the Axolotl',
-        price: 64.0,
-        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAEVVC9lGd86TKlhuFEfyMdq4dcY8P-8NGTZU83F7bgLAqEwh7O8wsJfmMZ92ep0o6lm8quxkUDLfwYa-tiCnGVQLhVh2_fmFYNL-RY2avGAEfG9UPnTc6Jsfs75yX8t5eDv4G7i9HhelDxVG0K2xnmD6iQir_6HVFHo_NZ8h81fMVWoJBOB48ps-ssAU37IpMi7qblF4h2w7xn2JljyLmbLt6Gx-tw_8M7XXgYuhIvW7OTWhCFgMn0W7n9kSzHyHMkP5U5mhAyoFI',
-        tags: ['Limited Edition', 'Handmade'],
-        customization: 'Pastel Pink Yarn, Safety Eyes (Glitter Blue), Silk Ribbon Accessory.',
-        quantity: 1,
-    },
-    {
-        id: '2',
-        name: 'Mossy Guardian',
-        price: 48.0,
-        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuABnB2ovQDMVwk6VZ3-7h7aN0X4X7R932Z7-XQen2RukCUFdGJY6-fpuqqYUdaD4SjQYYdnpzrgcHsbyMx9geryVuRy17Ygi47ogG1Gyjfu-GwAWfgJdvHGDQEdLmDffS9XrwLTHFaQtyGC3y0xSM4LwaUYmLZmF6x2cSCgjirO50OaB6mh35LzFlXpIWFk3DIfjzlkjHc5urQvmZjoPX-btIatDO2k3S9mwrZlJrW5FY0SKCmVe0WeuA9cgnyyloqAJdVv9t07_1Q',
-        tags: ['Eco-Yarn'],
-        customization: 'Forest Green Base, White Leaf Crown, Bamboo Stuffing.',
-        quantity: 2,
-    },
-];
+import { cn, formatCurrency } from '@/lib/utils';
+import { useCartStore, isCartItemActive } from '@/hooks/use-cart';
 
 export default function CartPage() {
-    const [cartItems, setCartItems] = useState<CartItem[]>(initialCartItems);
+    const { items, updateQuantity, removeItem, totalAmount, isLoading } = useCartStore();
 
-    const updateQuantity = (id: string, newQuantity: number) => {
-        if (newQuantity < 1) return;
-        setCartItems(
-            cartItems.map((item) =>
-                item.id === id ? { ...item, quantity: newQuantity } : item
-            )
-        );
-    };
-
-    const removeItem = (id: string) => {
-        setCartItems(cartItems.filter((item) => item.id !== id));
-    };
-
-    const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const shipping = 12.5;
-    const handmadeFee = 5.0;
+    const subtotal = totalAmount;
+    const shipping = subtotal > 0 ? 12.5 : 0;
+    const handmadeFee = subtotal > 0 ? 5.0 : 0;
     const total = subtotal + shipping + handmadeFee;
 
     return (
@@ -68,7 +25,7 @@ export default function CartPage() {
                             Your Bag
                         </h1>
                         <p className="text-secondary text-lg">
-                            {cartItems.length} curated collectible{cartItems.length !== 1 ? 's' : ''} waiting for their new home.
+                            {items.length} curated collectible{items.length !== 1 ? 's' : ''} waiting for their new home.
                         </p>
                     </header>
 
@@ -76,93 +33,114 @@ export default function CartPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                         {/* Items Section */}
                         <section className="lg:col-span-8 space-y-6">
-                            {cartItems.length === 0 ? (
+                            {isLoading && items.length === 0 ? (
+                                <div className="flex grow items-center justify-center p-20">
+                                    <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+                                </div>
+                            ) : items.length === 0 ? (
                                 <div className="rounded-lg bg-surface-container-low p-12 text-center">
                                     <p className="text-secondary text-lg">Your cart is empty</p>
                                 </div>
                             ) : (
-                                cartItems.map((item) => (
-                                    <div
-                                        key={item.id}
-                                        className="rounded-lg bg-surface-container-low p-6 flex flex-col sm:flex-row gap-6 items-start"
-                                    >
-                                        {/* Product Image */}
-                                        <div className="relative w-full sm:w-40 h-40 bg-surface-container-highest rounded overflow-hidden shrink-0">
-                                            <Image
-                                                loading="eager"
-                                                src={item.image}
-                                                alt={item.name}
-                                                fill
-                                                className="object-cover"
-                                                sizes="(max-width: 640px) 100vw, 160px"
-                                            />
-                                        </div>
+                                items.map((item) => {
+                                    const isUnavailable = !isCartItemActive(item);
+                                    const isQuantityDisabled = isLoading || isUnavailable;
 
-                                        {/* Product Details */}
-                                        <div className="grow space-y-2">
-                                            <div className="flex justify-between items-start">
-                                                <div>
-                                                    <h3 className="text-xl font-bold text-on-surface">
-                                                        {item.name}
-                                                    </h3>
-                                                    <div className="flex gap-2 mt-2 flex-wrap">
-                                                        {item.tags.map((tag) => (
-                                                            <span
-                                                                key={tag}
-                                                                className={`px-3 py-1 text-xs font-bold rounded-full ${tag === 'Limited Edition'
-                                                                    ? 'bg-primary-fixed text-on-primary-fixed'
-                                                                    : 'bg-surface-container-highest text-secondary font-medium'
-                                                                    }`}
-                                                            >
-                                                                {tag}
-                                                            </span>
-                                                        ))}
+                                    return (
+                                        <div
+                                            key={item.id}
+                                            className={cn(
+                                                "rounded-lg bg-surface-container-low p-6 flex flex-col sm:flex-row gap-6 items-start",
+                                                isUnavailable && "opacity-50"
+                                            )}
+                                        >
+                                            {/* Product Image */}
+                                            <div className="relative w-full sm:w-40 h-40 bg-surface-container-highest rounded overflow-hidden shrink-0">
+                                                <Image
+                                                    loading="eager"
+                                                    src={item.product_snapshot.image_url || "/placeholder-product.jpg"}
+                                                    alt={item.product_name}
+                                                    fill
+                                                    className="object-cover"
+                                                    sizes="(max-width: 640px) 100vw, 160px"
+                                                />
+                                                {isUnavailable && (
+                                                    <div className="absolute left-3 top-3">
+                                                        <Badge variant="default">Unavailable</Badge>
                                                     </div>
-                                                </div>
-                                                <span className="text-xl font-black text-primary">
-                                                    {formatCurrency(item.price)}
-                                                </span>
+                                                )}
                                             </div>
 
-                                            {/* Customization */}
-                                            <div className="py-3 text-sm text-secondary leading-relaxed">
-                                                <p>
-                                                    <span className="font-bold text-on-surface">Customization:</span>{' '}
-                                                    {item.customization}
-                                                </p>
-                                            </div>
+                                            {/* Product Details */}
+                                            <div className="grow space-y-2">
+                                                <div className="flex justify-between items-start">
+                                                    <div>
+                                                        <h3 className="text-xl font-bold text-on-surface">
+                                                            {item.product_name}
+                                                        </h3>
+                                                        <div className="flex gap-2 mt-2 flex-wrap">
+                                                            <span className="px-3 py-1 text-xs font-bold rounded-full bg-surface-container-highest text-secondary">
+                                                                {item.item_type === 'ai_personalization' ? 'AI Personalization' : 'Standard'}
+                                                            </span>
+                                                            {item.product_snapshot.variant_label && (
+                                                                <span className="px-3 py-1 text-xs font-bold rounded-full bg-surface-container-highest text-secondary">
+                                                                    {item.product_snapshot.variant_label}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <span className="text-xl font-black text-primary">
+                                                        {formatCurrency(item.unit_price + item.customization_fee)}
+                                                    </span>
+                                                </div>
 
-                                            {/* Quantity & Remove */}
-                                            <div className="flex justify-between items-center pt-4">
-                                                <div className="flex items-center bg-surface-container-highest rounded-full px-4 py-2">
-                                                    <button
-                                                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                                        className="text-secondary hover:text-primary transition-colors p-1"
-                                                        aria-label="Decrease quantity"
+                                                {/* Snapshot Info */}
+                                                <div className="py-3 text-sm text-secondary leading-relaxed">
+                                                    {/* <p>
+                                                        Each piece is handcrafted specifically for you.
+                                                    </p> */}
+                                                </div>
+
+                                                {/* Quantity & Remove */}
+                                                <div className="flex justify-between items-center pt-4">
+                                                    <div
+                                                        className={cn(
+                                                            "flex items-center bg-surface-container-highest rounded-full px-4 py-2",
+                                                            isQuantityDisabled && "opacity-60"
+                                                        )}
                                                     >
-                                                        <IconMinus className="w-4 h-4" stroke={2} />
-                                                    </button>
-                                                    <span className="px-4 font-bold">{item.quantity}</span>
+                                                        <button
+                                                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                            disabled={isQuantityDisabled}
+                                                            className="text-secondary hover:text-primary transition-colors p-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                            aria-label="Decrease quantity"
+                                                        >
+                                                            <IconMinus className="w-4 h-4" stroke={2} />
+                                                        </button>
+                                                        <span className="px-4 font-bold">{item.quantity}</span>
+                                                        <button
+                                                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                            disabled={isQuantityDisabled}
+                                                            className="text-secondary hover:text-primary transition-colors p-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                            aria-label="Increase quantity"
+                                                        >
+                                                            <IconPlus className="w-4 h-4" stroke={2} />
+                                                        </button>
+                                                    </div>
                                                     <button
-                                                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                                        className="text-secondary hover:text-primary transition-colors p-1"
-                                                        aria-label="Increase quantity"
+                                                        onClick={() => removeItem(item.id)}
+                                                        disabled={isLoading}
+                                                        className="text-secondary hover:text-error transition-colors flex items-center gap-2 text-sm font-medium disabled:opacity-50"
+                                                        aria-label={`Remove ${item.product_name}`}
                                                     >
-                                                        <IconPlus className="w-4 h-4" stroke={2} />
+                                                        <IconTrash className="w-5 h-5" stroke={2} />
+                                                        Remove
                                                     </button>
                                                 </div>
-                                                <button
-                                                    onClick={() => removeItem(item.id)}
-                                                    className="text-secondary hover:text-error transition-colors flex items-center gap-2 text-sm font-medium"
-                                                    aria-label={`Remove ${item.name}`}
-                                                >
-                                                    <IconTrash className="w-5 h-5" stroke={2} />
-                                                    Remove
-                                                </button>
                                             </div>
                                         </div>
-                                    </div>
-                                ))
+                                    );
+                                })
                             )}
                         </section>
 

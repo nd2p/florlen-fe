@@ -10,6 +10,7 @@ import Input from "@/components/ui/input";
 import AuthLayout from "@/components/common/auth-layout";
 import { login } from "@/lib/api/auth.api";
 import { setTokens, setCachedUser } from "@/lib/auth";
+import { useCartStore } from "@/hooks/use-cart";
 
 const LoginSchema = z.object({
     email: z.string().email({ message: "Invalid email address" }),
@@ -46,6 +47,9 @@ export default function Login() {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { role: _role, ...safeUser } = response.user;
             setCachedUser(safeUser);
+            
+            // Merge guest cart items into the user cart
+            await useCartStore.getState().mergeCartAfterLogin();
 
             toast.success("Welcome back! Redirecting to your profile...", { id: "login" });
 

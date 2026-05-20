@@ -1,6 +1,7 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { IconShoppingBag, IconUser, IconSearch, IconLoader2 } from "@tabler/icons-react";
+import { IconSearch, IconShoppingCart, IconUser, IconLoader2 } from "@tabler/icons-react";
+import { useCartStore } from "@/hooks/use-cart";
 import { getAccessToken } from "@/lib/auth";
 import { useState, useEffect, useRef } from "react";
 import { listProducts, type ProductListItem } from "@/lib/api/product.api";
@@ -12,6 +13,11 @@ export default function Header() {
     const router = useRouter();
     const [searchQuery, setSearchQuery] = useState("");
     const [results, setResults] = useState<{ products: ProductListItem[], collections: Collection[] }>({ products: [], collections: [] });
+    const { fetchCart, totalQuantity } = useCartStore();
+    useEffect(() => {
+        fetchCart();
+    }, [fetchCart]);
+
     const [isSearching, setIsSearching] = useState(false);
     const [showResults, setShowResults] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -119,7 +125,7 @@ export default function Header() {
 
                         {/* Real-time Results Dropdown */}
                         {showResults && (searchQuery.length >= 2) && (
-                            <div className="absolute top-full left-0 mt-2 w-[400px] overflow-hidden rounded-2xl bg-surface-container-high shadow-2xl nocturnal-shadow border border-outline/10 ring-1 ring-black/5 animate-in fade-in zoom-in-95 duration-200 z-[100]">
+                            <div className="absolute top-full left-0 mt-2 w-100 overflow-hidden rounded-2xl bg-surface-container-high shadow-2xl nocturnal-shadow border border-outline/10 ring-1 ring-black/5 animate-in fade-in zoom-in-95 duration-200 z-100">
                                 {isSearching && results.products.length === 0 && results.collections.length === 0 ? (
                                     <div className="p-8 text-center text-secondary">
                                         <IconLoader2 className="mx-auto mb-2 h-6 w-6 animate-spin" />
@@ -202,9 +208,18 @@ export default function Header() {
                     <button className="md:hidden rounded-full p-2 hover:bg-surface-container-highest" aria-label="Search mobile">
                         <IconSearch className="h-5 w-5 text-primary" stroke={2} />
                     </button>
-                    <button className="rounded-full p-2 transition-all duration-200 hover:bg-surface-container-highest active:scale-95" aria-label="Open cart">
-                        <IconShoppingBag className="h-5 w-5 text-primary" stroke={2} />
-                    </button>
+                    <Link
+                        href="/cart"
+                        className="relative rounded-full p-2 transition-all duration-200 hover:bg-surface-container-highest active:scale-95"
+                        aria-label="Open cart"
+                    >
+                        <IconShoppingCart className="h-5 w-5 text-primary" stroke={2} />
+                        {totalQuantity > 0 && (
+                            <span className="absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-on-primary">
+                                {totalQuantity}
+                            </span>
+                        )}
+                    </Link>
                     <button type="button" onClick={handleProfileClick} className="rounded-full p-2 transition-all duration-200 hover:bg-surface-container-highest active:scale-95" aria-label="Open profile">
                         <IconUser className="h-5 w-5 text-primary" stroke={2} />
                     </button>

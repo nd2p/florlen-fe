@@ -6,6 +6,7 @@ import {
   clearTokens,
   clearCachedUser,
 } from '@/lib/auth';
+import { getOrCreateSessionId } from '@/lib/session';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
@@ -45,6 +46,12 @@ client.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    const sessionId = getOrCreateSessionId();
+    if (sessionId) {
+      config.headers['x-session-id'] = sessionId;
+    }
+    
     return config;
   },
   (error) => Promise.reject(error)

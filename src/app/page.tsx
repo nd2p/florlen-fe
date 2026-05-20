@@ -22,9 +22,9 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid h-auto grid-cols-1 gap-6 md:h-[600px] md:grid-cols-4">
+          <div className="grid h-auto grid-cols-1 gap-6 md:h-150 md:grid-cols-4">
             <div className="group flex cursor-pointer flex-col justify-between rounded-lg bg-surface-container-lowest p-6 md:col-span-2 md:row-span-2">
-              <div className="relative mb-6 flex-grow overflow-hidden rounded-[1rem]">
+              <div className="relative mb-6 grow overflow-hidden rounded-lg">
                 <Image
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -41,7 +41,7 @@ export default function Home() {
             </div>
 
             <div className="group flex cursor-pointer items-center gap-6 rounded-lg bg-surface-container-low p-6 md:col-span-2">
-              <div className="relative aspect-square w-1/3 overflow-hidden rounded-[1rem]">
+              <div className="relative aspect-square w-1/3 overflow-hidden rounded-lg">
                 <Image
                   fill
                   sizes="(max-width: 768px) 33vw, 15vw"
@@ -57,7 +57,7 @@ export default function Home() {
             </div>
 
             <div className="group relative cursor-pointer rounded-lg bg-surface-container-high p-6">
-              <div className="relative mb-4 aspect-square overflow-hidden rounded-[1rem]">
+              <div className="relative mb-4 aspect-square overflow-hidden rounded-lg">
                 <Image
                   fill
                   sizes="(max-width: 768px) 100vw, 25vw"
@@ -70,7 +70,7 @@ export default function Home() {
             </div>
 
             <div className="group relative cursor-pointer rounded-lg bg-surface-container-high p-6">
-              <div className="relative mb-4 aspect-square overflow-hidden rounded-[1rem]">
+              <div className="relative mb-4 aspect-square overflow-hidden rounded-lg">
                 <Image
                   fill
                   sizes="(max-width: 768px) 100vw, 25vw"
@@ -92,7 +92,7 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
               <div className="space-y-6">
-                <div className="relative aspect-[4/5] overflow-hidden rounded-xl nocturnal-shadow">
+                <div className="relative aspect-4/5 overflow-hidden rounded-xl nocturnal-shadow">
                   <Image fill sizes="(max-width: 768px) 100vw, 33vw" className="h-full w-full object-cover" alt="Autumn harvest collection" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0Rf5ik-TAvFHBoXXQlHC4kohAeucldwEhzHUcXutTFjM4xTlps2UV7mgDkqTrngwypl2kladNDNLUmsDwp2ECKP_JY3rLkVpevoYHUc1cBNDzxq5withBqsGz99ZFXDt_4du-es1RZPIcPpCRzZyaOSiAQkwBsYZVg6v7sR_HbwLcHCQJRZptNVLVKUydfjjw6ohM5cx4_s8ww1G_DlwOJZ9-bhSMMfTLq7qEdSAaPdP0FxcvEgkrg8Ccn_UPJ9iaQ36Ox3qcs98" />
                 </div>
                 <div className="text-center">
@@ -101,7 +101,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="mt-12 space-y-6 md:mt-24">
-                <div className="relative aspect-[4/5] overflow-hidden rounded-xl nocturnal-shadow">
+                <div className="relative aspect-4/5 overflow-hidden rounded-xl nocturnal-shadow">
                   <Image fill sizes="(max-width: 768px) 100vw, 33vw" className="h-full w-full object-cover" alt="Winter solstice collection" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfaTpDh2vkd3b6PsM7vByCoZR5nYYVqFGiC2g7EqcAmrmVO_Pu7KvxbSWLTnnDCDV8eEsueNVYbYXuw11T9xFrylH3nc3eGUn-oUn-651VFaPZlmfnVsCHJjoNa1vjTZ3fqHMdvx1jtUIHXRMFS0UEeMe7uLrU4S2QfRg1Vfyj4fqmAYPgQKFut-DBb9Wxw5KGq4Pkx2E3Hi_iLMaF7IzxIJ_nGyPKry5H3VuycT-wI7re7KdUoB0xbHiecZ8rwujYCmHe2arHAn4" />
                 </div>
                 <div className="text-center">
@@ -110,7 +110,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="space-y-6">
-                <div className="relative aspect-[4/5] overflow-hidden rounded-xl nocturnal-shadow">
+                <div className="relative aspect-4/5 overflow-hidden rounded-xl nocturnal-shadow">
                   <Image fill sizes="(max-width: 768px) 100vw, 33vw" className="h-full w-full object-cover" alt="Spring bloom collection" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHKZR3BKakk7HBOgPwfokKZGddOZ8m6koRZ2nCGNwo2SWxqmCCSZU4qIBqlla45SP1G9zdiA7c9MOFbQ1Fa_eKBnqTvYuBlX4s3St9LgVexX4XZoFNJb983sc9KOi20Fsasi6R0xUJPEqK2QVKV-kAJSCeunv17OcQu6joqZLQ0zQXHqSQtkHe-68WBUNCaKaHpg-09L0R1VGwcPeqagmyOuNGgPwd7ICsLXTefFCpPeYGRYr88l2g6segcZs69SLcw9_r8YDLw_M" />
                 </div>
                 <div className="text-center">

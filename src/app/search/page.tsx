@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import { listProducts, type ProductListItem } from "@/lib/api/product.api";
 import { listCollections, type Collection } from "@/lib/api/collection.api";
 import Link from "next/link";
-import { formatCurrency } from "@/lib/utils";
 import Image from "next/image";
+import ProductCard from "@/components/common/product-card";
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
@@ -17,6 +17,8 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+
     if (!query) {
       queueMicrotask(() => {
         if (isMounted) {
@@ -25,10 +27,10 @@ export default function SearchPage() {
           setLoading(false);
         }
       });
-      return;
+      return () => {
+        isMounted = false;
+      };
     }
-
-    let isMounted = true;
 
     async function fetchData() {
       setLoading(true);
@@ -62,8 +64,8 @@ export default function SearchPage() {
           {query ? `Search results for "${query}"` : "Search"}
         </h1>
         <p className="mt-2 text-secondary">
-          {loading 
-            ? "Searching..." 
+          {loading
+            ? "Searching..."
             : `${products.length + collections.length} results found`}
         </p>
       </div>
@@ -107,25 +109,7 @@ export default function SearchPage() {
               <h2 className="mb-6 text-2xl font-bold text-on-surface">Products</h2>
               <div className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4">
                 {products.map((prod) => (
-                  <Link
-                    key={prod.id}
-                    href={`/shop/${prod.id}`}
-                    className="group space-y-3"
-                  >
-                    <div className="relative aspect-square overflow-hidden rounded-xl bg-surface-container-high">
-                      <Image
-                        fill
-                        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-                        src={prod.product_images?.[0]?.url || "/placeholder-product.jpg"}
-                        alt={prod.name}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">{prod.name}</h3>
-                      <p className="text-sm text-secondary">{formatCurrency(prod.base_price)}</p>
-                    </div>
-                  </Link>
+                  <ProductCard key={prod.id} product={prod} href={`/shop/${prod.id}`} />
                 ))}
               </div>
             </section>
