@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { IconPlus, IconTrash } from "@tabler/icons-react";
+import { IconPlus, IconTrash, IconChevronDown } from "@tabler/icons-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,13 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
     createProduct,
     getProductById,
@@ -346,7 +353,7 @@ export default function ProductDialog({ compact = false, product = null, open, o
                         slug: slug.trim(),
                         description: description.trim(),
                         short_description: shortDescription.trim() || undefined,
-                        product_type: PRODUCT_TYPE.NORMAL,
+                        product_type: productType,
                         base_price: Number(basePrice || 0),
                         customization_fee: Number(customizationFee || 0),
                         production_days_min: Number(productionDaysMin || 0),
@@ -478,6 +485,47 @@ export default function ProductDialog({ compact = false, product = null, open, o
                                 onChange={(event) => setProductionDaysMax(event.target.value)}
                                 placeholder="7"
                             />
+                            <div className="space-y-2">
+                                <span className="ml-1 block text-sm font-headline font-bold text-on-surface">
+                                    Product Type
+                                </span>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button
+                                            type="button"
+                                            variant="secondary"
+                                            className="flex w-full items-center justify-between rounded-xl bg-surface-container-low px-6 py-4 font-body font-normal text-on-surface outline-none transition-all hover:bg-surface-container-highest"
+                                        >
+                                            <span>
+                                                {productType === PRODUCT_TYPE.NORMAL ? "Normal" : "Add-ons"}
+                                            </span>
+                                            <IconChevronDown className="h-5 w-5 text-secondary" stroke={2} />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent
+                                        style={{ width: "var(--radix-dropdown-menu-trigger-width)" }}
+                                        className="bg-surface-container-highest border border-outline-variant rounded-xl shadow-lg p-1 z-[100]"
+                                    >
+                                        <DropdownMenuRadioGroup
+                                            value={productType}
+                                            onValueChange={(val) => setProductType(val as ProductType)}
+                                        >
+                                            <DropdownMenuRadioItem
+                                                value={PRODUCT_TYPE.NORMAL}
+                                                className="rounded-lg py-2 pl-8 pr-3 font-body text-sm cursor-pointer hover:bg-surface-container-low"
+                                            >
+                                                Normal
+                                            </DropdownMenuRadioItem>
+                                            <DropdownMenuRadioItem
+                                                value={PRODUCT_TYPE.ADD_ONS}
+                                                className="rounded-lg py-2 pl-8 pr-3 font-body text-sm cursor-pointer hover:bg-surface-container-low"
+                                            >
+                                                Add-ons
+                                            </DropdownMenuRadioItem>
+                                        </DropdownMenuRadioGroup>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
                         </section>
 
                         <section className="space-y-2">

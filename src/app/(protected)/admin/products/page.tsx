@@ -6,6 +6,7 @@ import { IconCircleCheck, IconDownload, IconEdit, IconTrash } from '@tabler/icon
 import { toast } from 'sonner';
 import DataTable, { TableColumn, TableAction } from '@/components/admin/data-table';
 import ProductDialog from '@/components/admin/product-dialog';
+import Badge from '@/components/ui/badge';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -56,13 +57,9 @@ const formatType = (value?: ProductType | null) => {
 
 const formatStatus = (isActive: boolean) =>
     isActive ? (
-        <span className="rounded-full bg-primary-fixed px-3 py-1 text-xs font-semibold text-on-primary-fixed">
-            Active
-        </span>
+        <Badge variant="active">Active</Badge>
     ) : (
-        <span className="rounded-full bg-surface-container-high px-3 py-1 text-xs font-semibold text-secondary">
-            Inactive
-        </span>
+        <Badge variant="inactive">Inactive</Badge>
     );
 
 const getPrimaryImage = (images?: ProductImage[]) => {
