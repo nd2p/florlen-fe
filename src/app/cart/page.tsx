@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import Badge from '@/components/ui/badge';
@@ -8,6 +9,7 @@ import { cn, formatCurrency } from '@/lib/utils';
 import { useCartStore, isCartItemActive } from '@/hooks/use-cart';
 
 export default function CartPage() {
+    const router = useRouter();
     const { items, updateQuantity, removeItem, totalAmount, isLoading } = useCartStore();
 
     const subtotal = totalAmount;
@@ -180,10 +182,19 @@ export default function CartPage() {
                                 </div>
 
                                 <div className="space-y-4">
-                                    <Button variant="primary" size="lg">
+                                    <Button
+                                        variant="primary"
+                                        size="lg"
+                                        onClick={() => router.push('/checkout')}
+                                        disabled={items.length === 0}
+                                    >
                                         Proceed to checkout
                                     </Button>
-                                    <Button variant="secondary" size="lg">
+                                    <Button
+                                        variant="secondary"
+                                        size="lg"
+                                        onClick={() => router.push('/shop')}
+                                    >
                                         Continue Shopping
                                     </Button>
                                 </div>

@@ -24,14 +24,17 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - If no suitable component exists, ask for approval before adding a new common component.
 - Avoid duplicating UI patterns; refactor to common components where appropriate.
 
-## Next.js conventions
+# CODING GUIDELINES
 
 - Use App Router conventions and keep server components as the default.
 - Add `use client` only when client-side hooks or browser APIs are required.
 - Avoid direct use of `window`/`document` in server components.
-
-## General frontend rules
-
+- Always write modular, reusable, and maintainable code.
+- Strictly follow the DRY (Don't Repeat Yourself) principle.
+- Before generating a large block of code or a full page, independently identify UI elements or logic that can be extracted into reusable components (e.g., Cards, Buttons, Inputs, Layout wrappers). If it is already exist, use it or add variance if necessary
+- Extract these components into separate functions or files automatically.
+- Keep components small and focused on a single responsibility.
+- When create new components or pages, always implement i18n for translation (English and Vietnamese)
 - Follow the existing file and naming conventions in the frontend codebase.
 - Keep components small and focused; prefer composition over large monolith components.
 - Do not introduce new dependencies without approval.
@@ -39,11 +42,3 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Use react-hook-form and Zod
 - Use Next components includes: Link,Form, Image when edit/create (a) file(s)
 - When implementing or modifying API-related logic in florlen-frontend, ensure consistency between the type returned by the backend and the get method, or between the type in the payload body and the post and patchcheck methods. (folder: florlen-backend/).
-
-# CODING GUIDELINES
-
-- Always write modular, reusable, and maintainable code.
-- Strictly follow the DRY (Don't Repeat Yourself) principle.
-- Before generating a large block of code or a full page, independently identify UI elements or logic that can be extracted into reusable components (e.g., Cards, Buttons, Inputs, Layout wrappers). If it is already exist, use it or add variance if necessary
-- Extract these components into separate functions or files automatically.
-- Keep components small and focused on a single responsibility.
