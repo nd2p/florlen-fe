@@ -72,7 +72,21 @@
     "submitting": "Processing your order...",
     "fieldRequired": "This field is required",
     "invalidEmail": "Please enter a valid email",
-    "invalidPhone": "Please enter a valid phone number"
+    "invalidPhone": "Please enter a valid phone number",
+    "orderCreated": "Order created! Redirecting to payment...",
+    "orderFailed": "Could not create order. Please try again.",
+    "paymentCancelled": "Payment was cancelled. You can try again.",
+    "paymentSuccess": "Payment Successful!",
+    "paymentFailed": "Payment Failed",
+    "paymentSuccessDesc": "Thank you! Your order has been confirmed and is being processed.",
+    "paymentFailedDesc": "Payment was not completed. You can try again or contact support.",
+    "paymentCode": "Payment Code",
+    "confirmed": "Confirmed",
+    "failed": "Failed",
+    "cancelled": "Cancelled",
+    "tryAgain": "Try Again",
+    "continueShopping": "Continue Shopping",
+    "paymentHelpText": "If you experience any issues with your order, please contact our support via email or chat."
   },
   "address": {
     "sectionTitle": "Information",

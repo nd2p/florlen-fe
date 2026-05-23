@@ -1,16 +1,19 @@
 "use client";
 
 import { z } from "zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import AuthLayout from "@/components/common/auth-layout";
+import { register as registerApi } from "@/lib/api/auth.api";
 
 const RegisterSchema = z
     .object({
         fullName: z.string().min(2, { message: "Full name is required" }),
-        email: z.email({ message: "Invalid email address" }),
+        email: z.string().email({ message: "Invalid email address" }),
         password: z.string().min(8, { message: "Password must be at least 8 characters" }),
         confirmPassword: z.string().min(8),
     })
@@ -22,6 +25,7 @@ const RegisterSchema = z
 type RegisterValues = z.infer<typeof RegisterSchema>;
 
 export default function Register() {
+    const router = useRouter();
     const {
         register,
         handleSubmit,
@@ -30,10 +34,29 @@ export default function Register() {
 
     const onSubmit = async (values: RegisterValues) => {
         try {
-            console.log("Register values:", values);
-            // TODO: call auth service (Supabase signUp)
-        } catch (err) {
-            console.error(err);
+            toast.loading("Creating your account...", { id: "register" });
+
+            await registerApi({
+                email: values.email,
+                password: values.password,
+                full_name: values.fullName,
+            });
+
+            toast.success("Account created successfully! Redirecting to sign in...", { id: "register" });
+
+            setTimeout(() => {
+                router.push("/auth/login");
+            }, 1000);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (err: any) {
+            console.error("Registration error:", err);
+            let errorMessage = "Registration failed. Please try again.";
+            if (err?.response?.data?.message) {
+                errorMessage = err.response.data.message;
+            } else if (err?.message) {
+                errorMessage = err.message;
+            }
+            toast.error(errorMessage, { id: "register" });
         }
     };
 

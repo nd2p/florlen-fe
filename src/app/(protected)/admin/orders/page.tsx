@@ -1,67 +1,207 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import {
-    IconAlertTriangle,
-    IconArrowRight,
     IconCalendar,
-    IconChevronDown,
     IconDownload,
-    IconFilter,
-} from "@tabler/icons-react";
-import { formatCurrency } from "@/lib/utils";
+    IconEye,
+} from '@tabler/icons-react';
+import { formatCurrency } from '@/lib/utils';
+import DataTable, { TableColumn, TableAction } from '@/components/admin/data-table';
+import Badge from '@/components/ui/badge';
+import {
+    getAllOrdersAdmin,
+    type OrderSummary,
+    type OrderStatus,
+} from '@/lib/api/order.api';
 
-type OrderStatus = "Processing" | "Stitched" | "Shipped";
-
-type OrderItem = {
-    id: string;
-    customer: string;
-    date: string;
-    items: number;
-    status: OrderStatus;
-    total: number;
-    avatars: string[];
-};
-
-const orders: OrderItem[] = [
-    {
-        id: "#3",
-        customer: "Eleanor Shellstrop",
-        date: "Oct 24, 2023",
-        items: 2,
-        status: "Processing",
-        total: 145000,
-        avatars: ["ES", "PT"],
-    },
-    {
-        id: "#2",
-        customer: "Chidi Anagonye",
-        date: "Oct 23, 2023",
-        items: 1,
-        status: "Stitched",
-        total: 85000,
-        avatars: ["CA"],
-    },
-    {
-        id: "#1",
-        customer: "Tahani Al-Jamil",
-        date: "Oct 22, 2023",
-        items: 3,
-        status: "Shipped",
-        total: 320000,
-        avatars: ["TA", "MJ", "KA"],
-    },
-];
-
-function statusStyles(status: OrderStatus) {
+// Format status labels elegantly
+export function formatStatusLabel(status: OrderStatus): string {
     switch (status) {
-        case "Processing":
-            return "bg-primary-fixed text-on-primary-fixed";
-        case "Stitched":
-            return "bg-surface-container-highest text-on-surface";
-        case "Shipped":
-            return "bg-surface-container-high text-secondary";
+        case 'pending_payment':
+            return 'Pending Payment';
+        case 'confirmed':
+            return 'Confirmed';
+        case 'in_production':
+            return 'In Production';
+        case 'quality_check':
+            return 'Quality Check';
+        case 'awaiting_remaining_payment':
+            return 'Awaiting Rem. Payment';
+        case 'ready_to_ship':
+            return 'Ready to Ship';
+        case 'shipping':
+            return 'Shipping';
+        case 'completed':
+            return 'Completed';
+        case 'cancelled':
+            return 'Cancelled';
+        default:
+            return status;
     }
 }
 
 export default function OrdersPage() {
+    const router = useRouter();
+    const [orders, setOrders] = useState<OrderSummary[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [selectedStatus, setSelectedStatus] = useState<OrderStatus | null>(null);
+
+    const loadOrders = async () => {
+        setIsLoading(true);
+        setErrorMessage(null);
+        try {
+            const response = await getAllOrdersAdmin({ limit: 100 });
+            setOrders(response.orders || []);
+        } catch (error) {
+            console.error('Load admin orders error:', error);
+            setErrorMessage(error instanceof Error ? error.message : 'Failed to fetch system orders.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        let active = true;
+        const fetchOrders = async () => {
+            // Delay slightly or fetch asynchronously to prevent synchronous render state cascade
+            try {
+                const response = await getAllOrdersAdmin({ limit: 100 });
+                if (active) {
+                    setOrders(response.orders || []);
+                    setIsLoading(false);
+                }
+            } catch (error) {
+                console.error('Load admin orders error:', error);
+                if (active) {
+                    setErrorMessage(error instanceof Error ? error.message : 'Failed to fetch system orders.');
+                    setIsLoading(false);
+                }
+            }
+        };
+
+        fetchOrders();
+        return () => {
+            active = false;
+        };
+    }, []);
+
+    // Filter local data based on status selection
+    const filteredOrders = selectedStatus
+        ? orders.filter((order) => order.status === selectedStatus)
+        : orders;
+
+    const columns: TableColumn<OrderSummary>[] = [
+        {
+            key: 'order_number',
+            label: 'Order',
+            render: (value, row) => (
+                <div>
+                    <span className="font-mono text-sm font-black text-primary">#{value}</span>
+                    <p className="text-xs text-secondary">
+                        {new Date(row.created_at).toLocaleDateString('vi-VN', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                        })}
+                    </p>
+                </div>
+            ),
+        },
+        {
+            key: 'recipient_name',
+            label: 'Customer',
+            render: (value, row) => (
+                <div>
+                    <p className="font-bold text-on-surface">{value || 'Guest'}</p>
+                    <p className="text-xs text-secondary">{row.recipient_phone || '-'}</p>
+                </div>
+            ),
+        },
+        {
+            key: 'product_name',
+            label: 'Items',
+            render: (value, row) => {
+                const count = row.order_items?.length || 1;
+                return (
+                    <div className="flex items-center gap-3">
+                        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-surface-container-highest">
+                            {row.product_image_url ? (
+                                <Image
+                                    src={row.product_image_url}
+                                    alt={value}
+                                    fill
+                                    className="object-cover"
+                                    sizes="40px"
+                                />
+                            ) : (
+                                <div className="flex h-full w-full items-center justify-center text-xs font-black text-secondary">
+                                    📦
+                                </div>
+                            )}
+                        </div>
+                        <div>
+                            <p className="max-w-40 truncate font-semibold text-on-surface" title={value}>
+                                {value}
+                            </p>
+                            <p className="text-xs text-secondary">
+                                {row.variant_label || 'Standard'} {count > 1 ? `· +${count - 1} item${count > 2 ? 's' : ''}` : ''}
+                            </p>
+                        </div>
+                    </div>
+                );
+            },
+        },
+        {
+            key: 'status',
+            label: 'Status',
+            render: (value) => {
+                const status = value as OrderStatus;
+                const isActive = ['confirmed', 'in_production', 'quality_check', 'ready_to_ship', 'shipping', 'completed'].includes(status);
+                return (
+                    <Badge variant={isActive ? 'active' : 'inactive'}>
+                        {formatStatusLabel(status)}
+                    </Badge>
+                );
+            },
+        },
+        {
+            key: 'total_amount',
+            label: 'Total',
+            render: (value) => (
+                <p className="font-bold text-on-surface">{formatCurrency(value)}</p>
+            ),
+        },
+    ];
+
+    const actions: TableAction<OrderSummary>[] = [
+        {
+            label: 'View Details',
+            icon: <IconEye className="h-4 w-4" stroke={2} />,
+            onClick: (row) => {
+                router.push(`/admin/orders/${row.id}`);
+            },
+            className: 'flex h-9 w-9 items-center justify-center rounded-full bg-surface-container-high text-secondary transition-colors hover:bg-surface-container-highest hover:text-primary',
+        },
+    ];
+
+    // Status filter options
+    const statusOptions: { value: OrderStatus | null; label: string }[] = [
+        { value: null, label: 'All Statuses' },
+        { value: 'pending_payment', label: 'Pending Payment' },
+        { value: 'confirmed', label: 'Confirmed' },
+        { value: 'in_production', label: 'In Production' },
+        { value: 'quality_check', label: 'Quality Check' },
+        { value: 'awaiting_remaining_payment', label: 'Awaiting Rem. Payment' },
+        { value: 'ready_to_ship', label: 'Ready to Ship' },
+        { value: 'shipping', label: 'Shipping' },
+        { value: 'completed', label: 'Completed' },
+        { value: 'cancelled', label: 'Cancelled' },
+    ];
+
     return (
         <div className="space-y-8">
             <section className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
@@ -77,120 +217,48 @@ export default function OrdersPage() {
                 </div>
 
                 <div className="flex flex-wrap gap-3">
-                    <button className="flex h-12 items-center gap-2 rounded-full bg-surface-container-high px-4 text-sm font-semibold text-on-surface transition-colors hover:bg-surface-container-highest">
+                    <button 
+                        onClick={() => loadOrders()}
+                        className="flex h-12 items-center gap-2 rounded-full bg-surface-container-high px-4 text-sm font-semibold text-on-surface transition-colors hover:bg-surface-container-highest"
+                    >
                         <IconCalendar className="h-4 w-4 text-secondary" stroke={2} />
-                        Last 30 Days
-                        <IconChevronDown className="h-4 w-4 text-secondary" stroke={2} />
+                        Refresh Queue
                     </button>
-                    <button className="flex h-12 items-center gap-2 rounded-full bg-surface-container-high px-4 text-sm font-semibold text-on-surface transition-colors hover:bg-surface-container-highest">
-                        <IconFilter className="h-4 w-4 text-secondary" stroke={2} />
-                        All Statuses
-                        <IconChevronDown className="h-4 w-4 text-secondary" stroke={2} />
-                    </button>
-                    <button className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-on-primary transition-colors hover:bg-primary-container" aria-label="Download orders">
+                    <button 
+                        className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-on-primary transition-colors hover:bg-primary-container" 
+                        aria-label="Download orders"
+                    >
                         <IconDownload className="h-5 w-5" stroke={2} />
                     </button>
                 </div>
             </section>
 
-            <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]">
-                <div className="space-y-4">
-                    {orders.map((order) => (
-                        <article
-                            key={order.id}
-                            className="rounded-[1.5rem] bg-surface-container-low p-5 shadow-[0_22px_50px_-40px_rgba(27,28,28,0.28)] transition-transform hover:-translate-y-0.5"
-                        >
-                            <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-                                <div className="space-y-5">
-                                    <div className="flex items-start gap-4">
-                                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-container-lowest text-sm font-black text-primary">
-                                            {order.id}
-                                        </div>
-                                        <div>
-                                            <h2 className="text-lg font-black text-on-surface sm:text-xl">{order.customer}</h2>
-                                            <p className="text-sm text-secondary">
-                                                {order.date} · {order.items} Item{order.items > 1 ? "s" : ""}
-                                            </p>
-                                        </div>
-                                    </div>
+            {errorMessage ? (
+                <section className="rounded-[1.5rem] bg-error/10 border border-error/20 p-5 text-sm text-error">
+                    {errorMessage}
+                </section>
+            ) : null}
 
-                                    <div className="flex items-center gap-2">
-                                        {order.avatars.map((avatar, index) => (
-                                            <div
-                                                key={`${order.id}-${avatar}`}
-                                                className={`flex h-10 w-10 items-center justify-center rounded-full border-2 border-surface-container-low text-[11px] font-bold text-on-primary shadow-sm ${index === 0 ? "bg-primary" : index === 1 ? "bg-secondary" : "bg-primary-container"
-                                                    } ${index > 0 ? "-ml-2" : ""}`}
-                                            >
-                                                {avatar}
-                                            </div>
-                                        ))}
-                                        {order.avatars.length > 0 ? (
-                                            <span className="rounded-full bg-surface-container-high px-3 py-2 text-xs font-semibold text-secondary">
-                                                +{order.items}
-                                            </span>
-                                        ) : null}
-                                    </div>
-                                </div>
-
-                                <div className="flex flex-row items-start justify-between gap-4 sm:min-w-40 sm:flex-col sm:items-end sm:text-right">
-                                    <span className={`rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] ${statusStyles(order.status)}`}>
-                                        {order.status}
-                                    </span>
-                                    <div>
-                                        <p className="text-sm text-secondary">Total</p>
-                                        <p className="text-2xl font-black text-on-surface">{formatCurrency(order.total)}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </article>
-                    ))}
-                </div>
-
-                <aside className="space-y-4">
-                    <section className="rounded-[1.5rem] bg-primary p-5 text-on-primary shadow-[0_28px_60px_-40px_rgba(164,0,21,0.6)]">
-                        <div className="mb-6 flex items-start justify-between gap-4">
-                            <div>
-                                <p className="text-lg font-black">Today&apos;s Queue</p>
-                                <p className="mt-1 text-sm text-primary-fixed-dim">Live production pressure at a glance.</p>
-                            </div>
-                            <span className="rounded-full bg-surface-container-lowest/15 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-on-primary">
-                                Live
-                            </span>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary-fixed-dim">To Stitch</p>
-                                <p className="mt-2 text-4xl font-black">12</p>
-                            </div>
-                            <div>
-                                <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary-fixed-dim">To Ship</p>
-                                <p className="mt-2 text-4xl font-black">8</p>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section className="rounded-[1.5rem] bg-surface-container-low p-5 shadow-[0_22px_50px_-40px_rgba(27,28,28,0.28)]">
-                        <h2 className="text-lg font-black text-on-surface">Urgent Actions</h2>
-
-                        <div className="mt-4 rounded-[1.25rem] bg-surface-container-lowest p-4">
-                            <div className="flex items-start gap-3">
-                                <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-full bg-primary-fixed text-primary">
-                                    <IconAlertTriangle className="h-5 w-5" stroke={2} />
-                                </div>
-
-                                <div className="min-w-0 flex-1">
-                                    <p className="text-sm font-bold text-on-surface">Order #1038 Delayed</p>
-                                    <p className="mt-1 text-sm text-secondary">Awaiting crimson yarn restock.</p>
-                                </div>
-
-                                <button className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-container-high text-primary transition-colors hover:bg-surface-container-highest" aria-label="Open delayed order details">
-                                    <IconArrowRight className="h-5 w-5" stroke={2} />
-                                </button>
-                            </div>
-                        </div>
-                    </section>
-                </aside>
+            <section className="space-y-4">
+                {isLoading ? (
+                    <div className="flex h-40 items-center justify-center rounded-[1.5rem] bg-surface-container-low text-secondary">
+                        <span className="text-sm font-semibold">Loading orders queue...</span>
+                    </div>
+                ) : (
+                    <DataTable<OrderSummary>
+                        columns={columns}
+                        data={filteredOrders}
+                        actions={actions}
+                        searchPlaceholder="Search by customer, order number..."
+                        searchableFields={['order_number', 'recipient_name', 'recipient_phone']}
+                        filterOptions={{
+                            label: 'Status',
+                            options: statusOptions,
+                            onFilter: (value) => setSelectedStatus(value as OrderStatus | null),
+                        }}
+                        itemsPerPage={10}
+                    />
+                )}
             </section>
         </div>
     );

@@ -13,8 +13,8 @@ export default function CartPage() {
     const { items, updateQuantity, removeItem, totalAmount, isLoading } = useCartStore();
 
     const subtotal = totalAmount;
-    const shipping = subtotal > 0 ? 12.5 : 0;
-    const handmadeFee = subtotal > 0 ? 5.0 : 0;
+    const shipping = 0;
+    const handmadeFee = 0;
     const total = subtotal + shipping + handmadeFee;
 
     return (

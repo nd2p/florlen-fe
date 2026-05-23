@@ -72,7 +72,21 @@
     "submitting": "Đang xử lý đơn hàng của bạn...",
     "fieldRequired": "Trường này là bắt buộc",
     "invalidEmail": "Email không hợp lệ",
-    "invalidPhone": "Số điện thoại không hợp lệ"
+    "invalidPhone": "Số điện thoại không hợp lệ",
+    "orderCreated": "Đã tạo đơn hàng! Đang chuyển đến trang thanh toán...",
+    "orderFailed": "Không thể tạo đơn hàng. Vui lòng thử lại.",
+    "paymentCancelled": "Thanh toán đã bị huỷ. Bạn có thể thử lại.",
+    "paymentSuccess": "Thanh Toán Thành Công!",
+    "paymentFailed": "Thanh Toán Thất Bại",
+    "paymentSuccessDesc": "Cảm ơn bạn! Đơn hàng đã được xác nhận và đang được xử lý.",
+    "paymentFailedDesc": "Thanh toán chưa được hoàn tất. Bạn có thể thử lại hoặc liên hệ hỗ trợ.",
+    "paymentCode": "Mã Thanh Toán",
+    "confirmed": "Đã Xác Nhận",
+    "failed": "Thất Bại",
+    "cancelled": "Đã Huỷ",
+    "tryAgain": "Thử Lại",
+    "continueShopping": "Tiếp Tục Mua Sắm",
+    "paymentHelpText": "Nếu bạn gặp vấn đề với đơn hàng, vui lòng liên hệ hỗ trợ qua email hoặc chat."
   },
   "address": {
     "sectionTitle": "Thông Tin",
