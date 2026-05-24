@@ -7,6 +7,7 @@ import Badge from '@/components/ui/badge';
 import { IconMinus, IconPlus, IconTrash, IconTruck } from '@tabler/icons-react';
 import { cn, formatCurrency } from '@/lib/utils';
 import { useCartStore, isCartItemActive } from '@/hooks/use-cart';
+import { Loading } from '@/components/ui/loading';
 
 export default function CartPage() {
     const router = useRouter();
@@ -36,9 +37,7 @@ export default function CartPage() {
                         {/* Items Section */}
                         <section className="lg:col-span-8 space-y-6">
                             {isLoading && items.length === 0 ? (
-                                <div className="flex grow items-center justify-center p-20">
-                                    <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-                                </div>
+                                <Loading text="Loading your bag..." className="py-20" />
                             ) : items.length === 0 ? (
                                 <div className="rounded-lg bg-surface-container-low p-12 text-center">
                                     <p className="text-secondary text-lg">Your cart is empty</p>

@@ -10,6 +10,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useCartStore } from "@/hooks/use-cart";
 import ProductCard from "@/components/common/product-card";
+import { Loading } from "@/components/ui/loading";
 
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -67,11 +68,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const isUnavailable = product?.is_active === false;
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center pt-32">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-      </div>
-    );
+    return <Loading variant="skeleton-detail" className="pt-32" />;
   }
 
   if (!product) {

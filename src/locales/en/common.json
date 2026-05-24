@@ -122,5 +122,144 @@
     "updatedSuccess": "Address updated successfully!",
     "deletedSuccess": "Address removed",
     "errorGeneric": "Something went wrong, please try again"
+  },
+  "profile": {
+    "title": "My Profile",
+    "logout": "Log Out",
+    "menu": {
+      "orders": "My Orders",
+      "settings": "Profile Setting",
+      "payments": "Payment Logs"
+    },
+    "settings": {
+      "title": "Profile Settings",
+      "subtitle": "Manage your personal information and contact details.",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Enter your full name",
+      "displayName": "Display Name",
+      "displayNamePlaceholder": "Enter your display name",
+      "phone": "Phone Number",
+      "phonePlaceholder": "Enter your phone number",
+      "bio": "Bio",
+      "bioPlaceholder": "Tell us a bit about yourself...",
+      "updating": "Updating profile...",
+      "success": "Profile updated successfully!",
+      "error": "Failed to update profile. Please try again.",
+      "save": "Save Changes",
+      "avatar": {
+        "editTitle": "Edit Avatar",
+        "uploadNew": "Upload New Photo",
+        "remove": "Remove Avatar",
+        "zoom": "Zoom In / Out",
+        "rotate": "Rotate Photo",
+        "accept": "Apply",
+        "cancel": "Cancel",
+        "removeConfirm": "Are you sure you want to remove your avatar?",
+        "saving": "Uploading avatar...",
+        "removeSuccess": "Avatar removed successfully!"
+      }
+    },
+    "orders": {
+      "title": "Order History",
+      "subtitle": "Track your handcrafted crochet orders and their production details.",
+      "status": {
+        "all": "All Orders",
+        "in_production": "In Production",
+        "shipping": "Shipping",
+        "completed": "Completed",
+        "pending_payment": "Pending Payment",
+        "confirmed": "Confirmed",
+        "quality_check": "Quality Check",
+        "awaiting_remaining_payment": "Awaiting Balance",
+        "ready_to_ship": "Ready to Ship",
+        "cancelled": "Cancelled"
+      },
+      "empty": "No orders found in this status.",
+      "orderNumber": "Order #",
+      "created": "Ordered on",
+      "total": "Total Amount",
+      "deposit": "Deposit Paid",
+      "remaining": "Remaining Balance",
+      "delivery": "Est. Delivery",
+      "items": "items",
+      "paymentOption": "Payment Scheme",
+      "payOptionFull": "100% Full Payment",
+      "payOptionDeposit": "30% Deposit Payment",
+      "payRemaining": "Pay Remaining Balance",
+      "stage": "Payment Stage",
+      "stages": {
+        "deposit_pending": "Deposit Pending",
+        "deposit_paid": "Deposit Paid",
+        "fully_paid": "Fully Paid",
+        "refunded": "Refunded"
+      },
+      "details": {
+        "backToProfile": "Back to Profile",
+        "errorTitle": "Error Retrieving Order",
+        "errorNotFound": "Order not found.",
+        "progressTitle": "Order Progress",
+        "cancelledTitle": "This order has been Cancelled",
+        "cancelledDesc": "All production operations and balances for this order are suspended.",
+        "awaitingBalance": "Awaiting Balance",
+        "itemsTitle": "Order Items Details",
+        "variant": "Variant",
+        "standard": "Standard",
+        "custFee": "Cust. Fee",
+        "viewMockup": "View Generated Mockup ↗",
+        "subtotal": "Subtotal",
+        "totalPrice": "Total Price",
+        "historyTitle": "Status Logs & History",
+        "transitionedTo": "Transitioned to",
+        "from": "From",
+        "noHistory": "No status log history records available.",
+        "recipientTitle": "Customer Recipient",
+        "recipientName": "Full Name",
+        "recipientPhone": "Phone Number",
+        "shippingAddress": "Shipping Address",
+        "customerNote": "Customer Note",
+        "paymentTitle": "Payment Information",
+        "payOption": "Payment Option Chosen",
+        "payOptionFull": "Full Payment (100%)",
+        "payOptionDeposit": "Deposit Installment (30%)",
+        "payStage": "Payment Stage",
+        "totalAmount": "Total Amount",
+        "depositAmount": "Deposit (30%)",
+        "remainingAmount": "Remaining (70%)",
+        "generatingLink": "Generating payment link...",
+        "redirectingPayOS": "Redirecting to PayOS checkout...",
+        "linkCreationFailed": "Checkout link creation failed."
+      }
+    },
+    "payments": {
+      "title": "Transaction History",
+      "subtitle": "View your complete payment transaction records.",
+      "table": {
+        "id": "Transaction ID",
+        "order": "Order Code",
+        "type": "Payment Type",
+        "method": "Payment Method",
+        "amount": "Amount",
+        "status": "Status",
+        "date": "Payment Date"
+      },
+      "types": {
+        "deposit": "Deposit (30%)",
+        "remaining_balance": "Remaining (70%)",
+        "full_payment": "Full Payment (100%)"
+      },
+      "methods": {
+        "payos_qr": "PayOS QR Code",
+        "bank_transfer": "Bank Transfer",
+        "manual": "Manual Payment"
+      },
+      "statuses": {
+        "pending": "Pending",
+        "processing": "Processing",
+        "succeeded": "Succeeded",
+        "failed": "Failed",
+        "refunded": "Refunded"
+      },
+      "empty": "No transaction history found."
+    }
   }
 }

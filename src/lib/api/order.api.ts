@@ -94,6 +94,9 @@ export interface OrderSummary {
     product_name: string;
     product_image_url: string | null;
     variant_label: string | null;
+    quantity?: number;
+    subtotal?: number;
+    unit_price?: number;
   }[];
 }
 
@@ -184,14 +187,56 @@ export async function createOrder(data: CreateOrderRequest): Promise<CreateOrder
   return response.data;
 }
 
+export interface OrderMetrics {
+  all: number;
+  in_production: number;
+  shipping: number;
+  completed: number;
+}
+
+export interface PaymentLog {
+  id: string;
+  payment_intent_id: string;
+  payment_type: string;
+  payment_method: string;
+  gateway: string;
+  amount: number;
+  currency: string;
+  status: string;
+  paid_at: string | null;
+  qr_code_url: string | null;
+  created_at: string;
+  order_id: string | null;
+  orders?: {
+    order_number: string;
+  } | null;
+}
+
 /**
  * List orders for authenticated user
  */
 export async function getOrders(params?: {
   cursor?: string;
   limit?: number;
+  status?: OrderStatus;
 }): Promise<OrderListResponse> {
   const response = await client.get<OrderListResponse>('/orders', { params });
+  return response.data;
+}
+
+/**
+ * Get count of orders in in_production, shipping, completed statuses
+ */
+export async function getOrderMetrics(): Promise<OrderMetrics> {
+  const response = await client.get<OrderMetrics>('/orders/metrics');
+  return response.data;
+}
+
+/**
+ * Get payment logs for authenticated user
+ */
+export async function getPaymentLogs(): Promise<{ payments: PaymentLog[] }> {
+  const response = await client.get<{ payments: PaymentLog[] }>('/orders/payments/logs');
   return response.data;
 }
 

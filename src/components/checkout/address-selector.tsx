@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
-  IconMapPin,
   IconPlus,
   IconCheck,
   IconPencil,
@@ -68,6 +67,7 @@ export default function AddressSelector({
   }, [selectedAddressId, onSelect]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchAddresses();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

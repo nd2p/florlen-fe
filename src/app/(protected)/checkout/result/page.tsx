@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo, Suspense } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useCartStore } from '@/hooks/use-cart';
@@ -19,7 +19,7 @@ import { syncPayment } from '@/lib/api/order.api';
 function PaymentResultContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { t, i18n } = useTranslation('common');
+  const { i18n } = useTranslation('common');
   const { clearCart, fetchCart } = useCartStore();
   const isVi = i18n.resolvedLanguage?.startsWith('vi');
 

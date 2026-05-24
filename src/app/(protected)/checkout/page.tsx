@@ -11,7 +11,6 @@ import CheckoutForm from '@/components/checkout/checkout-form';
 import OrderSummary from '@/components/checkout/order-summary';
 import { UserAddress } from '@/lib/api/address.api';
 import { createOrder } from '@/lib/api/order.api';
-import { formatCurrency } from '@/lib/utils';
 import {
     IconArrowLeft,
     IconAlertTriangle,
@@ -39,7 +38,6 @@ export default function CheckoutPage() {
     });
 
     // Track selected address object for order submission
-    const [selectedAddress, setSelectedAddress] = useState<UserAddress | null>(null);
     const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
 
     // Checkout options
@@ -88,7 +86,6 @@ export default function CheckoutPage() {
 
     // Handle address selection from AddressSelector
     const handleAddressSelect = (address: UserAddress | null) => {
-        setSelectedAddress(address);
         setSelectedAddressId(address?.id ?? null);
         if (address) {
             setValue('selectedAddressId', address.id);

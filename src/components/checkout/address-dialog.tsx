@@ -78,6 +78,7 @@ export default function AddressDialog({
     },
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const isDefault = watch('isDefault');
 
   // Populate form when editing
@@ -132,7 +133,13 @@ export default function AddressDialog({
         </DialogHeader>
 
         {/* Form body */}
-        <form onSubmit={handleSubmit(handleFormSubmit)} id="address-form">
+        <form
+          onSubmit={(e) => {
+            e.stopPropagation();
+            handleSubmit(handleFormSubmit)(e);
+          }}
+          id="address-form"
+        >
           <div className="px-6 py-5 space-y-4">
             {/* Label (optional) */}
             <Input

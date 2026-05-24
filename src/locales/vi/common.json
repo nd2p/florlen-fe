@@ -122,5 +122,144 @@
     "updatedSuccess": "Đã cập nhật địa chỉ thành công!",
     "deletedSuccess": "Đã xóa địa chỉ",
     "errorGeneric": "Đã có lỗi xảy ra, vui lòng thử lại"
+  },
+  "profile": {
+    "title": "Tài Khoản Của Tôi",
+    "logout": "Đăng Xuất",
+    "menu": {
+      "orders": "Đơn hàng của tôi",
+      "settings": "Cài đặt tài khoản",
+      "payments": "Lịch sử thanh toán"
+    },
+    "settings": {
+      "title": "Cài Đặt Hồ Sơ",
+      "subtitle": "Quản lý thông tin cá nhân và thông tin liên lạc của bạn.",
+      "fullName": "Họ và Tên",
+      "fullNamePlaceholder": "Nhập họ và tên của bạn",
+      "displayName": "Tên Hiển Thị",
+      "displayNamePlaceholder": "Nhập tên hiển thị của bạn",
+      "phone": "Số Điện Thoại",
+      "phonePlaceholder": "Nhập số điện thoại của bạn",
+      "bio": "Giới thiệu bản thân",
+      "bioPlaceholder": "Viết một vài điều về bạn...",
+      "updating": "Đang cập nhật hồ sơ...",
+      "success": "Đã cập nhật hồ sơ thành công!",
+      "error": "Cập nhật hồ sơ thất bại. Vui lòng thử lại.",
+      "save": "Lưu thay đổi",
+      "avatar": {
+        "editTitle": "Chỉnh sửa ảnh đại diện",
+        "uploadNew": "Tải ảnh mới lên",
+        "remove": "Xóa ảnh đại diện",
+        "zoom": "Phóng to / Thu nhỏ",
+        "rotate": "Xoay ảnh",
+        "accept": "Áp dụng",
+        "cancel": "Hủy bỏ",
+        "removeConfirm": "Bạn có chắc chắn muốn xóa ảnh đại diện?",
+        "saving": "Đang tải ảnh lên...",
+        "removeSuccess": "Đã xóa ảnh đại diện thành công!"
+      }
+    },
+    "orders": {
+      "title": "Lịch Sử Đơn Hàng",
+      "subtitle": "Theo dõi các đơn hàng móc len thủ công của bạn và chi tiết sản xuất.",
+      "status": {
+        "all": "Tất cả đơn hàng",
+        "in_production": "Đang sản xuất",
+        "shipping": "Đang giao hàng",
+        "completed": "Đã hoàn thành",
+        "pending_payment": "Chờ thanh toán",
+        "confirmed": "Đã xác nhận",
+        "quality_check": "Kiểm tra chất lượng",
+        "awaiting_remaining_payment": "Chờ thanh toán nốt",
+        "ready_to_ship": "Sẵn sàng giao hàng",
+        "cancelled": "Đã hủy"
+      },
+      "empty": "Không tìm thấy đơn hàng nào ở trạng thái này.",
+      "orderNumber": "Đơn hàng #",
+      "created": "Đặt ngày",
+      "total": "Tổng tiền",
+      "deposit": "Đặt cọc",
+      "remaining": "Còn lại",
+      "delivery": "Giao dự kiến",
+      "items": "sản phẩm",
+      "paymentOption": "Hình thức thanh toán",
+      "payOptionFull": "Thanh toán 100%",
+      "payOptionDeposit": "Đặt cọc trước 30%",
+      "payRemaining": "Thanh toán 70% còn lại",
+      "stage": "Trạng thái thanh toán",
+      "stages": {
+        "deposit_pending": "Chờ đặt cọc",
+        "deposit_paid": "Đã đặt cọc",
+        "fully_paid": "Đã tất toán",
+        "refunded": "Đã hoàn tiền"
+      },
+      "details": {
+        "backToProfile": "Quay lại Hồ sơ",
+        "errorTitle": "Lỗi Tải Đơn Hàng",
+        "errorNotFound": "Không tìm thấy đơn hàng.",
+        "progressTitle": "Tiến trình đơn hàng",
+        "cancelledTitle": "Đơn hàng này đã bị Hủy",
+        "cancelledDesc": "Mọi hoạt động sản xuất và các khoản thanh toán cho đơn hàng này đã dừng lại.",
+        "awaitingBalance": "Chờ thanh toán nốt",
+        "itemsTitle": "Chi tiết sản phẩm",
+        "variant": "Phân loại",
+        "standard": "Tiêu chuẩn",
+        "custFee": "Phí thiết kế",
+        "viewMockup": "Xem bản vẽ thiết kế ↗",
+        "subtotal": "Tạm tính",
+        "totalPrice": "Tổng thanh toán",
+        "historyTitle": "Lịch sử xử lý đơn hàng",
+        "transitionedTo": "Chuyển sang trạng thái",
+        "from": "Từ trạng thái",
+        "noHistory": "Không có lịch sử thay đổi trạng thái.",
+        "recipientTitle": "Thông tin nhận hàng",
+        "recipientName": "Người nhận",
+        "recipientPhone": "Số điện thoại",
+        "shippingAddress": "Địa chỉ giao hàng",
+        "customerNote": "Ghi chú của khách hàng",
+        "paymentTitle": "Thông tin thanh toán",
+        "payOption": "Hình thức chọn",
+        "payOptionFull": "Thanh toán 100%",
+        "payOptionDeposit": "Đặt cọc 30%",
+        "payStage": "Trạng thái thanh toán",
+        "totalAmount": "Tổng tiền đơn hàng",
+        "depositAmount": "Đã cọc (30%)",
+        "remainingAmount": "Còn lại (70%)",
+        "generatingLink": "Đang khởi tạo liên kết thanh toán...",
+        "redirectingPayOS": "Đang chuyển hướng đến cổng thanh toán PayOS...",
+        "linkCreationFailed": "Khởi tạo liên kết thanh toán thất bại."
+      }
+    },
+    "payments": {
+      "title": "Lịch Sử Giao Dịch",
+      "subtitle": "Xem toàn bộ bản ghi lịch sử giao dịch thanh toán của bạn.",
+      "table": {
+        "id": "Mã Giao Dịch",
+        "order": "Mã Đơn",
+        "type": "Loại Thanh Toán",
+        "method": "Phương Thức",
+        "amount": "Số Tiền",
+        "status": "Trạng Thái",
+        "date": "Ngày Thanh Toán"
+      },
+      "types": {
+        "deposit": "Đặt cọc (30%)",
+        "remaining_balance": "Thanh toán nốt (70%)",
+        "full_payment": "Thanh toán toàn bộ (100%)"
+      },
+      "methods": {
+        "payos_qr": "Mã QR PayOS",
+        "bank_transfer": "Chuyển khoản",
+        "manual": "Thủ công"
+      },
+      "statuses": {
+        "pending": "Chờ xử lý",
+        "processing": "Đang xử lý",
+        "succeeded": "Thành công",
+        "failed": "Thất bại",
+        "refunded": "Hoàn tiền"
+      },
+      "empty": "Không tìm thấy lịch sử giao dịch nào."
+    }
   }
 }
