@@ -69,11 +69,16 @@ export type ProductListItem = {
 
 export type ListProductsParams = {
   cursor?: string;
+  offset?: number;
   limit?: number;
   type?: ProductType;
   tag?: string;
   collection?: string;
   q?: string;
+  is_featured?: boolean | string;
+  sort_by?: string;
+  min_price?: number;
+  max_price?: number;
 };
 
 export type ListProductsResponse = {

@@ -261,5 +261,83 @@
       },
       "empty": "Không tìm thấy lịch sử giao dịch nào."
     }
+  },
+  "home": {
+    "hero": {
+      "handmadeCollectibles": "Đồ chơi thủ công cao cấp",
+      "designCrochetStoryPart1": "Kiến tạo Câu chuyện",
+      "designCrochetStoryPart2": "Len của riêng bạn",
+      "crochetStoryDesc": "Biến trí tưởng tượng của bạn thành tác phẩm nghệ thuật len chất lượng cao. Người bạn thủ công do bạn thiết kế, do chúng tôi tạo tác.",
+      "startCustomizing": "Bắt đầu thiết kế",
+      "viewGallery": "Xem bộ sưu tập",
+      "communityFavorite": "Được yêu thích nhất",
+      "redPandaPlush": "Thú bông Gấu trúc đỏ",
+      "altRedPanda": "Gấu trúc đỏ móc len thủ công nổi bật",
+      "buyNow": "Mua ngay"
+    },
+    "featured": {
+      "title": "Thiết Kế Nổi Bật",
+      "subtitle": "Khám phá những người bạn đồng hành thủ công được yêu thích nhất.",
+      "discoverMore": "XEM CHI TIẾT",
+      "placeholderTitle": "Thiết Kế Mới",
+      "placeholderDesc": "Nghệ sĩ của chúng tôi đang hoàn thiện thiết kế độc đáo tiếp theo. Hãy quay lại sớm để khám phá bạn đồng hành tiếp theo!"
+    },
+    "collection": {
+      "label": "Bộ Sưu Tập",
+      "title": "Bộ Sưu Tập",
+      "exploreAll": "Xem Tất Cả",
+      "viewMore": "Xem Thêm"
+    },
+    "marquee": "Welcome to Florlen ● Chất lượng dệt nên khác biệt",
+    "fullCollection": {
+      "title": "Khám Phá Toàn Bộ Bộ Sưu Tập",
+      "subtitle": "Toàn bộ danh mục tác phẩm thủ công kỳ diệu của chúng tôi.",
+      "viewAll": "Xem Tất Cả",
+      "emptyTitle": "Chưa có sản phẩm nào",
+      "emptySubtitle": "Hãy quay lại sớm để khám phá các sản phẩm mới nhé!",
+      "backToTop": "Quay lại đầu trang"
+    },
+    "mission": {
+      "label": "Sứ mệnh",
+      "text": "Được chế tác tỉ mỉ, đáng tin cậy trong từng đường kim mũi chỉ."
+    }
+  },
+  "shop": {
+    "filter": "Bộ lọc",
+    "catalog": "Bộ sưu tập Florlen",
+    "title": "Tất Cả Sản Phẩm",
+    "description": "Khám phá các sản phẩm thủ công độc đáo, cao cấp, được dệt tỉ mỉ từng sợi chỉ để tạo nên sự khác biệt.",
+    "showing_one": "Hiển thị {{count}} sản phẩm",
+    "showing_other": "Hiển thị {{count}} sản phẩm",
+    "filterTitle": "BỘ LỌC TÌM KIẾM",
+    "reset": "Đặt lại",
+    "searchPlaceholder": "Nhập tên sản phẩm...",
+    "searchLabel": "Tìm kiếm sản phẩm",
+    "sortByLabel": "Sắp xếp theo",
+    "sortNewest": "Mới cập nhật",
+    "sortPriceAsc": "Giá: Thấp đến Cao",
+    "sortPriceDesc": "Giá: Cao đến Thấp",
+    "priceRangeLabel": "Khoảng giá (VNĐ)",
+    "priceFrom": "Từ",
+    "priceTo": "Đến",
+    "presetUnder200k": "Dưới 200k",
+    "preset200k500k": "200k – 500k",
+    "preset500k1M": "500k – 1M",
+    "presetOver1M": "Trên 1M",
+    "noProductsTitle": "Không Tìm Thấy Sản Phẩm",
+    "noProductsDesc": "Không có sản phẩm nào phù hợp với khoảng giá hoặc từ khoá tìm kiếm của bạn. Hãy thử thay đổi bộ lọc nhé!",
+    "resetFilters": "Đặt Lại Bộ Lọc",
+    "apply": "Áp Dụng"
+  },
+  "collections": {
+    "label": "Bộ Sưu Tập",
+    "title": "Bộ Sưu Tập Của Chúng Tôi",
+    "description": "Khám phá những bộ sưu tập móc len thủ công cao cấp được chọn lọc tỉ mỉ, dệt may thủ công theo yêu cầu.",
+    "exploreAll": "Khám phá tất cả",
+    "loading": "Đang tải danh sách bộ sưu tập...",
+    "empty": "Chưa có bộ sưu tập nào được công bố. Hãy quay lại sớm nhé!",
+    "viewMore": "Xem Thêm",
+    "backToCollections": "Quay lại danh sách",
+    "scrollDown": "Cuộn xuống để xem sản phẩm"
   }
 }

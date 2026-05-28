@@ -261,5 +261,83 @@
       },
       "empty": "No transaction history found."
     }
+  },
+  "home": {
+    "hero": {
+      "handmadeCollectibles": "Handmade Collectibles",
+      "designCrochetStoryPart1": "Design Your Own",
+      "designCrochetStoryPart2": "Crochet Story",
+      "crochetStoryDesc": "Turn your imagination into high-quality, tactile art. Custom handmade companions designed by you, crafted by us.",
+      "startCustomizing": "Start Customizing",
+      "viewGallery": "View Gallery",
+      "communityFavorite": "Community Favorite",
+      "redPandaPlush": "The Red Panda Plush",
+      "altRedPanda": "Featured crochet red panda plush",
+      "buyNow": "Shop Now"
+    },
+    "featured": {
+      "title": "Featured Designs",
+      "subtitle": "Explore our most loved handcrafted companions.",
+      "discoverMore": "DISCOVER MORE",
+      "placeholderTitle": "New Companion",
+      "placeholderDesc": "Our artists are currently handcrafting the next unique masterpiece design. Check back soon to discover your next companion!"
+    },
+    "collection": {
+      "label": "Collections",
+      "title": "Curated Collections",
+      "exploreAll": "Explore All",
+      "viewMore": "View More"
+    },
+    "marquee": "Welcome to Florlen ● Quality weaves the difference",
+    "fullCollection": {
+      "title": "Explore the Full Collection",
+      "subtitle": "Our complete catalog of handcrafted wonders.",
+      "viewAll": "View All",
+      "emptyTitle": "No products yet",
+      "emptySubtitle": "Check back soon for new arrivals!",
+      "backToTop": "Back to top"
+    },
+    "mission": {
+      "label": "Our Mission",
+      "text": "Meticulously crafted, trusted in every single stitch."
+    }
+  },
+  "shop": {
+    "filter": "Filters",
+    "catalog": "Florlen Catalog",
+    "title": "Explore Our Collection",
+    "description": "Discover unique, premium, handcrafted wonders tailored to weave quality into every single thread.",
+    "showing_one": "Showing {{count}} product",
+    "showing_other": "Showing {{count}} products",
+    "filterTitle": "FILTER PRODUCTS",
+    "reset": "Reset",
+    "searchPlaceholder": "Search product name...",
+    "searchLabel": "Search Products",
+    "sortByLabel": "Sort By",
+    "sortNewest": "Newest",
+    "sortPriceAsc": "Price: Low to High",
+    "sortPriceDesc": "Price: High to Low",
+    "priceRangeLabel": "Price Range (VND)",
+    "priceFrom": "From",
+    "priceTo": "To",
+    "presetUnder200k": "Under 200k",
+    "preset200k500k": "200k – 500k",
+    "preset500k1M": "500k – 1M",
+    "presetOver1M": "Over 1M",
+    "noProductsTitle": "No Products Found",
+    "noProductsDesc": "No products match your price range or search terms. Try changing the filters!",
+    "resetFilters": "Reset Filters",
+    "apply": "Apply"
+  },
+  "collections": {
+    "label": "Collections",
+    "title": "Our Crafted Collections",
+    "description": "Explore curated collections of premium handcrafted slow-fashion wonders, meticulously stitched to order.",
+    "exploreAll": "Explore All",
+    "loading": "Loading collections...",
+    "empty": "No collections found. Check back soon for new releases!",
+    "viewMore": "View More",
+    "backToCollections": "Back to Collections",
+    "scrollDown": "Scroll down to view products"
   }
 }

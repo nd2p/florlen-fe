@@ -118,3 +118,8 @@ export async function deleteCollection(id: string): Promise<{
   );
   return response.data;
 }
+
+export async function getCollectionById(id: string): Promise<{ collection: Collection }> {
+  const response = await client.get<{ collection: Collection }>(`/collections/${id}`);
+  return response.data;
+}

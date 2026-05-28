@@ -12,8 +12,11 @@ import { listCollections, type Collection } from "@/lib/api/collection.api";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
 export function HeroCarousel() {
+  const { t } = useTranslation("common");
   const [api, setApi] = useState<CarouselApi>();
   const [collections, setCollections] = useState<Collection[]>([]);
   const [current, setCurrent] = useState(0);
@@ -65,7 +68,7 @@ export function HeroCarousel() {
   const scrollNext = useCallback(() => api?.scrollNext(), [api]);
 
   return (
-    <div className="w-full relative group bg-surface-container-low min-h-[700px] md:min-h-[800px]">
+    <div className="w-full relative group bg-surface-container-low min-h-[750px] md:min-h-[850px]">
       <Carousel
         setApi={setApi}
         opts={{ loop: true }}
@@ -75,21 +78,27 @@ export function HeroCarousel() {
         <CarouselContent className="-ml-0">
           {/* Default Create Your Own Page (Slide 0) */}
           <CarouselItem className="pl-0 basis-full flex items-center justify-center bg-surface-container-low">
-            <div className="flex h-[700px] md:h-[800px] w-full flex-col overflow-hidden md:flex-row">
+            <div className="flex h-[750px] md:h-[850px] w-full flex-col overflow-hidden md:flex-row">
               <div className="flex-1 flex flex-col justify-center space-y-8 p-12 md:p-24 h-full bg-surface-container-low">
                 <div className="space-y-4">
-                  <span className="inline-block rounded-full bg-primary-fixed px-4 py-1.5 text-sm font-bold uppercase tracking-wider text-on-primary-fixed">Handmade Collectibles</span>
+                  <span className="inline-block rounded-full bg-primary-fixed px-4 py-1.5 text-sm font-bold uppercase tracking-wider text-on-primary-fixed">
+                    {t('home.hero.handmadeCollectibles')}
+                  </span>
                   <h1 className="font-headline text-5xl font-black leading-[0.9] tracking-tight text-on-surface md:text-7xl">
-                    Design Your Own <br />
-                    <span className="text-primary">Crochet Story</span>
+                    {t('home.hero.designCrochetStoryPart1')} <br />
+                    <span className="text-primary">{t('home.hero.designCrochetStoryPart2')}</span>
                   </h1>
                   <p className="max-w-lg text-xl leading-relaxed text-secondary">
-                    Turn your imagination into high-quality, tactile art. Custom handmade companions designed by you, crafted by us.
+                    {t('home.hero.crochetStoryDesc')}
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-4 relative z-20">
-                  <button className="rounded-full bg-primary px-8 py-5 text-lg font-bold text-on-primary transition-all hover:bg-primary-container active:scale-95">Start Customizing</button>
-                  <button className="rounded-full bg-surface-container-highest px-8 py-5 text-lg font-bold text-on-surface transition-all hover:bg-surface-dim active:scale-95">View Gallery</button>
+                  <button className="rounded-full bg-primary px-8 py-5 text-lg font-bold text-on-primary transition-all hover:bg-primary-container active:scale-95">
+                    {t('home.hero.startCustomizing')}
+                  </button>
+                  <button className="rounded-full bg-surface-container-highest px-8 py-5 text-lg font-bold text-on-surface transition-all hover:bg-surface-dim active:scale-95">
+                    {t('home.hero.viewGallery')}
+                  </button>
                 </div>
               </div>
               <div className="relative h-[450px] w-full flex-1 md:h-full bg-surface-container-high">
@@ -97,12 +106,12 @@ export function HeroCarousel() {
                   fill
                   priority
                   className="h-full w-full object-cover rounded-none"
-                  alt="Featured crochet red panda plush"
+                  alt={t('home.hero.altRedPanda')}
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhKKiFUzCmkeHp5InAESLgcZoStW8aGqa373rYLrgtENv5mdQUv3GyXacQKdXuT7dVaKoT9nojn1Szut-6q0FkyH5gvO67b2ps5w1rlfo3rrr5yD6EX3HcVS96cmQusXL1Cg4mmp6UQvKQTbEZPVC3p8b9y-kw4vfDYpZp0mDT8m9IXY6aO5_ndIwaIgB49bifjkEK23joL2jfjCOoxpaHtGDB4yJdp6MpgXuID3jra45aJ14IaZcazjPr5CXT7nzpnboOy1OTUmU"
                 />
                 <div className="absolute bottom-8 right-8 rounded-lg bg-surface-container-lowest/80 p-6 backdrop-blur-md shadow-xl">
-                  <p className="text-sm font-bold text-on-surface">Community Favorite</p>
-                  <p className="text-xs text-secondary">The Red Panda Plush</p>
+                  <p className="text-sm font-bold text-on-surface">{t('home.hero.communityFavorite')}</p>
+                  <p className="text-xs text-secondary">{t('home.hero.redPandaPlush')}</p>
                 </div>
               </div>
             </div>
@@ -111,7 +120,7 @@ export function HeroCarousel() {
           {/* Top 5 Collections */}
           {collections.map((col) => (
             <CarouselItem key={col.id} className="pl-0 basis-full">
-              <div className="relative w-full h-[700px] md:h-[800px] overflow-hidden bg-surface-container-highest">
+              <div className="relative w-full h-[750px] md:h-[850px] overflow-hidden bg-surface-container-highest">
                 <Image
                   fill
                   src={col.banner_image_url || col.cover_image_url || "/placeholder-collection.jpg"}
@@ -123,9 +132,12 @@ export function HeroCarousel() {
                   <h2 className="text-white text-4xl md:text-5xl font-bold tracking-wide mb-4">
                     {col.name}
                   </h2>
-                  <button className="border-b-2 border-white pb-1 text-white font-bold text-sm tracking-widest hover:text-white/80 hover:border-white/80 transition-colors uppercase">
-                    Mua ngay
-                  </button>
+                  <Link 
+                    href={`/collections/${col.id}`}
+                    className="border-b-2 border-white pb-1 text-white font-bold text-sm tracking-widest hover:text-white/80 hover:border-white/80 transition-colors uppercase"
+                  >
+                    {t('home.hero.buyNow')}
+                  </Link>
                 </div>
               </div>
             </CarouselItem>
