@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Loading } from '@/components/ui/loading';
@@ -9,6 +9,7 @@ import { Loading } from '@/components/ui/loading';
 // Subcomponents refactored
 import ProfileSidebar from '@/components/profile/profile-sidebar';
 import OrdersTab from '@/components/profile/orders-tab';
+import DesignsTab from '@/components/profile/designs-tab';
 import SettingsTab from '@/components/profile/settings-tab';
 import PaymentLogsTab from '@/components/profile/payment-logs-tab';
 import AvatarEditorDialog from '@/components/profile/avatar-editor-dialog';
@@ -28,17 +29,26 @@ import {
 } from '@/lib/api/order.api';
 import { clearTokens, clearCachedUser, setCachedUser, User } from '@/lib/auth';
 
-type TabType = 'my_orders' | 'profile_settings' | 'payment_logs';
+type TabType = 'my_orders' | 'saved_designs' | 'profile_settings' | 'payment_logs';
 
 export default function UserProfile() {
   const { t, i18n } = useTranslation('common');
   const router = useRouter();
+  const searchParams = useSearchParams();
   const isVi = !!i18n.resolvedLanguage?.startsWith('vi');
 
   // Primary states
   const [activeTab, setActiveTab] = useState<TabType>('my_orders');
   const [user, setUser] = useState<User | null>(null);
   const [userLoading, setUserLoading] = useState(true);
+
+  // Sync tab with search parameters
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam && ['my_orders', 'saved_designs', 'profile_settings', 'payment_logs'].includes(tabParam)) {
+      setActiveTab(tabParam as TabType);
+    }
+  }, [searchParams]);
 
   // Tab 1: Orders states
   const [activeStatus, setActiveStatus] = useState<
@@ -346,6 +356,10 @@ export default function UserProfile() {
               handlePayRemaining={handlePayRemaining}
               isVi={isVi}
             />
+          )}
+
+          {activeTab === 'saved_designs' && (
+            <DesignsTab />
           )}
 
           {activeTab === 'profile_settings' && (

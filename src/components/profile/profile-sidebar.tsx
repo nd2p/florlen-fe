@@ -9,10 +9,11 @@ import {
   IconSettings,
   IconChevronRight,
   IconCamera,
+  IconPalette,
 } from '@tabler/icons-react';
 import { User } from '@/lib/auth';
 
-type TabType = 'my_orders' | 'profile_settings' | 'payment_logs';
+type TabType = 'my_orders' | 'saved_designs' | 'profile_settings' | 'payment_logs';
 
 interface ProfileSidebarProps {
   user: User | null;
@@ -105,6 +106,24 @@ export default function ProfileSidebar({
           <IconChevronRight
             className={`w-4 h-4 transition-transform ${
               activeTab === 'my_orders' ? 'rotate-90' : ''
+            }`}
+          />
+        </button>
+
+        {/* Saved Designs Tab */}
+        <button
+          onClick={() => setActiveTab('saved_designs')}
+          className={`flex items-center gap-3 w-full px-4 py-3.5 rounded-2xl text-sm font-semibold tracking-wide font-headline transition-all active:scale-[0.98] ${
+            activeTab === 'saved_designs'
+              ? 'bg-primary text-on-primary shadow-lg shadow-primary/10'
+              : 'text-secondary hover:bg-surface-container-low hover:text-on-surface'
+          }`}
+        >
+          <IconPalette className="w-5 h-5" stroke={2} />
+          <span className="flex-1 text-left">{t('aiStudio.libraryTitle')}</span>
+          <IconChevronRight
+            className={`w-4 h-4 transition-transform ${
+              activeTab === 'saved_designs' ? 'rotate-90' : ''
             }`}
           />
         </button>

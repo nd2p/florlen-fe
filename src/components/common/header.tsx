@@ -220,7 +220,6 @@ export default function Header() {
                     <Link href="/shop" className="font-headline font-bold text-secondary transition-colors hover:text-primary">{t("header.nav.shopAll")}</Link>
                     <Link href="/ai-studio" className="font-headline font-bold text-secondary transition-colors hover:text-primary">{t("header.nav.aiStudio")}</Link>
                     <Link href="/collections" className="font-headline font-bold text-secondary transition-colors hover:text-primary">{t("header.nav.collections")}</Link>
-                    <Link href="/blog" className="font-headline font-bold text-secondary transition-colors hover:text-primary">{t("header.nav.blog")}</Link>
                 </div>
 
                 {/* Right Section: Actions */}

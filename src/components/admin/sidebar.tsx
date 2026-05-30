@@ -15,6 +15,7 @@ import {
     IconPackage,
     IconSettings,
     IconShoppingBag,
+    IconSparkles,
     IconUsers,
 } from "@tabler/icons-react";
 
@@ -25,6 +26,7 @@ const navigationItems = [
     { href: "/admin/discounts", label: "Discount Management", icon: IconDiscount },
     { href: "/admin/users", label: "User Management", icon: IconUsers },
     { href: "/admin/reports", label: "Reports", icon: IconChartBar },
+    { href: "/admin/ai-management", label: "AI Management", icon: IconSparkles },
 ];
 
 export default function Sidebar() {

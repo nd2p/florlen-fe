@@ -11,6 +11,7 @@ import CheckoutForm from '@/components/checkout/checkout-form';
 import OrderSummary from '@/components/checkout/order-summary';
 import { UserAddress } from '@/lib/api/address.api';
 import { createOrder } from '@/lib/api/order.api';
+import { validateVoucher } from '@/lib/api/discount.api';
 import {
     IconArrowLeft,
     IconAlertTriangle,
@@ -93,20 +94,24 @@ export default function CheckoutPage() {
     };
 
     // Handle Promo Code submission
-    const handleApplyPromo = () => {
+    const handleApplyPromo = async () => {
         setPromoError('');
         const trimmedCode = promoCode.trim().toUpperCase();
         if (!trimmedCode) return;
 
-        if (trimmedCode === 'FLORLEN50') {
-            setAppliedPromo({ code: 'FLORLEN50', type: 'flat', value: 50000 });
+        try {
+            const res = await validateVoucher(trimmedCode, subtotal);
+            setAppliedPromo({
+                code: res.code,
+                type: res.discountType === 'percentage' ? 'percentage' : 'flat',
+                value: res.discountType === 'percentage' ? res.discountValue / 100 : res.discountValue
+            });
             toast.success(t('checkout.appliedPromo'));
-        } else if (trimmedCode === 'WELCOME10') {
-            setAppliedPromo({ code: 'WELCOME10', type: 'percentage', value: 0.1 });
-            toast.success(t('checkout.appliedPromo'));
-        } else {
-            setPromoError(t('checkout.invalidPromo'));
-            toast.error(t('checkout.invalidPromo'));
+        } catch (err: any) {
+            console.error('Validate promo error:', err);
+            const message = err?.response?.data?.message || err?.message || t('checkout.invalidPromo');
+            setPromoError(message);
+            toast.error(message);
         }
     };
 
@@ -133,6 +138,7 @@ export default function CheckoutPage() {
                 paymentOption,
                 addressId: values.selectedAddressId,
                 note: values.note,
+                voucherCode: appliedPromo?.code || undefined,
             });
 
             // Redirect to PayOS checkout page

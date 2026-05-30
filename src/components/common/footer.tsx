@@ -19,7 +19,6 @@ export default function Footer() {
                     <h4 className="mb-6 font-bold">Company</h4>
                     <ul className="space-y-4 text-sm text-secondary">
                         <li><a className="transition-all duration-300 hover:text-primary hover:underline" href="#">Our Story</a></li>
-                        <li><a className="transition-all duration-300 hover:text-primary hover:underline" href="#">Blog</a></li>
                         <li><a className="transition-all duration-300 hover:text-primary hover:underline" href="#">Sustainability</a></li>
                         <li><a className="transition-all duration-300 hover:text-primary hover:underline" href="#">Careers</a></li>
                     </ul>

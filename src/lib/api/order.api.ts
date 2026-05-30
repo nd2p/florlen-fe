@@ -126,6 +126,7 @@ export interface CreateOrderRequest {
   paymentOption: PaymentOption;
   addressId: string;
   note?: string;
+  voucherCode?: string;
 }
 
 export interface CreateOrderResponse {
