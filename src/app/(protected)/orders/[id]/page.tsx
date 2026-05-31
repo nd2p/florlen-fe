@@ -11,7 +11,9 @@ import {
   IconPackage,
   IconUser,
   IconLoader2,
+  IconMaximize,
 } from '@tabler/icons-react';
+import { useImageLightbox } from '@/components/ui/image-lightbox';
 import { toast } from 'sonner';
 import { formatCurrency } from '@/lib/utils';
 import { getOrderById, payRemaining, type Order, type OrderStatus } from '@/lib/api/order.api';
@@ -39,6 +41,7 @@ export default function UserOrderDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPayingRemaining, setIsPayingRemaining] = useState(false);
+  const { openLightbox, LightboxNode } = useImageLightbox();
 
   useEffect(() => {
     if (!orderId) return;
@@ -272,20 +275,28 @@ export default function UserOrderDetailPage() {
                 order.order_items.map((item) => (
                   <div key={item.id} className="py-5 first:pt-0 last:pb-0">
                     <div className="flex gap-4">
-                      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-surface-container-highest shadow-inner">
-                        {item.product_image_url ? (
+                      {item.product_image_url ? (
+                        <button
+                          type="button"
+                          onClick={() => openLightbox(item.product_image_url!, item.product_name)}
+                          className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-surface-container-highest shadow-inner group/img cursor-zoom-in text-left focus:outline-none focus:ring-2 focus:ring-primary"
+                          title="Xem ảnh"
+                        >
                           <Image
                             src={item.product_image_url}
                             alt={item.product_name}
                             fill
-                            className="object-cover"
+                            className="object-cover transition-transform duration-200 group-hover/img:scale-105"
                           />
-                        ) : (
-                          <div className="flex h-full w-full items-center justify-center text-2xl">
-                            🧸
+                          <div className="absolute inset-0 bg-black/0 group-hover/img:bg-black/30 transition-colors duration-200 flex items-center justify-center">
+                            <IconMaximize className="w-4 h-4 text-white opacity-0 group-hover/img:opacity-100 transition-opacity duration-200" />
                           </div>
-                        )}
-                      </div>
+                        </button>
+                      ) : (
+                        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-surface-container-highest shadow-inner flex items-center justify-center text-2xl">
+                          🧸
+                        </div>
+                      )}
 
                       <div className="min-w-0 flex-1 space-y-1">
                         <h3 className="font-headline text-lg font-black text-on-surface">
@@ -344,20 +355,28 @@ export default function UserOrderDetailPage() {
                 // Fallback mapping from root order object for backward compatibility
                 <div className="py-5">
                   <div className="flex gap-4">
-                    <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-surface-container-highest shadow-inner">
-                      {order.product_image_url ? (
+                    {order.product_image_url ? (
+                      <button
+                        type="button"
+                        onClick={() => openLightbox(order.product_image_url!, order.product_name)}
+                        className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-surface-container-highest shadow-inner group/img cursor-zoom-in text-left focus:outline-none focus:ring-2 focus:ring-primary"
+                        title="Xem ảnh"
+                      >
                         <Image
                           src={order.product_image_url}
                           alt={order.product_name}
                           fill
-                          className="object-cover"
+                          className="object-cover transition-transform duration-200 group-hover/img:scale-105"
                         />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center text-2xl">
-                          🧸
+                        <div className="absolute inset-0 bg-black/0 group-hover/img:bg-black/30 transition-colors duration-200 flex items-center justify-center">
+                          <IconMaximize className="w-4 h-4 text-white opacity-0 group-hover/img:opacity-100 transition-opacity duration-200" />
                         </div>
-                      )}
-                    </div>
+                      </button>
+                    ) : (
+                      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-surface-container-highest shadow-inner flex items-center justify-center text-2xl">
+                        🧸
+                      </div>
+                    )}
 
                     <div className="min-w-0 flex-1 space-y-1">
                       <h3 className="font-headline text-lg font-black text-on-surface">
@@ -614,6 +633,7 @@ export default function UserOrderDetailPage() {
           </aside>
         </div>
       </section>
+      {LightboxNode}
     </div>
   );
 }

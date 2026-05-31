@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import Badge from '@/components/ui/badge';
 import { IconMinus, IconPlus, IconTrash, IconTruck } from '@tabler/icons-react';
@@ -11,12 +12,27 @@ import { Loading } from '@/components/ui/loading';
 
 export default function CartPage() {
     const router = useRouter();
-    const { items, updateQuantity, removeItem, totalAmount, isLoading } = useCartStore();
+    const { items, updateQuantity, removeItem, totalAmount, isLoading, fetchCart } = useCartStore();
 
     const subtotal = totalAmount;
     const shipping = 0;
     const handmadeFee = 0;
     const total = subtotal + shipping + handmadeFee;
+
+    const handleProceedToCheckout = async () => {
+        const oldTotal = totalAmount;
+        try {
+            await fetchCart();
+            const newTotal = useCartStore.getState().totalAmount;
+            if (newTotal !== oldTotal) {
+                toast.info("Product prices have changed. Your summary has been updated.");
+                return;
+            }
+            router.push('/checkout');
+        } catch {
+            toast.error("Failed to verify current prices. Please try again.");
+        }
+    };
 
     return (
         <div className="min-h-screen flex flex-col bg-surface">
@@ -184,8 +200,8 @@ export default function CartPage() {
                                     <Button
                                         variant="primary"
                                         size="lg"
-                                        onClick={() => router.push('/checkout')}
-                                        disabled={items.length === 0}
+                                        onClick={handleProceedToCheckout}
+                                        disabled={items.length === 0 || isLoading}
                                     >
                                         Proceed to checkout
                                     </Button>

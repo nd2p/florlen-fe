@@ -94,6 +94,7 @@ export function FullCollection() {
 
   // Show scroll-to-top button after 5 rows (20 products @ 4 cols)
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setShowScrollTop(products.length > SCROLL_TOP_THRESHOLD);
   }, [products.length]);
 

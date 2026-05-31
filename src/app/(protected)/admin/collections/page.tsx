@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { IconEdit, IconTrash, IconPlus } from '@tabler/icons-react';
 import { toast } from 'sonner';
 
@@ -43,6 +44,7 @@ const formatDate = (value?: string | null) => {
 };
 
 export default function CollectionsPage() {
+    const { t } = useTranslation('common');
     const [collections, setCollections] = useState<CollectionRow[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -89,7 +91,7 @@ export default function CollectionsPage() {
     const confirmDelete = async () => {
         if (!collectionToDelete) return;
         setIsDeletingCollection(true);
-        const toastId = toast.loading('Deleting collection...');
+        const toastId = toast.loading(t('adminCollections.dialog.deleting'));
         try {
             await deleteCollection(collectionToDelete.id);
             setCollections((current) =>
@@ -106,7 +108,7 @@ export default function CollectionsPage() {
                         : item
                 )
             );
-            toast.success('Collection deleted.', { id: toastId });
+            toast.success(t('adminCollections.dialog.deleted'), { id: toastId });
             setCollectionToDelete(null);
         } catch (error) {
             console.error('Delete collection error:', error);
@@ -124,12 +126,12 @@ export default function CollectionsPage() {
     const confirmActivate = async () => {
         if (!collectionToActivate) return;
         setIsActivatingCollection(true);
-        const toastId = toast.loading('Activating collection...');
+        const toastId = toast.loading(t('adminCollections.dialog.activating'));
 
         try {
             await updateCollection(collectionToActivate.id, { is_active: true });
             setCollections((current) => current.map((c) => (c.id === collectionToActivate.id ? { ...c, is_active: true } : c)));
-            toast.success('Collection activated.', { id: toastId });
+            toast.success(t('adminCollections.dialog.activated'), { id: toastId });
             setCollectionToActivate(null);
             loadCollections();
         } catch (error) {
@@ -145,28 +147,28 @@ export default function CollectionsPage() {
         () => [
             {
                 key: 'name',
-                label: 'Collection',
+                label: t('adminCollections.table.collection'),
                 render: (value) => (
                     <p className="font-semibold text-on-surface">{value}</p>
                 ),
             },
             {
                 key: 'starts_at',
-                label: 'Start',
+                label: t('adminCollections.table.start'),
                 render: (value) => (
                     <span className="text-sm text-secondary">{formatDate(value)}</span>
                 ),
             },
             {
                 key: 'ends_at',
-                label: 'End',
+                label: t('adminCollections.table.end'),
                 render: (value) => (
                     <span className="text-sm text-secondary">{formatDate(value)}</span>
                 ),
             },
             {
                 key: 'is_active',
-                label: 'Status',
+                label: t('adminCollections.table.status'),
                 render: (value) => (
                     <span
                         className={`rounded-full px-3 py-1 text-xs font-semibold ${value
@@ -174,24 +176,24 @@ export default function CollectionsPage() {
                             : 'bg-surface-container-high text-secondary'
                             }`}
                     >
-                        {value ? 'Active' : 'Inactive'}
+                        {value ? t('adminCollections.table.active') : t('adminCollections.table.inactive')}
                     </span>
                 ),
             },
         ],
-        []
+        [t]
     );
 
     const actions: TableAction<CollectionRow>[] = [
         {
-            label: 'Edit',
+            label: t('adminCollections.actions.edit'),
             icon: <IconEdit className="h-4 w-4" stroke={2} />,
             onClick: (row) => setEditingCollection(row._raw),
             className:
                 'flex h-9 w-9 items-center justify-center rounded-full bg-surface-container-high text-secondary transition-colors hover:bg-surface-container-highest hover:text-primary',
         },
         {
-            label: (row) => (row.is_active ? 'Delete' : 'Activate'),
+            label: (row) => (row.is_active ? t('adminCollections.actions.delete') : t('adminCollections.actions.activate')),
             icon: (row) => (row.is_active ? <IconTrash className="h-4 w-4" stroke={2} /> : <IconPlus className="h-4 w-4" stroke={2} />),
             onClick: (row) => (row.is_active ? handleDelete(row) : handleActivate(row)),
             className: (row) =>
@@ -207,10 +209,10 @@ export default function CollectionsPage() {
                 <div className="space-y-3">
                     <div className="space-y-2">
                         <h1 className="font-headline text-4xl font-black tracking-tight text-on-surface sm:text-5xl">
-                            Collection Management
+                            {t('adminCollections.title')}
                         </h1>
                         <p className="max-w-2xl text-base text-secondary sm:text-lg">
-                            Curate seasonal drops, fandom collections, and featured showcases.
+                            {t('adminCollections.subtitle')}
                         </p>
                     </div>
                 </div>
@@ -243,7 +245,7 @@ export default function CollectionsPage() {
                     columns={columns}
                     data={collections}
                     actions={actions}
-                    searchPlaceholder="Search collections..."
+                    searchPlaceholder={t('adminDataTable.search')}
                     searchableFields={['name']}
                     itemsPerPage={10}
                 />
@@ -257,9 +259,9 @@ export default function CollectionsPage() {
             >
                 <AlertDialogContent size="sm">
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Delete collection?</AlertDialogTitle>
+                        <AlertDialogTitle>{t('adminCollections.dialog.deleteTitle')}</AlertDialogTitle>
                         <div className="text-sm leading-6 text-secondary">
-                            This will delete <span className="font-semibold text-on-surface">{collectionToDelete?.name}</span> and remove it from listings.
+                            {t('adminCollections.dialog.deleteDesc', { name: collectionToDelete?.name })}
                         </div>
                     </AlertDialogHeader>
 
@@ -268,7 +270,7 @@ export default function CollectionsPage() {
                             disabled={isDeletingCollection}
                             className="rounded-full border-none bg-surface-container-high px-5 py-3 text-sm font-bold text-on-surface hover:bg-surface-container-highest"
                         >
-                            Cancel
+                            {t('adminDiscounts.form.cancel')}
                         </AlertDialogCancel>
                         <AlertDialogAction
                             onClick={(e) => {
@@ -278,7 +280,7 @@ export default function CollectionsPage() {
                             disabled={isDeletingCollection}
                             className="rounded-full bg-error px-5 py-3 text-sm font-bold text-on-error shadow-[0_10px_20px_-5px_rgba(164,0,21,0.3)] hover:bg-error/90"
                         >
-                            {isDeletingCollection ? 'Deleting...' : 'Delete'}
+                            {isDeletingCollection ? t('adminCollections.dialog.deleting') : t('adminCollections.actions.delete')}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
@@ -292,9 +294,9 @@ export default function CollectionsPage() {
             >
                 <AlertDialogContent size="sm">
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Activate collection?</AlertDialogTitle>
+                        <AlertDialogTitle>{t('adminCollections.dialog.activateTitle')}</AlertDialogTitle>
                         <div className="text-sm leading-6 text-secondary">
-                            This will activate <span className="font-semibold text-on-surface">{collectionToActivate?.name}</span> and make it visible again in listings.
+                            {t('adminCollections.dialog.activateDesc', { name: collectionToActivate?.name })}
                         </div>
                     </AlertDialogHeader>
 
@@ -303,7 +305,7 @@ export default function CollectionsPage() {
                             disabled={isActivatingCollection}
                             className="rounded-full border-none bg-surface-container-high px-5 py-3 text-sm font-bold text-on-surface hover:bg-surface-container-highest"
                         >
-                            Cancel
+                            {t('adminDiscounts.form.cancel')}
                         </AlertDialogCancel>
                         <AlertDialogAction
                             onClick={(e) => {
@@ -313,14 +315,14 @@ export default function CollectionsPage() {
                             disabled={isActivatingCollection}
                             className="rounded-full bg-primary px-5 py-3 text-sm font-bold text-on-primary shadow-[0_10px_20px_-5px_rgba(0,104,74,0.3)] hover:bg-primary-container"
                         >
-                            {isActivatingCollection ? 'Activating...' : 'Activate'}
+                            {isActivatingCollection ? t('adminCollections.dialog.activating') : t('adminCollections.actions.activate')}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
 
             {isLoading ? (
-                <div className="text-sm text-secondary">Loading collections...</div>
+                <div className="text-sm text-secondary">{t('adminCollections.dialog.loading')}</div>
             ) : null}
         </div>
     );

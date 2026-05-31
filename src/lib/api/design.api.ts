@@ -8,8 +8,9 @@ export interface Design {
   id: string;
   user_id?: string | null;
   product_id: string;
+  base?: 'mini_figure' | 'bag' | 'hat' | null;
   prompt_text?: string | null;
-  selected_colors?: Record<string, any> | null;
+  selected_colors?: Record<string, unknown> | null;
   complexity_score?: number | null;
   mockup_image_url?: string | null;
   mockup_storage_path?: string | null;
@@ -19,7 +20,6 @@ export interface Design {
   customization_fee: number;
   status: DesignStatus;
   generation_attempts: number;
-  variant_suggestions?: any[] | null;
   created_at: string;
   updated_at: string;
   products?: ProductListItem | null; // Attached base product
@@ -36,13 +36,13 @@ export interface EphemeralDesign {
 
 export interface GenerationRequest {
   productType: 'mini_figure' | 'bag' | 'hat';
-  options?: Record<string, any>;
+  options?: Record<string, unknown>;
   customPrompt?: string;
 }
 
 export interface SaveRequest {
   productType: 'mini_figure' | 'bag' | 'hat';
-  options?: Record<string, any>;
+  options?: Record<string, unknown>;
   customPrompt?: string;
   mockupImageUrl: string;
   aiPromptUsed: string;

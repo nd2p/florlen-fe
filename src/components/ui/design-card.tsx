@@ -26,14 +26,11 @@ export default function DesignCard({ design, onEdit, onDelete, onAddToCart }: De
   const { t, i18n } = useTranslation('common');
 
   const promptUsed = design.ai_prompt_used?.toLowerCase() || '';
-  const isMiniFigure = promptUsed.includes('mini_figure');
-  const isBag = promptUsed.includes('bag');
-  const isHat = promptUsed.includes('hat');
+  const isMiniFigure = design.base === 'mini_figure' || (!design.base && promptUsed.includes('mini_figure'));
+  const isBag = design.base === 'bag' || (!design.base && promptUsed.includes('bag'));
+  const isHat = design.base === 'hat' || (!design.base && promptUsed.includes('hat'));
 
-  const basePrice =
-    design.products?.base_price || (isMiniFigure ? 250000 : isBag ? 150000 : 120000);
-  const custFee = design.customization_fee || 0;
-  const totalPrice = Number(basePrice) + Number(custFee);
+  const totalPrice = design.customization_fee || 0;
 
   const displayType = isMiniFigure
     ? t('aiStudio.productMiniFigure')
@@ -51,6 +48,7 @@ export default function DesignCard({ design, onEdit, onDelete, onAddToCart }: De
       {/* Mockup Frame */}
       <div className="relative aspect-square w-full bg-surface-container overflow-hidden">
         {design.mockup_image_url ? (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={design.mockup_image_url}
             alt={design.prompt_text || 'AI Design'}

@@ -33,7 +33,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 <input
                     ref={ref}
                     id={id}
-                    className={`w-full px-6 py-4 bg-surface-container-low border-none rounded-xl font-body text-on-surface focus:ring-2 focus:ring-primary focus:bg-surface transition-all outline-none ${
+                    className={`w-full px-6 py-4 bg-surface-container-low border-none rounded-xl font-body text-on-surface focus:ring-2 focus:ring-primary focus:bg-surface disabled:opacity-60 disabled:cursor-not-allowed transition-all outline-none ${
                         error ? "focus:ring-error" : ""
                     } ${className}`}
                     {...props}

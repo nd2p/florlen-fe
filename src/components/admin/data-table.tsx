@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { IconChevronDown, IconSearch } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 import Input from '@/components/ui/input';
@@ -51,10 +52,12 @@ export default function DataTable<T extends { id: string }>({
     filterOptions,
     itemsPerPage = 10,
 }: DataTableProps<T>) {
+    const { t } = useTranslation('common');
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
     const [itemsPerPageValue, setItemsPerPageValue] = useState(itemsPerPage);
     const [selectedFilterValue, setSelectedFilterValue] = useState<string | null>(null);
+    const actualPlaceholder = searchPlaceholder || t('adminDataTable.search');
 
     const filteredData = data.filter((item) => {
         if (!searchTerm || searchableFields.length === 0) return true;
@@ -90,8 +93,8 @@ export default function DataTable<T extends { id: string }>({
                     />
                     <Input
                         type="search"
-                        aria-label={searchPlaceholder}
-                        placeholder={searchPlaceholder}
+                        aria-label={actualPlaceholder}
+                        placeholder={actualPlaceholder}
                         value={searchTerm}
                         onChange={(e) => handleSearch(e.target.value)}
                         className="h-14 rounded-full bg-surface-container-highest pl-12 pr-5 text-sm text-on-surface placeholder:text-secondary/70"
@@ -145,7 +148,7 @@ export default function DataTable<T extends { id: string }>({
                                 </th>
                             ))}
                             {actions && actions.length > 0 && (
-                                <th className="px-6 py-5 text-right text-sm font-semibold text-secondary">Actions</th>
+                                <th className="px-6 py-5 text-right text-sm font-semibold text-secondary">{t('adminDataTable.actions')}</th>
                             )}
                         </tr>
                     </thead>
@@ -215,7 +218,7 @@ export default function DataTable<T extends { id: string }>({
                                     colSpan={columns.length + (actions ? 1 : 0)}
                                     className="px-6 py-12 text-center"
                                 >
-                                    <p className="text-secondary">No data found.</p>
+                                    <p className="text-secondary">{t('adminDataTable.noData')}</p>
                                 </td>
                             </tr>
                         )}
@@ -226,7 +229,7 @@ export default function DataTable<T extends { id: string }>({
             <div className="flex items-center justify-between rounded-[1.5rem] bg-surface-container-low p-4 shadow-[0_22px_50px_-40px_rgba(27,28,28,0.28)]">
                 <div className="flex items-center gap-3">
                     <p className="text-sm text-secondary">
-                        Page {currentPage} of {totalPages} ({filteredData.length} items)
+                        {t('adminDataTable.pagination', { page: currentPage, total: totalPages, count: filteredData.length })}
                     </p>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -236,7 +239,7 @@ export default function DataTable<T extends { id: string }>({
                                 size="sm"
                                 className="rounded-full bg-surface-container-high px-3 py-1.5 text-xs font-medium text-secondary hover:bg-surface-container-highest"
                             >
-                                Show: <span className="font-semibold text-on-surface">{itemsPerPageValue}</span>
+                                {t('adminDataTable.show')} <span className="font-semibold text-on-surface">{itemsPerPageValue}</span>
                                 <IconChevronDown className="h-4 w-4" stroke={2} />
                             </Button>
                         </DropdownMenuTrigger>
@@ -264,7 +267,7 @@ export default function DataTable<T extends { id: string }>({
                         onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                         disabled={currentPage === 1}
                         className="h-10 w-10 rounded-full bg-surface-container-high px-0 py-0 text-on-surface hover:bg-surface-container-highest disabled:cursor-not-allowed"
-                        aria-label="Previous page"
+                        aria-label={t('adminDataTable.previous')}
                     >
                         ←
                     </Button>
@@ -275,7 +278,7 @@ export default function DataTable<T extends { id: string }>({
                         onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                         disabled={currentPage === totalPages}
                         className="h-10 w-10 rounded-full bg-surface-container-high px-0 py-0 text-on-surface hover:bg-surface-container-highest disabled:cursor-not-allowed"
-                        aria-label="Next page"
+                        aria-label={t('adminDataTable.next')}
                     >
                         →
                     </Button>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   IconSparkles,
@@ -44,8 +45,9 @@ interface AccessoryItem {
 }
 
 export default function AIManagementPage() {
+  const { t } = useTranslation('common');
   // Config state
-  const [config, setConfig] = useState<AdminAIConfig | null>(null);
+  const [, setConfig] = useState<AdminAIConfig | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -98,18 +100,18 @@ export default function AIManagementPage() {
         }
       } catch (err: unknown) {
         console.error('Failed to load admin AI config:', err);
-        toast.error('Không thể tải cấu hình AI. Vui lòng thử lại!');
+        toast.error(t('adminAI.loadError') || 'Failed to load AI configurations.');
       } finally {
         setIsLoading(false);
       }
     }
     loadConfig();
-  }, []);
+  }, [t]);
 
   // Save configurations
   const handleSaveChanges = async () => {
     setIsSaving(true);
-    const toastId = toast.loading('Đang lưu thay đổi cấu hình...');
+    const toastId = toast.loading(t('adminAI.saving'));
 
     // Convert accessories list back to key-value object
     const accConfigObj: Record<string, { labelKey: string; label: string; price: number }> = {};
@@ -130,10 +132,10 @@ export default function AIManagementPage() {
 
     try {
       await updateAdminAIConfig(payload);
-      toast.success('Cấu hình AI đã được cập nhật thành công!', { id: toastId });
+      toast.success(t('adminAI.updated'), { id: toastId });
     } catch (err: unknown) {
       console.error('Failed to update config:', err);
-      toast.error('Lưu thay đổi thất bại. Vui lòng kiểm tra lại!', { id: toastId });
+      toast.error(t('adminAI.saveError'), { id: toastId });
     } finally {
       setIsSaving(false);
     }
@@ -162,7 +164,7 @@ export default function AIManagementPage() {
   // Save Accessory (Create / Update local state list)
   const handleSaveAccessory = () => {
     if (!accKey.trim() || !accLabel.trim() || !accLabelKey.trim()) {
-      toast.error('Vui lòng điền đầy đủ các trường thông tin!');
+      toast.error(t('adminAI.accRequired'));
       return;
     }
 
@@ -170,7 +172,7 @@ export default function AIManagementPage() {
 
     // Check conflict for new accessory keys
     if (!editingAcc && accessories.some((a) => a.key === key)) {
-      toast.error('Key này đã tồn tại! Vui lòng chọn key khác.');
+      toast.error(t('adminAI.accConflict'));
       return;
     }
 
@@ -184,11 +186,11 @@ export default function AIManagementPage() {
     if (editingAcc) {
       // Edit mode
       setAccessories((prev) => prev.map((a) => (a.key === editingAcc.key ? newAcc : a)));
-      toast.success('Đã cập nhật phụ kiện trong danh sách tạm thời');
+      toast.success(t('adminAI.accUpdated'));
     } else {
       // Add mode
       setAccessories((prev) => [...prev, newAcc]);
-      toast.success('Đã thêm phụ kiện mới vào danh sách tạm thời');
+      toast.success(t('adminAI.accAdded'));
     }
 
     setIsAccDialogOpen(false);
@@ -199,14 +201,14 @@ export default function AIManagementPage() {
     if (!deletingAccKey) return;
     setAccessories((prev) => prev.filter((a) => a.key !== deletingAccKey));
     setDeletingAccKey(null);
-    toast.success('Đã xóa phụ kiện khỏi danh sách tạm thời');
+    toast.success(t('adminAI.accDeleted'));
   };
 
   if (isLoading) {
     return (
       <div className="flex h-[70vh] w-full flex-col items-center justify-center gap-4">
         <IconLoader className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-sm font-semibold text-secondary">Đang tải cấu hình AI...</p>
+        <p className="text-sm font-semibold text-secondary">{t('adminAI.loading')}</p>
       </div>
     );
   }
@@ -219,12 +221,11 @@ export default function AIManagementPage() {
           <div className="flex items-center gap-2 text-primary">
             <IconSparkles className="h-8 w-8" />
             <h1 className="font-headline text-4xl font-black tracking-tight text-on-surface sm:text-5xl">
-              AI Management
+              {t('adminAI.title')}
             </h1>
           </div>
           <p className="max-w-2xl text-base text-secondary">
-            Cấu hình khóa tích hợp Gemini, quản lý danh mục phụ kiện và thiết lập khung giá sản phẩm
-            AI Studio.
+            {t('adminAI.subtitle')}
           </p>
         </div>
 
@@ -239,7 +240,7 @@ export default function AIManagementPage() {
           ) : (
             <IconDeviceFloppy className="h-4 w-4" />
           )}
-          Lưu tất cả thay đổi
+          {t('adminAI.saveChanges')}
         </Button>
       </section>
 
@@ -249,17 +250,16 @@ export default function AIManagementPage() {
         <div className="lg:col-span-1 space-y-8">
           {/* Gemini API Key Card */}
           <div className="rounded-3xl border border-outline/10 bg-surface-container-lowest p-6 shadow-md transition-all duration-300 hover:shadow-lg">
-            <h2 className="text-lg font-bold text-on-surface mb-4">Gemini API Integration</h2>
+            <h2 className="text-lg font-bold text-on-surface mb-4">{t('adminAI.apiIntegration')}</h2>
             <p className="text-xs text-secondary mb-4 leading-relaxed">
-              Khóa API kết nối trực tiếp với Google AI Gemini Studio để soạn thảo prompt và phân
-              tích ngôn ngữ tự nhiên.
+              {t('adminAI.apiDesc')}
             </p>
             <div className="relative">
               <Input
                 type={showApiKey ? 'text' : 'password'}
                 value={geminiApiKey}
                 onChange={(e) => setGeminiApiKey(e.target.value)}
-                placeholder="Nhập GEMINI_API_KEY..."
+                placeholder={t('adminAI.apiKeyPlaceholder')}
                 className="pr-12"
               />
               <button
@@ -274,15 +274,14 @@ export default function AIManagementPage() {
 
           {/* Surcharges & Illustration Pricing */}
           <div className="rounded-3xl border border-outline/10 bg-surface-container-lowest p-6 shadow-md transition-all duration-300 hover:shadow-lg">
-            <h2 className="text-lg font-bold text-on-surface mb-4">Surcharges & Drawing Price</h2>
+            <h2 className="text-lg font-bold text-on-surface mb-4">{t('adminAI.drawingPrice')}</h2>
             <p className="text-xs text-secondary mb-4 leading-relaxed">
-              Khung giá thu thêm khi khách hàng yêu cầu thêm họa tiết thêu hoặc hình vẽ đơn giản lên
-              bề mặt túi/mũ.
+              {t('adminAI.drawingDesc')}
             </p>
             <div className="space-y-4">
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-secondary mb-2">
-                  Phí vẽ/thêu họa tiết (VND)
+                  {t('adminAI.illustrationFee')}
                 </label>
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-secondary font-bold z-10">
@@ -306,17 +305,16 @@ export default function AIManagementPage() {
         <div className="lg:col-span-2 space-y-8">
           {/* Base Product Pricing Card */}
           <div className="rounded-3xl border border-outline/10 bg-surface-container-lowest p-6 shadow-md transition-all duration-300 hover:shadow-lg">
-            <h2 className="text-lg font-bold text-on-surface mb-4">Base Product Prices</h2>
+            <h2 className="text-lg font-bold text-on-surface mb-4">{t('adminAI.basePrices')}</h2>
             <p className="text-xs text-secondary mb-6 leading-relaxed">
-              Thiết lập giá gốc cho các dòng sản phẩm nền của AI Studio. Người dùng sẽ phải trả mức
-              phí nền này cộng với các chi phí phụ kiện custom.
+              {t('adminAI.basePricesDesc')}
             </p>
 
             <div className="grid gap-6 sm:grid-cols-3">
               {/* Keychain Crochet */}
               <div className="rounded-2xl bg-surface-container p-4 space-y-2 border border-outline/5">
                 <span className="text-xs font-bold text-secondary uppercase block">
-                  Móc khóa companion
+                  {t('adminAI.keychainCompanion')}
                 </span>
                 <span className="text-[10px] text-primary bg-primary/5 px-2.5 py-0.5 rounded-full font-bold inline-block">
                   mini_figure
@@ -342,7 +340,7 @@ export default function AIManagementPage() {
               {/* Mini Plush Bag */}
               <div className="rounded-2xl bg-surface-container p-4 space-y-2 border border-outline/5">
                 <span className="text-xs font-bold text-secondary uppercase block">
-                  Túi len Mini Plush
+                  {t('adminAI.bagMiniPlush')}
                 </span>
                 <span className="text-[10px] text-primary bg-primary/5 px-2.5 py-0.5 rounded-full font-bold inline-block">
                   bag
@@ -368,7 +366,7 @@ export default function AIManagementPage() {
               {/* Mini Sweater Hat */}
               <div className="rounded-2xl bg-surface-container p-4 space-y-2 border border-outline/5">
                 <span className="text-xs font-bold text-secondary uppercase block">
-                  Mũ len Mini Sweater
+                  {t('adminAI.hatMiniSweater')}
                 </span>
                 <span className="text-[10px] text-primary bg-primary/5 px-2.5 py-0.5 rounded-full font-bold inline-block">
                   hat
@@ -397,9 +395,9 @@ export default function AIManagementPage() {
           <div className="rounded-3xl border border-outline/10 bg-surface-container-lowest p-6 shadow-md transition-all duration-300 hover:shadow-lg">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-lg font-bold text-on-surface">Accessories Config (Keychain)</h2>
+                <h2 className="text-lg font-bold text-on-surface">{t('adminAI.accConfig')}</h2>
                 <p className="text-xs text-secondary leading-relaxed mt-1">
-                  Định nghĩa các lựa chọn phụ trang/phụ kiện của Keychain Companion.
+                  {t('adminAI.accConfigDesc')}
                 </p>
               </div>
 
@@ -409,7 +407,7 @@ export default function AIManagementPage() {
                 size="sm"
                 className="flex items-center gap-1.5"
               >
-                <IconPlus className="h-3.5 w-3.5" /> Thêm phụ kiện
+                <IconPlus className="h-3.5 w-3.5" /> {t('adminAI.addAcc')}
               </Button>
             </div>
 
@@ -418,24 +416,24 @@ export default function AIManagementPage() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b border-outline/5 text-xs font-bold uppercase tracking-wider text-secondary">
-                    <th className="py-3 px-4">Key</th>
-                    <th className="py-3 px-4">Tên phụ kiện (Vie)</th>
-                    <th className="py-3 px-4">I18n Translation Key</th>
-                    <th className="py-3 px-4 text-right">Mức giá</th>
-                    <th className="py-3 px-4 text-center">Thao tác</th>
+                    <th className="py-3 px-4">{t('adminAI.table.key')}</th>
+                    <th className="py-3 px-4">{t('adminAI.table.name')}</th>
+                    <th className="py-3 px-4">{t('adminAI.table.i18n')}</th>
+                    <th className="py-3 px-4 text-right">{t('adminAI.table.price')}</th>
+                    <th className="py-3 px-4 text-center">{t('adminAI.table.actions')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-outline/5">
                   {accessories.length === 0 ? (
                     <tr>
                       <td colSpan={5} className="py-8 text-center text-xs text-secondary italic">
-                        Không có phụ kiện nào. Hãy click "Thêm phụ kiện"!
+                        {t('adminAI.emptyAcc')}
                       </td>
                     </tr>
                   ) : (
                     accessories.map((item) => (
                       <tr
-                        key={item.key}
+                         key={item.key}
                         className="text-sm hover:bg-surface-container-low transition-colors"
                       >
                         <td className="py-4 px-4 font-mono font-bold text-secondary text-xs">
@@ -478,39 +476,39 @@ export default function AIManagementPage() {
       <Dialog open={isAccDialogOpen} onOpenChange={setIsAccDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editingAcc ? 'Cập nhật phụ kiện' : 'Thêm phụ kiện mới'}</DialogTitle>
+            <DialogTitle>{editingAcc ? t('adminAI.editAcc') : t('adminAI.newAcc')}</DialogTitle>
           </DialogHeader>
 
           <DialogBody className="space-y-4">
             <Input
-              label="Accessory Unique Key (e.g. hair, scarf)"
+              label={t('adminAI.accKeyLabel')}
               type="text"
               value={accKey}
               onChange={(e) => setAccKey(e.target.value)}
               disabled={Boolean(editingAcc)}
-              placeholder="Nhập unique key..."
+              placeholder={t('adminAI.accKeyPlaceholder')}
               className="font-mono"
             />
 
             <Input
-              label="Tên phụ kiện tiếng Việt (e.g. Tóc giả, Khăn quàng)"
+              label={t('adminAI.accNameLabel')}
               type="text"
               value={accLabel}
               onChange={(e) => setAccLabel(e.target.value)}
-              placeholder="Nhập tên phụ kiện..."
+              placeholder={t('adminAI.accNamePlaceholder')}
             />
 
             <Input
-              label="Translation Key i18n (e.g. accessoryHair, accessoryScarf)"
+              label={t('adminAI.accI18nLabel')}
               type="text"
               value={accLabelKey}
               onChange={(e) => setAccLabelKey(e.target.value)}
-              placeholder="Nhập translation key..."
+              placeholder={t('adminAI.accI18nPlaceholder')}
             />
 
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-secondary mb-2">
-                Đơn giá phụ kiện (₫)
+                {t('adminAI.accPriceLabel')}
               </label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-secondary font-bold z-10">
@@ -532,13 +530,13 @@ export default function AIManagementPage() {
               variant="secondary"
               className="rounded-full py-3 text-sm px-5"
             >
-              Hủy
+              {t('adminAI.cancel')}
             </Button>
             <Button
               onClick={handleSaveAccessory}
               className="flex items-center gap-1.5 rounded-full py-3 text-sm px-5"
             >
-              <IconCheck className="h-4 w-4" stroke={3} /> Xác nhận
+              <IconCheck className="h-4 w-4" stroke={3} /> {t('adminAI.confirm')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -553,22 +551,19 @@ export default function AIManagementPage() {
       >
         <AlertDialogContent size="sm">
           <AlertDialogHeader>
-            <AlertDialogTitle>Xóa phụ kiện?</AlertDialogTitle>
+            <AlertDialogTitle>{t('adminAI.deleteTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Bạn có chắc chắn muốn xóa phụ kiện{' '}
-              <span className="font-mono font-bold text-on-surface">"{deletingAccKey}"</span> khỏi
-              danh sách cấu hình tạm thời?
+              {t('adminAI.deleteDesc', { key: deletingAccKey })}
               <br />
               <span className="text-[11px] text-secondary mt-1 block">
-                (Lưu ý: Thay đổi chỉ chính thức được áp dụng khi bạn click "Lưu tất cả thay đổi" ở
-                góc trên)
+                {t('adminAI.deleteWarn')}
               </span>
             </AlertDialogDescription>
           </AlertDialogHeader>
 
           <AlertDialogFooter>
-            <AlertDialogCancel>Hủy</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteAccessory}>Xác nhận xóa</AlertDialogAction>
+            <AlertDialogCancel>{t('adminAI.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteAccessory}>{t('adminAI.deleteConfirm')}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

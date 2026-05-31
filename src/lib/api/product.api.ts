@@ -16,6 +16,7 @@ export type ProductImageUpload = {
 };
 
 export type ProductVariantInput = {
+  id?: string;
   sku_suffix: string;
   size?: string;
   color_name?: string;
@@ -62,6 +63,7 @@ export type ProductListItem = {
   product_type?: ProductType;
   collection_id?: string | null;
   is_active?: boolean;
+  is_featured?: boolean;
   available_stock?: number | null;
   product_images?: ProductImage[];
   product_variants?: ProductVariant[];
@@ -99,6 +101,7 @@ export type CreateProductInput = {
   production_days_min: number;
   production_days_max: number;
   is_active?: boolean;
+  is_featured?: boolean;
 };
 
 export async function uploadProductImages(files: File[]): Promise<ProductImageUpload[]> {

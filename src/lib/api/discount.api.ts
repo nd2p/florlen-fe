@@ -1,5 +1,13 @@
 import client from './client';
 
+export interface AssignedUser {
+  id: string;
+  full_name: string | null;
+  display_name: string | null;
+  email: string | null;
+  avatar_url: string | null;
+}
+
 export interface Voucher {
   id: string;
   code: string;
@@ -11,6 +19,8 @@ export interface Voucher {
   limit_per_user?: number | null;
   used_count: number;
   is_active: boolean;
+  user_ids?: string[];
+  assigned_users?: AssignedUser[];
   created_at: string;
   updated_at: string;
 }
@@ -82,4 +92,23 @@ export async function deleteVoucher(id: string): Promise<{ message: string }> {
 export async function validateVoucher(code: string, subtotal: number): Promise<ValidateVoucherResponse> {
   const res = await client.post<ValidateVoucherResponse>('/discounts/validate', { code, subtotal });
   return res.data;
+}
+
+export interface AvailableVoucher {
+  id: string;
+  code: string;
+  discount_type: 'percentage' | 'fixed_amount' | 'free_shipping';
+  discount_value: number;
+  end_date?: string | null;
+  discountAmount: number;
+}
+
+/**
+ * Fetch all vouchers available for the current authenticated user at checkout
+ */
+export async function getAvailableVouchers(subtotal: number): Promise<AvailableVoucher[]> {
+  const res = await client.get<{ vouchers: AvailableVoucher[] }>('/discounts/available', {
+    params: { subtotal },
+  });
+  return res.data.vouchers;
 }

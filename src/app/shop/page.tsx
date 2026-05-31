@@ -6,7 +6,6 @@ import {
   SlidersHorizontal, 
   ArrowUpDown, 
   ChevronUp, 
-  Loader2, 
   X, 
   RotateCcw, 
   Search,
@@ -170,6 +169,7 @@ export default function ShopPage() {
 
   // Scroll to top button visibility
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setShowScrollTop(products.length > SCROLL_TOP_THRESHOLD);
   }, [products.length]);
 

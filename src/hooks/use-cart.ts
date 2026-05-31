@@ -16,7 +16,18 @@ import { getOrCreateSessionId, clearSessionId } from '@/lib/session';
 export const isCartItemActive = (item: CartItem) => {
   if (item.products === undefined) return true;
   if (item.products === null) return false;
-  return item.products.is_active !== false && !item.products.deleted_at;
+
+  if (item.products.is_active === false || item.products.deleted_at) {
+    return false;
+  }
+
+  if (item.variant_id && item.product_variants) {
+    if (item.product_variants.is_active === false) {
+      return false;
+    }
+  }
+
+  return true;
 };
 
 interface CartState {

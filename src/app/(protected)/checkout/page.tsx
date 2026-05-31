@@ -11,7 +11,7 @@ import CheckoutForm from '@/components/checkout/checkout-form';
 import OrderSummary from '@/components/checkout/order-summary';
 import { UserAddress } from '@/lib/api/address.api';
 import { createOrder } from '@/lib/api/order.api';
-import { validateVoucher } from '@/lib/api/discount.api';
+import { validateVoucher, type AvailableVoucher } from '@/lib/api/discount.api';
 import {
     IconArrowLeft,
     IconAlertTriangle,
@@ -43,9 +43,40 @@ export default function CheckoutPage() {
 
     // Checkout options
     const [paymentOption, setPaymentOption] = useState<'full' | 'deposit'>('full');
-    const [promoCode, setPromoCode] = useState('');
     const [appliedPromo, setAppliedPromo] = useState<{ code: string; type: 'flat' | 'percentage'; value: number } | null>(null);
-    const [promoError, setPromoError] = useState('');
+
+    // Financial math — declared early so useEffect can reference subtotal
+    const subtotal = totalAmount;
+    const shippingFee = 0;
+    const handmadeFee = 0;
+
+    // Listen to voucher:select event dispatched from the picker inside OrderSummary
+    useEffect(() => {
+        const handleVoucherSelect = async (e: Event) => {
+            const v = (e as CustomEvent<AvailableVoucher>).detail;
+            try {
+                // Re-validate via API to be safe (checks user assignment, limits, etc.)
+                const res = await validateVoucher(v.code, subtotal);
+                setAppliedPromo({
+                    code: res.code,
+                    type: res.discountType === 'percentage' ? 'percentage' : 'flat',
+                    value: res.discountType === 'percentage' ? res.discountValue / 100 : res.discountValue,
+                });
+                toast.success(
+                    i18n.resolvedLanguage?.startsWith('vi')
+                        ? `Đã áp dụng mã ${v.code}!`
+                        : `Applied code ${v.code}!`
+                );
+            } catch (err: unknown) {
+                console.error('Voucher select validation error:', err);
+                const errorObj = err as { response?: { data?: { message?: string } }; message?: string };
+                const message = errorObj?.response?.data?.message || errorObj?.message || 'Mã giảm giá không hợp lệ';
+                toast.error(message);
+            }
+        };
+        window.addEventListener('voucher:select', handleVoucherSelect);
+        return () => window.removeEventListener('voucher:select', handleVoucherSelect);
+    }, [subtotal, i18n.resolvedLanguage]);
 
     // Show cancelled message if redirected from PayOS
     const wasCancelled = searchParams.get('cancelled') === 'true';
@@ -65,11 +96,6 @@ export default function CheckoutPage() {
             router.push('/cart');
         }
     }, [activeItems, router]);
-
-    // Financial math
-    const subtotal = totalAmount;
-    const shippingFee = 0;
-    const handmadeFee = 0;
 
     // Discount calculations
     let discount = 0;
@@ -93,32 +119,8 @@ export default function CheckoutPage() {
         }
     };
 
-    // Handle Promo Code submission
-    const handleApplyPromo = async () => {
-        setPromoError('');
-        const trimmedCode = promoCode.trim().toUpperCase();
-        if (!trimmedCode) return;
-
-        try {
-            const res = await validateVoucher(trimmedCode, subtotal);
-            setAppliedPromo({
-                code: res.code,
-                type: res.discountType === 'percentage' ? 'percentage' : 'flat',
-                value: res.discountType === 'percentage' ? res.discountValue / 100 : res.discountValue
-            });
-            toast.success(t('checkout.appliedPromo'));
-        } catch (err: any) {
-            console.error('Validate promo error:', err);
-            const message = err?.response?.data?.message || err?.message || t('checkout.invalidPromo');
-            setPromoError(message);
-            toast.error(message);
-        }
-    };
-
     const handleRemovePromo = () => {
         setAppliedPromo(null);
-        setPromoCode('');
-        setPromoError('');
     };
 
     // Final order placement — calls real API and redirects to PayOS
@@ -223,11 +225,7 @@ export default function CheckoutPage() {
                     <div className="lg:col-span-5 sticky top-32">
                         <OrderSummary
                             activeItems={activeItems}
-                            promoCode={promoCode}
-                            setPromoCode={setPromoCode}
                             appliedPromo={appliedPromo}
-                            promoError={promoError}
-                            handleApplyPromo={handleApplyPromo}
                             handleRemovePromo={handleRemovePromo}
                             subtotal={subtotal}
                             shippingFee={shippingFee}

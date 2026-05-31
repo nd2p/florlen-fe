@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import Image from 'next/image';
 import { IconCircleCheck, IconDownload, IconEdit, IconTrash } from '@tabler/icons-react';
 import { toast } from 'sonner';
@@ -43,23 +44,24 @@ type ProductRow = {
     images: ProductImage[] | null;
     variants: ProductVariant[] | null;
     stock: number | null;
+    isFeatured: boolean;
 };
 
 const formatCurrency = (value: number) =>
     Number(value || 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
 
-const formatType = (value?: ProductType | null) => {
-    if (!value) return 'Unassigned';
-    if (value === 'ai_base') return 'AI Base';
-    if (value === 'add_ons') return 'Add-ons';
-    return 'Normal';
+const formatType = (value?: ProductType | null, t?: (key: string) => string) => {
+    if (!value) return t ? t('adminProducts.table.unassigned') : 'Unassigned';
+    if (value === 'ai_base') return t ? t('adminProducts.table.aiBase') : 'AI Base';
+    if (value === 'add_ons') return t ? t('adminProducts.table.addons') : 'Add-ons';
+    return t ? t('adminProducts.table.normal') : 'Normal';
 };
 
-const formatStatus = (isActive: boolean) =>
+const formatStatus = (isActive: boolean, t?: (key: string) => string) =>
     isActive ? (
-        <Badge variant="active">Active</Badge>
+        <Badge variant="active">{t ? t('adminProducts.table.active') : 'Active'}</Badge>
     ) : (
-        <Badge variant="inactive">Inactive</Badge>
+        <Badge variant="inactive">{t ? t('adminProducts.table.inactive') : 'Inactive'}</Badge>
     );
 
 const getPrimaryImage = (images?: ProductImage[]) => {
@@ -69,6 +71,7 @@ const getPrimaryImage = (images?: ProductImage[]) => {
 };
 
 export default function ProductsPage() {
+    const { t } = useTranslation('common');
     const [dialogOpen, setDialogOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Partial<ProductListItem> | null>(null);
     const [productToDelete, setProductToDelete] = useState<ProductRow | null>(null);
@@ -80,7 +83,7 @@ export default function ProductsPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const loadProducts = async () => {
+    const loadProducts = useCallback(async () => {
         setIsLoading(true);
         setErrorMessage(null);
 
@@ -105,21 +108,22 @@ export default function ProductsPage() {
                     typeof product.available_stock === 'number'
                         ? product.available_stock
                         : null,
+                isFeatured: Boolean(product.is_featured),
             }));
             setProducts(rows);
         } catch (error) {
             console.error('Load products error:', error);
-            const message = error instanceof Error ? error.message : 'Failed to load products.';
+            const message = error instanceof Error ? error.message : t('adminProducts.dialog.loadError');
             setErrorMessage(message);
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [t]);
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        loadProducts();
-    }, []);
+        void loadProducts();
+    }, [loadProducts]);
 
     const filteredByType = selectedType
         ? products.filter((product) => product.type === selectedType)
@@ -132,7 +136,7 @@ export default function ProductsPage() {
     const columns: TableColumn<ProductRow>[] = [
         {
             key: 'name',
-            label: 'Product',
+            label: t('adminProducts.table.product'),
             render: (_, row) => {
                 const primary = getPrimaryImage(row.images ?? undefined);
                 return (
@@ -145,6 +149,7 @@ export default function ProductsPage() {
                                     fill
                                     className="object-cover"
                                     sizes="48px"
+                                    unoptimized
                                 />
                             ) : (
                                 <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-secondary">
@@ -155,7 +160,7 @@ export default function ProductsPage() {
                         <div>
                             <p className="font-semibold text-on-surface">{row.name}</p>
                             <p className="text-xs text-secondary">
-                                Stock: {row.stock ?? '-'}
+                                {t('adminProducts.dialog.stockQty')}: {row.stock ?? '-'}
                             </p>
                         </div>
                     </div>
@@ -164,35 +169,35 @@ export default function ProductsPage() {
         },
         {
             key: 'sku',
-            label: 'SKU',
+            label: t('adminProducts.table.sku'),
             render: (value) => <p className="font-mono text-sm text-on-surface">{value}</p>,
         },
         {
             key: 'price',
-            label: 'Price',
+            label: t('adminProducts.table.price'),
             render: (value) => (
                 <p className="font-semibold text-on-surface">{formatCurrency(value)}</p>
             ),
         },
         {
             key: 'type',
-            label: 'Type',
+            label: t('adminProducts.table.type'),
             render: (value) => (
                 <span className="rounded-full bg-primary-fixed px-3 py-1 text-xs font-semibold text-on-primary-fixed">
-                    {formatType(value)}
+                    {formatType(value, t)}
                 </span>
             ),
         },
         {
             key: 'isActive',
-            label: 'Status',
-            render: (value) => formatStatus(Boolean(value)),
+            label: t('adminProducts.table.status'),
+            render: (value) => formatStatus(Boolean(value), t),
         },
     ];
 
     const actions: TableAction<ProductRow>[] = [
         {
-            label: 'Edit',
+            label: t('adminProducts.actions.edit'),
             icon: <IconEdit className="h-4 w-4" stroke={2} />,
             onClick: (row) => {
                 console.log(row);
@@ -210,13 +215,14 @@ export default function ProductsPage() {
                     product_type: row.type ?? undefined,
                     product_images: row.images ?? [],
                     product_variants: row.variants ?? [],
+                    is_featured: row.isFeatured,
                 });
                 setDialogOpen(true);
             },
             className: 'flex h-9 w-9 items-center justify-center rounded-full bg-surface-container-high text-secondary transition-colors hover:bg-surface-container-highest hover:text-primary',
         },
         {
-            label: (row) => (row.isActive ? 'Delete' : 'Activate'),
+            label: (row) => (row.isActive ? t('adminProducts.actions.delete') : t('adminProducts.actions.activate')),
             icon: (row) =>
                 row.isActive ? (
                     <IconTrash className="h-4 w-4" stroke={2} />
@@ -224,6 +230,10 @@ export default function ProductsPage() {
                     <IconCircleCheck className="h-4 w-4" stroke={2} />
                 ),
             onClick: (row) => {
+                if (row.type === 'ai_base') {
+                    toast.error(t('adminProducts.dialog.aiBaseNoEdit') || 'AI Base products cannot be modified.');
+                    return;
+                }
                 if (row.isActive) {
                     setProductToDelete(row);
                     return;
@@ -231,10 +241,14 @@ export default function ProductsPage() {
 
                 setProductToActivate(row);
             },
-            className: (row) =>
-                row.isActive
+            className: (row) => {
+                if (row.type === 'ai_base') {
+                    return 'flex h-9 w-9 items-center justify-center rounded-full bg-surface-container-low text-secondary/30 cursor-not-allowed opacity-50';
+                }
+                return row.isActive
                     ? 'flex h-9 w-9 items-center justify-center rounded-full bg-surface-container-high text-secondary transition-colors hover:bg-surface-container-highest hover:text-error'
-                    : 'flex h-9 w-9 items-center justify-center rounded-full bg-primary-fixed text-on-primary-fixed transition-colors hover:bg-primary-container hover:text-on-primary',
+                    : 'flex h-9 w-9 items-center justify-center rounded-full bg-primary-fixed text-on-primary-fixed transition-colors hover:bg-primary-container hover:text-on-primary';
+            }
         },
     ];
 
@@ -242,16 +256,16 @@ export default function ProductsPage() {
         if (!productToDelete) return;
 
         setIsDeleting(true);
-        const toastId = toast.loading('Deleting product...');
+        const toastId = toast.loading(t('adminProducts.dialog.deleting'));
 
         try {
             await deleteProduct(productToDelete.id);
             await loadProducts();
             setProductToDelete(null);
-            toast.success('Product deleted.', { id: toastId });
+            toast.success(t('adminProducts.dialog.deleted'), { id: toastId });
         } catch (error) {
             console.error('Delete product error:', error);
-            const message = error instanceof Error ? error.message : 'Failed to delete product.';
+            const message = error instanceof Error ? error.message : t('address.errorGeneric');
             setErrorMessage(message);
             toast.error(message, { id: toastId });
         } finally {
@@ -263,7 +277,7 @@ export default function ProductsPage() {
         if (!productToActivate) return;
 
         setIsActivating(true);
-        const toastId = toast.loading('Activating product...');
+        const toastId = toast.loading(t('adminProducts.dialog.activating'));
 
         try {
             await updateProduct(productToActivate.id, {
@@ -273,10 +287,10 @@ export default function ProductsPage() {
             });
             await loadProducts();
             setProductToActivate(null);
-            toast.success('Product activated.', { id: toastId });
+            toast.success(t('adminProducts.dialog.activated'), { id: toastId });
         } catch (error) {
             console.error('Activate product error:', error);
-            const message = error instanceof Error ? error.message : 'Failed to activate product.';
+            const message = error instanceof Error ? error.message : t('address.errorGeneric');
             setErrorMessage(message);
             toast.error(message, { id: toastId });
         } finally {
@@ -290,10 +304,10 @@ export default function ProductsPage() {
                 <div className="space-y-3">
                     <div className="space-y-2">
                         <h1 className="font-headline text-4xl font-black tracking-tight text-on-surface sm:text-5xl">
-                            Product Management
+                            {t('adminProducts.title')}
                         </h1>
                         <p className="max-w-2xl text-base text-secondary sm:text-lg">
-                            Manage your product catalog, inventory, and pricing all in one place.
+                            {t('adminProducts.subtitle')}
                         </p>
                     </div>
                 </div>
@@ -314,15 +328,15 @@ export default function ProductsPage() {
                     columns={columns}
                     data={filteredByType}
                     actions={actions}
-                    searchPlaceholder="Search by product name or SKU..."
+                    searchPlaceholder={t('adminProducts.searchPlaceholder')}
                     searchableFields={['name', 'sku']}
                     filterOptions={{
-                        label: 'Type',
+                        label: t('adminProducts.table.type'),
                         options: [
-                            { value: null, label: 'All Types' },
+                            { value: null, label: t('adminProducts.table.allTypes') },
                             ...typeOptions.map((type) => ({
                                 value: type,
-                                label: formatType(type),
+                                label: formatType(type, t),
                             })),
                         ],
                         onFilter: (value) => setSelectedType(value as ProductType | null),
@@ -332,7 +346,7 @@ export default function ProductsPage() {
             </section>
 
             {isLoading ? (
-                <div className="text-sm text-secondary">Loading products...</div>
+                <div className="text-sm text-secondary">{t('adminProducts.dialog.loading')}</div>
             ) : null}
 
             <ProductDialog
@@ -345,7 +359,7 @@ export default function ProductsPage() {
                 onSaved={() => {
                     setDialogOpen(false);
                     setEditingProduct(null);
-                    loadProducts();
+                    void loadProducts();
                 }}
             />
 
@@ -357,9 +371,9 @@ export default function ProductsPage() {
             >
                 <AlertDialogContent size="sm">
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Delete product?</AlertDialogTitle>
+                        <AlertDialogTitle>{t('adminProducts.dialog.deleteTitle')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This will soft delete <span className="font-semibold text-on-surface">{productToDelete?.name}</span>. Product images will be removed from storage and the product will be hidden from the catalog.
+                            {t('adminProducts.dialog.deleteDesc', { name: productToDelete?.name })}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
 
@@ -368,7 +382,7 @@ export default function ProductsPage() {
                             disabled={isDeleting}
                             className="rounded-full border-none bg-surface-container-high px-5 py-3 text-sm font-bold text-on-surface hover:bg-surface-container-highest"
                         >
-                            Cancel
+                            {t('address.cancel')}
                         </AlertDialogCancel>
                         <AlertDialogAction
                             onClick={(event) => {
@@ -378,7 +392,7 @@ export default function ProductsPage() {
                             disabled={isDeleting}
                             className="rounded-full bg-error px-5 py-3 text-sm font-bold text-on-error shadow-[0_10px_20px_-5px_rgba(164,0,21,0.3)] hover:bg-error/90"
                         >
-                            {isDeleting ? 'Deleting...' : 'Delete'}
+                            {isDeleting ? t('adminProducts.dialog.deleting') : t('adminProducts.actions.delete')}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
@@ -392,9 +406,9 @@ export default function ProductsPage() {
             >
                 <AlertDialogContent size="sm">
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Activate product?</AlertDialogTitle>
+                        <AlertDialogTitle>{t('adminProducts.dialog.activateTitle')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This will activate <span className="font-semibold text-on-surface">{productToActivate?.name}</span> and make it visible again in the catalog.
+                            {t('adminProducts.dialog.activateDesc', { name: productToActivate?.name })}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
 
@@ -403,7 +417,7 @@ export default function ProductsPage() {
                             disabled={isActivating}
                             className="rounded-full border-none bg-surface-container-high px-5 py-3 text-sm font-bold text-on-surface hover:bg-surface-container-highest"
                         >
-                            Cancel
+                            {t('address.cancel')}
                         </AlertDialogCancel>
                         <AlertDialogAction
                             onClick={(event) => {
@@ -413,7 +427,7 @@ export default function ProductsPage() {
                             disabled={isActivating}
                             className="rounded-full bg-primary px-5 py-3 text-sm font-bold text-on-primary shadow-[0_10px_20px_-5px_rgba(0,104,74,0.3)] hover:bg-primary-container"
                         >
-                            {isActivating ? 'Activating...' : 'Activate'}
+                            {isActivating ? t('adminProducts.dialog.activating') : t('adminProducts.actions.activate')}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

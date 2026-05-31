@@ -29,6 +29,10 @@ export interface CartItem {
     is_active?: boolean | null;
     deleted_at?: string | null;
   } | null;
+  product_variants?: {
+    id: string;
+    is_active?: boolean | null;
+  } | null;
   added_at: string;
 }
 

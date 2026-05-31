@@ -211,6 +211,7 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
 
   // Scroll to top button visibility
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setShowScrollTop(products.length > SCROLL_TOP_THRESHOLD);
   }, [products.length]);
 

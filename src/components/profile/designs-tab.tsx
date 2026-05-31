@@ -4,22 +4,20 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import {
-  IconTrash,
-  IconSparkles,
-  IconLoader2,
-} from '@tabler/icons-react';
+import { IconSparkles, IconLoader2 } from '@tabler/icons-react';
 
 import { listDesigns, deleteDesign, finalizeExistingDesign, Design } from '@/lib/api/design.api';
 import { useCartStore } from '@/hooks/use-cart';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import DesignCard from '../ui/design-card';
 
 export default function DesignsTab() {
@@ -40,7 +38,7 @@ export default function DesignsTab() {
       // Filter only drafts
       const draftsOnly = all.filter((d) => d.status === 'draft');
       setDesigns(draftsOnly);
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
       toast.error('Không thể tải danh sách bản vẽ của bạn');
     } finally {
@@ -49,6 +47,7 @@ export default function DesignsTab() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchUserDesigns();
   }, []);
 
@@ -64,7 +63,7 @@ export default function DesignsTab() {
       toast.success('Đã xóa bản vẽ thành công');
       setDesigns((prev) => prev.filter((d) => d.id !== deleteId));
       setDeleteId(null);
-    } catch (err: any) {
+    } catch {
       toast.error('Lỗi khi xóa bản vẽ');
     } finally {
       setIsDeleting(false);
@@ -81,8 +80,9 @@ export default function DesignsTab() {
       toast.success(t('aiStudio.successFinalize'));
       await fetchCart(); // Refresh cart badge
       router.push('/cart');
-    } catch (err: any) {
-      toast.error(err.message || 'Lỗi khi hoàn thành bản vẽ');
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : 'Lỗi khi hoàn thành bản vẽ';
+      toast.error(errMsg);
     }
   };
 
@@ -96,16 +96,13 @@ export default function DesignsTab() {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-      
       {/* Title block matching orders-tab */}
       <div className="bg-surface-container-lowest border border-outline/5 rounded-3xl p-6 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="space-y-1">
           <h2 className="text-2xl font-bold font-headline text-on-surface">
             {t('aiStudio.libraryTitle')}
           </h2>
-          <p className="text-secondary text-xs sm:text-sm">
-            {t('aiStudio.librarySubtitle')}
-          </p>
+          <p className="text-secondary text-xs sm:text-sm">{t('aiStudio.librarySubtitle')}</p>
         </div>
 
         {/* Start button */}
@@ -126,9 +123,7 @@ export default function DesignsTab() {
           <h3 className="mt-6 text-lg font-bold text-on-surface">
             {t('aiStudio.emptyStateTitle')}
           </h3>
-          <p className="mt-2 max-w-sm text-sm text-secondary">
-            {t('aiStudio.emptyStateSubtitle')}
-          </p>
+          <p className="mt-2 max-w-sm text-sm text-secondary">{t('aiStudio.emptyStateSubtitle')}</p>
           <button
             type="button"
             onClick={() => router.push('/ai-studio')}
@@ -152,41 +147,27 @@ export default function DesignsTab() {
       )}
 
       {/* Delete Confirmation Modal */}
-      <Dialog open={deleteId !== null} onOpenChange={(open) => !open && setDeleteId(null)}>
-        <DialogContent className="rounded-2xl border-0 bg-surface-container-lowest shadow-2xl p-6">
-          <DialogHeader>
-            <DialogTitle className="text-lg font-extrabold text-on-surface">
-              {t('aiStudio.deleteConfirmTitle')}
-            </DialogTitle>
-            <DialogDescription className="text-sm text-secondary pt-2">
-              {t('aiStudio.deleteConfirmDesc')}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="mt-6 flex gap-3 justify-end">
-            <button
-              type="button"
-              onClick={() => setDeleteId(null)}
-              className="rounded-full border border-outline/25 px-5 py-2 text-xs font-bold text-secondary hover:bg-surface-container active:scale-95 transition-all"
-            >
+      <AlertDialog open={deleteId !== null} onOpenChange={(open) => !open && setDeleteId(null)}>
+        <AlertDialogContent className="rounded-2xl border-0 bg-surface-container-lowest shadow-2xl p-6">
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('aiStudio.deleteConfirmTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>{t('aiStudio.deleteConfirmDesc')}</AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteId(null)}>
               {t('address.cancel')}
-            </button>
-            <button
-              type="button"
+            </AlertDialogCancel>
+            <AlertDialogAction
               disabled={isDeleting}
               onClick={handleConfirmDelete}
-              className="flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-xs font-bold text-on-primary hover:bg-primary-hover active:scale-95 transition-all"
+              variant="primary"
             >
-              {isDeleting ? (
-                <IconLoader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <IconTrash className="h-3.5 w-3.5" />
-              )}
               {t('address.delete').split(' ')[0]}
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

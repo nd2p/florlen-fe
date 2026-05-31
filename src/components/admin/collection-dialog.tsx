@@ -1,13 +1,15 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import Form from "next/form";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
-import { IconPlus, IconTrash, IconSearch, IconX } from "@tabler/icons-react";
+import { IconPlus, IconTrash, IconSearch, IconX, IconCrop } from "@tabler/icons-react";
+import ImageCropper from "./image-cropper";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -43,8 +45,8 @@ function useDebounce<T>(value: T, delay: number): T {
 }
 
 const CreateCollectionSchema = z.object({
-    name: z.string().min(1, { message: "Name is required." }),
-    slug: z.string().min(1, { message: "Slug is required." }),
+    name: z.string().min(1, { message: "adminCollections.dialog.nameRequired" }),
+    slug: z.string().min(1, { message: "adminCollections.dialog.slugRequired" }),
     description: z.string().optional(),
     collection_type: z.enum(["seasonal", "fandom", "event_drop", "permanent"]),
     starts_at: z.string().optional(),
@@ -85,6 +87,7 @@ export default function CollectionDialog({
     onSaved,
     onCreated,
 }: CreateCollectionDialogProps) {
+    const { t } = useTranslation("common");
     const router = useRouter();
     const [internalOpen, setInternalOpen] = useState(false);
     const controlled = typeof open === "boolean" && typeof onOpenChange === "function";
@@ -99,6 +102,60 @@ export default function CollectionDialog({
     const [bannerFile, setBannerFile] = useState<File | null>(null);
     const [existingCover, setExistingCover] = useState<string | null>(null);
     const [existingBanner, setExistingBanner] = useState<string | null>(null);
+
+    // Cropper & preview states
+    const [croppingType, setCroppingType] = useState<"cover" | "banner" | null>(null);
+    const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(null);
+    const [bannerPreviewUrl, setBannerPreviewUrl] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (coverFile) {
+            const url = URL.createObjectURL(coverFile);
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setCoverPreviewUrl(url);
+            return () => URL.revokeObjectURL(url);
+        } else {
+            setCoverPreviewUrl(existingCover);
+            return undefined;
+        }
+    }, [coverFile, existingCover]);
+
+    useEffect(() => {
+        if (bannerFile) {
+            const url = URL.createObjectURL(bannerFile);
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setBannerPreviewUrl(url);
+            return () => URL.revokeObjectURL(url);
+        } else {
+            setBannerPreviewUrl(existingBanner);
+            return undefined;
+        }
+    }, [bannerFile, existingBanner]);
+
+    const cropperImageUrl = useMemo(() => {
+        if (croppingType === "cover") return coverPreviewUrl;
+        if (croppingType === "banner") return bannerPreviewUrl;
+        return null;
+    }, [croppingType, coverPreviewUrl, bannerPreviewUrl]);
+
+    const handleCrop = (croppedFile: File) => {
+        if (croppingType === "cover") {
+            setCoverFile(croppedFile);
+        } else if (croppingType === "banner") {
+            setBannerFile(croppedFile);
+        }
+        setCroppingType(null);
+    };
+
+    const removeCover = () => {
+        setCoverFile(null);
+        setExistingCover(null);
+    };
+
+    const removeBanner = () => {
+        setBannerFile(null);
+        setExistingBanner(null);
+    };
 
     // Products Selection State
     const [searchQuery, setSearchQuery] = useState("");
@@ -141,6 +198,7 @@ export default function CollectionDialog({
                 setCoverFile(null);
                 setBannerFile(null);
                 setSearchQuery("");
+                setCroppingType(null);
             });
             return;
         }
@@ -248,7 +306,7 @@ export default function CollectionDialog({
     };
 
     const onSubmit = async (values: CreateCollectionValues) => {
-        const toastId = toast.loading(collection?.id ? "Updating collection..." : "Creating collection...");
+        const toastId = toast.loading(collection?.id ? t("adminCollections.dialog.updating") : t("adminCollections.dialog.creating"));
 
         try {
             let coverUrl: string | null = existingCover;
@@ -296,7 +354,7 @@ export default function CollectionDialog({
                 await syncCollectionProducts(savedId, selectedProducts.map(p => p.id));
             }
 
-            toast.success(collection?.id ? "Collection updated." : "Collection created.", { id: toastId });
+            toast.success(collection?.id ? t("adminCollections.dialog.updated") : t("adminCollections.dialog.created"), { id: toastId });
 
             if (!collection?.id) {
                 reset();
@@ -317,7 +375,7 @@ export default function CollectionDialog({
             }
         } catch (error) {
             console.error("Save collection error:", error);
-            const message = error instanceof Error ? error.message : "Failed to save collection.";
+            const message = error instanceof Error ? error.message : t("address.errorGeneric");
             toast.error(message, { id: toastId });
         }
     };
@@ -333,16 +391,16 @@ export default function CollectionDialog({
                         className={`rounded-full py-3 text-sm ${compact ? "px-3" : "px-5"}`}
                     >
                         <IconPlus className="h-4 w-4 shrink-0" stroke={2} />
-                        {compact ? null : collection?.id ? "Edit Collection" : "New Collection"}
+                        {compact ? null : collection?.id ? t("adminCollections.dialog.editCollection") : t("adminCollections.dialog.newCollection")}
                     </Button>
                 </DialogTrigger>
             )}
 
             <DialogContent className="max-w-2xl">
                 <DialogHeader>
-                    <DialogTitle>{collection?.id ? "Edit Collection" : "Create a new collection"}</DialogTitle>
+                    <DialogTitle>{collection?.id ? t("adminCollections.dialog.editCollection") : t("adminCollections.dialog.createCollection")}</DialogTitle>
                     <DialogDescription>
-                        {collection?.id ? "Update collection properties and assigned products." : "Upload cover or banner images first, then the dialog will submit the returned URLs."}
+                        {collection?.id ? t("adminCollections.dialog.editDesc") : t("adminCollections.dialog.createDesc")}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -350,18 +408,18 @@ export default function CollectionDialog({
                     <DialogBody className="space-y-8">
                         <section className="grid gap-4 md:grid-cols-2">
                             <Input
-                                label="Name"
+                                label={t("adminCollections.dialog.name")}
                                 id="collection-name"
                                 placeholder="Summer Drop 2026"
-                                error={errors.name?.message}
+                                error={errors.name?.message ? t(errors.name.message) : undefined}
                                 {...nameRegister}
                             />
                             <Input
-                                label="Slug"
+                                label={t("adminCollections.dialog.slug")}
                                 id="collection-slug"
                                 placeholder={generatedSlug || "summer-drop-2026"}
-                                helperText={collection?.id ? "Slug is auto-generated and locked for edits." : "Used in URLs and internal lookup."}
-                                error={errors.slug?.message}
+                                helperText={collection?.id ? t("adminCollections.dialog.slugLocked") : t("adminCollections.dialog.slugDesc")}
+                                error={errors.slug?.message ? t(errors.slug.message) : undefined}
                                 disabled={!!collection?.id}
                                 {...register("slug")}
                             />
@@ -370,51 +428,51 @@ export default function CollectionDialog({
                                     htmlFor="collection-type"
                                     className="ml-1 block text-sm font-headline font-bold text-on-surface"
                                 >
-                                    Collection Type
+                                    {t("adminCollections.dialog.type")}
                                 </label>
                                 <select
                                     id="collection-type"
                                     {...register("collection_type")}
                                     className="w-full rounded-xl border-none bg-surface-container-low px-6 py-4 font-body text-on-surface outline-none transition-all focus:bg-surface-container-highest focus:ring-2 focus:ring-primary"
                                 >
-                                    <option value="seasonal">Seasonal</option>
-                                    <option value="fandom">Fandom</option>
-                                    <option value="event_drop">Event Drop</option>
-                                    <option value="permanent">Permanent</option>
+                                    <option value="seasonal">{t("adminCollections.dialog.typeOptions.seasonal")}</option>
+                                    <option value="fandom">{t("adminCollections.dialog.typeOptions.fandom")}</option>
+                                    <option value="event_drop">{t("adminCollections.dialog.typeOptions.event_drop")}</option>
+                                    <option value="permanent">{t("adminCollections.dialog.typeOptions.permanent")}</option>
                                 </select>
                             </div>
                             <div className="hidden md:block" />
                             <Input
-                                label="Start"
+                                label={t("adminCollections.table.start")}
                                 id="collection-start"
                                 type="datetime-local"
-                                error={errors.starts_at?.message}
+                                error={errors.starts_at?.message ? t(errors.starts_at.message) : undefined}
                                 {...register("starts_at")}
                             />
                             <Input
-                                label="End"
+                                label={t("adminCollections.table.end")}
                                 id="collection-end"
                                 type="datetime-local"
-                                error={errors.ends_at?.message}
+                                error={errors.ends_at?.message ? t(errors.ends_at.message) : undefined}
                                 {...register("ends_at")}
                             />
                         </section>
 
                         <section className="space-y-2">
-                            <label
-                                htmlFor="collection-description"
-                                className="ml-1 block text-sm font-headline font-bold text-on-surface"
-                            >
-                                Description
-                            </label>
-                            <textarea
-                                id="collection-description"
-                                rows={4}
-                                placeholder="Short summary for the collection page."
-                                className="w-full rounded-xl border-none bg-surface-container-low px-6 py-4 font-body text-on-surface outline-none transition-all placeholder:text-secondary focus:bg-surface-container-highest focus:ring-2 focus:ring-primary"
-                                {...register("description")}
-                            />
-                        </section>
+                                <label
+                                    htmlFor="collection-description"
+                                    className="ml-1 block text-sm font-headline font-bold text-on-surface"
+                                >
+                                    {t("adminCollections.dialog.description")}
+                                </label>
+                                <textarea
+                                    id="collection-description"
+                                    rows={4}
+                                    placeholder={t("adminCollections.dialog.descriptionPlaceholder")}
+                                    className="w-full rounded-xl border-none bg-surface-container-low px-6 py-4 font-body text-on-surface outline-none transition-all placeholder:text-secondary focus:bg-surface-container-highest focus:ring-2 focus:ring-primary"
+                                    {...register("description")}
+                                />
+                            </section>
 
                         <section className="grid gap-4 md:grid-cols-2">
                             <label className="flex cursor-pointer items-center gap-3 rounded-xl bg-surface-container-low px-4 py-3 text-sm text-secondary">
@@ -430,78 +488,96 @@ export default function CollectionDialog({
                                         <path d="M1 5L4.2 8L11 1.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                                     </svg>
                                 </span>
-                                <span>Featured</span>
+                                <span>{t("adminCollections.dialog.featured")}</span>
                             </label>
                         </section>
 
                         <section className="space-y-3 rounded-[1.5rem] bg-surface-container-highest p-4">
                             <div className="flex items-center justify-between gap-3">
                                 <div>
-                                    <h3 className="font-headline text-lg font-black text-on-surface">Cover Image</h3>
-                                    <p className="text-sm text-secondary">Optional. Upload a wide cover for listings.</p>
+                                    <h3 className="font-headline text-lg font-black text-on-surface">{t("adminCollections.dialog.coverImage")}</h3>
+                                    <p className="text-sm text-secondary">{t("adminCollections.dialog.coverDesc")}</p>
                                 </div>
                             </div>
-                            {existingCover && !coverFile ? (
-                                <div className="relative h-32 w-48 overflow-hidden rounded-lg bg-surface-container-low">
-                                    <Image src={existingCover} alt="Cover Preview" fill className="object-cover" sizes="192px" />
+                            {coverPreviewUrl ? (
+                                <div className="group relative h-32 w-48 overflow-hidden rounded-xl border border-outline-variant bg-surface-container-low transition-all hover:shadow-md">
+                                    <Image src={coverPreviewUrl} alt="Cover Preview" fill className="object-cover transition-transform duration-300 group-hover:scale-105" sizes="192px" />
+                                    
+                                    {/* Remove Button */}
                                     <button
                                         type="button"
-                                        onClick={() => setExistingCover(null)}
-                                        className="absolute right-1 top-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-surface text-secondary hover:bg-error hover:text-on-error shadow-sm"
-                                        aria-label="Remove Cover"
+                                        onClick={removeCover}
+                                        className="absolute right-1.5 top-1.5 z-20 inline-flex h-7 w-7 items-center justify-center rounded-full bg-surface-container-high/80 text-secondary hover:bg-error hover:text-on-error backdrop-blur-sm shadow-sm transition-all"
+                                        aria-label={t("adminCollections.actions.delete")}
                                     >
-                                        <IconTrash className="h-4 w-4" stroke={2} />
+                                        <IconTrash className="h-3.5 w-3.5" stroke={2} />
+                                    </button>
+
+                                    {/* Hover Crop Trigger */}
+                                    <button
+                                        type="button"
+                                        onClick={() => setCroppingType("cover")}
+                                        className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/45 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-white font-headline text-[10px] font-bold gap-1 cursor-pointer"
+                                    >
+                                        <IconCrop className="h-5 w-5 text-white animate-pulse" stroke={2} />
+                                        <span>{t("adminProducts.dialog.cropTitle")}</span>
                                     </button>
                                 </div>
                             ) : (
-                                <>
-                                    <input
-                                        type="file"
-                                        accept="image/jpeg,image/jpg,image/png"
-                                        onChange={(event) => setCoverFile(event.target.files?.[0] || null)}
-                                        className="block w-full rounded-xl border border-dashed border-outline-variant bg-surface px-4 py-4 text-sm text-secondary file:mr-4 file:rounded-full file:border-0 file:bg-primary file:px-4 file:py-2 file:font-headline file:font-bold file:text-on-primary hover:file:bg-primary-container"
-                                    />
-                                    {coverFile && <p className="text-sm text-secondary">{coverFile.name}</p>}
-                                </>
+                                <input
+                                    type="file"
+                                    accept="image/jpeg,image/jpg,image/png"
+                                    onChange={(event) => setCoverFile(event.target.files?.[0] || null)}
+                                    className="block w-full rounded-xl border border-dashed border-outline-variant bg-surface px-4 py-4 text-sm text-secondary file:mr-4 file:rounded-full file:border-0 file:bg-primary file:px-4 file:py-2 file:font-headline file:font-bold file:text-on-primary hover:file:bg-primary-container"
+                                />
                             )}
                         </section>
 
                         <section className="space-y-3 rounded-[1.5rem] bg-surface-container-highest p-4">
                             <div className="flex items-center justify-between gap-3">
                                 <div>
-                                    <h3 className="font-headline text-lg font-black text-on-surface">Banner Image</h3>
-                                    <p className="text-sm text-secondary">Optional. Upload a hero banner for the page.</p>
+                                    <h3 className="font-headline text-lg font-black text-on-surface">{t("adminCollections.dialog.bannerImage")}</h3>
+                                    <p className="text-sm text-secondary">{t("adminCollections.dialog.bannerDesc")}</p>
                                 </div>
                             </div>
-                            {existingBanner && !bannerFile ? (
-                                <div className="relative h-32 w-48 overflow-hidden rounded-lg bg-surface-container-low">
-                                    <Image src={existingBanner} alt="Banner Preview" fill className="object-cover" sizes="192px" />
+                            {bannerPreviewUrl ? (
+                                <div className="group relative h-32 w-48 overflow-hidden rounded-xl border border-outline-variant bg-surface-container-low transition-all hover:shadow-md">
+                                    <Image src={bannerPreviewUrl} alt="Banner Preview" fill className="object-cover transition-transform duration-300 group-hover:scale-105" sizes="192px" />
+                                    
+                                    {/* Remove Button */}
                                     <button
                                         type="button"
-                                        onClick={() => setExistingBanner(null)}
-                                        className="absolute right-1 top-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-surface text-secondary hover:bg-error hover:text-on-error shadow-sm"
-                                        aria-label="Remove Banner"
+                                        onClick={removeBanner}
+                                        className="absolute right-1.5 top-1.5 z-20 inline-flex h-7 w-7 items-center justify-center rounded-full bg-surface-container-high/80 text-secondary hover:bg-error hover:text-on-error backdrop-blur-sm shadow-sm transition-all"
+                                        aria-label={t("adminCollections.actions.delete")}
                                     >
-                                        <IconTrash className="h-4 w-4" stroke={2} />
+                                        <IconTrash className="h-3.5 w-3.5" stroke={2} />
+                                    </button>
+
+                                    {/* Hover Crop Trigger */}
+                                    <button
+                                        type="button"
+                                        onClick={() => setCroppingType("banner")}
+                                        className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/45 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-white font-headline text-[10px] font-bold gap-1 cursor-pointer"
+                                    >
+                                        <IconCrop className="h-5 w-5 text-white animate-pulse" stroke={2} />
+                                        <span>{t("adminProducts.dialog.cropTitle")}</span>
                                     </button>
                                 </div>
                             ) : (
-                                <>
-                                    <input
-                                        type="file"
-                                        accept="image/jpeg,image/jpg,image/png"
-                                        onChange={(event) => setBannerFile(event.target.files?.[0] || null)}
-                                        className="block w-full rounded-xl border border-dashed border-outline-variant bg-surface px-4 py-4 text-sm text-secondary file:mr-4 file:rounded-full file:border-0 file:bg-primary file:px-4 file:py-2 file:font-headline file:font-bold file:text-on-primary hover:file:bg-primary-container"
-                                    />
-                                    {bannerFile && <p className="text-sm text-secondary">{bannerFile.name}</p>}
-                                </>
+                                <input
+                                    type="file"
+                                    accept="image/jpeg,image/jpg,image/png"
+                                    onChange={(event) => setBannerFile(event.target.files?.[0] || null)}
+                                    className="block w-full rounded-xl border border-dashed border-outline-variant bg-surface px-4 py-4 text-sm text-secondary file:mr-4 file:rounded-full file:border-0 file:bg-primary file:px-4 file:py-2 file:font-headline file:font-bold file:text-on-primary hover:file:bg-primary-container"
+                                />
                             )}
                         </section>
 
                         <section className="space-y-3 rounded-[1.5rem] bg-surface-container-highest p-4">
                             <div>
-                                <h3 className="font-headline text-lg font-black text-on-surface">Products</h3>
-                                <p className="text-sm text-secondary">Search and select products for this collection.</p>
+                                <h3 className="font-headline text-lg font-black text-on-surface">{t("adminCollections.dialog.products")}</h3>
+                                <p className="text-sm text-secondary">{t("adminCollections.dialog.productsDesc")}</p>
                             </div>
 
                             <div className="relative">
@@ -510,7 +586,7 @@ export default function CollectionDialog({
                                 </div>
                                 <input
                                     type="text"
-                                    placeholder="Search products by name or SKU..."
+                                    placeholder={t("adminCollections.dialog.searchPlaceholder")}
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     className="w-full rounded-xl border-none bg-surface px-11 py-4 font-body text-on-surface outline-none transition-all placeholder:text-secondary focus:bg-surface-container-low focus:ring-2 focus:ring-primary"
@@ -543,7 +619,7 @@ export default function CollectionDialog({
 
                             {selectedProducts.length > 0 && (
                                 <div className="mt-4 flex flex-col gap-2">
-                                    <span className="text-xs font-bold uppercase tracking-wider text-secondary">Selected ({selectedProducts.length})</span>
+                                    <span className="text-xs font-bold uppercase tracking-wider text-secondary">{t("adminCollections.dialog.selected", { count: selectedProducts.length })}</span>
                                     <div className="divide-y divide-outline-variant rounded-xl border border-outline-variant bg-surface">
                                         {selectedProducts.map((product) => (
                                             <div key={product.id} className="flex items-center justify-between p-3">
@@ -574,7 +650,7 @@ export default function CollectionDialog({
                             onClick={() => setActualOpen(false)}
                             className="rounded-full px-6 py-3 text-sm"
                         >
-                            Cancel
+                            {t("form.cancel")}
                         </Button>
                         <Button
                             type="submit"
@@ -583,10 +659,21 @@ export default function CollectionDialog({
                             disabled={isSubmitting || (!!collection?.id && !hasChanges)}
                             className="rounded-full px-6 py-3 text-sm"
                         >
-                            {isSubmitting ? (collection?.id ? "Updating..." : "Creating...") : collection?.id ? "Update Collection" : "Create Collection"}
+                            {isSubmitting ? (collection?.id ? t("adminCollections.dialog.updating") : t("adminCollections.dialog.creating")) : collection?.id ? t("adminCollections.dialog.editCollection") : t("adminCollections.dialog.newCollection")}
                         </Button>
                     </DialogFooter>
                 </Form>
+                {/* Absolute overlay ImageCropper to prevent Radix Dialog portal overlaps */}
+                {croppingType !== null && (
+                    <div className="absolute inset-0 z-50 bg-surface p-6 flex flex-col rounded-2xl animate-fade-in">
+                        <ImageCropper
+                            imageUrl={cropperImageUrl}
+                            aspectRatio={16 / 9}
+                            onCancel={() => setCroppingType(null)}
+                            onCrop={handleCrop}
+                        />
+                    </div>
+                )}
             </DialogContent>
         </Dialog>
     );

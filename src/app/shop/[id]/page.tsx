@@ -18,6 +18,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const [recommendedProducts, setRecommendedProducts] = useState<ProductListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string>("");
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
@@ -28,9 +29,16 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         const p = prodData.product as ProductListItem;
         setProduct(p);
 
-        if (p.product_images && p.product_images.length > 0) {
-          const primary = p.product_images.find(img => img.is_primary) || p.product_images[0];
-          setSelectedImage(primary.url);
+        const primaryImage = p.product_images?.find((img) => img.is_primary) || p.product_images?.[0];
+        if (primaryImage?.url) {
+          setSelectedImage(primaryImage.url);
+        }
+
+        const firstActiveVariant = p.product_variants?.find((variant) => variant.is_active !== false);
+        setSelectedVariantId(firstActiveVariant?.id ?? null);
+
+        if (firstActiveVariant?.image_url) {
+          setSelectedImage(firstActiveVariant.image_url);
         }
 
         // Recommendations Logic
@@ -66,6 +74,17 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
   const addItem = useCartStore((state) => state.addItem);
   const isUnavailable = product?.is_active === false;
+  const activeVariants = product?.product_variants?.filter((variant) => variant.is_active !== false) ?? [];
+  const selectedVariant = activeVariants.find((variant) => variant.id === selectedVariantId) ?? null;
+  const primaryImageUrl = product?.product_images?.find((img) => img.is_primary)?.url || product?.product_images?.[0]?.url || "";
+  const basePrice = Number(product?.base_price ?? 0);
+  const selectedVariantPrice = Number(selectedVariant?.additional_price ?? 0);
+  const displayPrice = basePrice + selectedVariantPrice;
+  const hasVariants = activeVariants.length > 0;
+  const selectedVariantLabel = selectedVariant
+    ? [selectedVariant.size, selectedVariant.color_name].filter(Boolean).join(" / ") || selectedVariant.sku_suffix
+    : null;
+  const displayedImage = selectedVariant?.image_url || selectedImage || primaryImageUrl || "/placeholder-product.jpg";
 
   if (loading) {
     return <Loading variant="skeleton-detail" className="pt-32" />;
@@ -83,9 +102,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const handleAddToCart = async () => {
     if (!product) return;
 
+    if (hasVariants && !selectedVariant?.id) {
+      toast.error("Please select a variant");
+      return;
+    }
+
     await addItem({
       item_type: "normal",
       product_id: id,
+      variant_id: selectedVariant?.id ?? undefined,
       quantity: quantity,
       // variant_id will be added here once we have selection UI
     });
@@ -102,7 +127,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 fill
                 priority
                 sizes="(max-width: 768px) 100vw, 60vw"
-                src={selectedImage || "/placeholder-product.jpg"}
+                src={displayedImage}
                 alt={product.name}
                 className="h-full w-full object-cover transition-all duration-500"
               />
@@ -136,7 +161,18 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             <div className="space-y-6">
               <div>
                 <h1 className="font-headline text-4xl font-black tracking-tight text-on-surface">{product.name}</h1>
-                <p className="mt-2 text-xl font-bold text-primary">{formatCurrency(product.base_price)}</p>
+                <div className="mt-2 space-y-1">
+                  <p className="text-2xl font-black text-primary">{formatCurrency(displayPrice)}</p>
+                  <p className="text-sm text-secondary">
+                    {formatCurrency(basePrice)} base
+                    {hasVariants ? (
+                      <>
+                        <span className="mx-2">+</span>
+                        {formatCurrency(selectedVariantPrice)} variant price
+                      </>
+                    ) : null}
+                  </p>
+                </div>
               </div>
 
               <div className="h-px bg-outline-variant" />
@@ -148,16 +184,54 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 </p>
               </div>
 
-              {/* Variants placeholder if needed */}
-              {product.product_variants && product.product_variants.length > 0 && (
+              {hasVariants && (
                 <div className="space-y-4 pt-4">
-                  <h3 className="text-sm font-bold uppercase tracking-widest text-secondary">Options</h3>
-                  <div className="flex flex-wrap gap-3">
-                    {product.product_variants.map((v, i) => (
-                      <div key={i} className="rounded-full border border-outline-variant px-4 py-2 text-xs font-bold text-on-surface bg-surface">
-                        {v.color_name} {v.size ? `(${v.size})` : ""}
-                      </div>
-                    ))}
+                  <div className="flex items-end justify-between gap-4">
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-secondary">Choose a variant</h3>
+                    {selectedVariantLabel ? (
+                      <span className="text-xs font-semibold text-secondary">Selected: {selectedVariantLabel}</span>
+                    ) : null}
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {activeVariants.map((variant) => {
+                      const isSelected = variant.id === selectedVariantId;
+                      const variantLabel = [variant.size, variant.color_name].filter(Boolean).join(" / ") || variant.sku_suffix;
+
+                      return (
+                        <button
+                          key={variant.id ?? variant.sku_suffix}
+                          type="button"
+                          onClick={() => {
+                            setSelectedVariantId(variant.id ?? null);
+                            setSelectedImage(variant.image_url || primaryImageUrl);
+                          }}
+                          className={cn(
+                            "rounded-2xl border p-4 text-left transition-all duration-200",
+                            isSelected
+                              ? "border-primary bg-primary/5 shadow-sm"
+                              : "border-outline-variant bg-surface hover:border-primary/40 hover:bg-surface-container-low"
+                          )}
+                        >
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="space-y-1">
+                              <p className="text-sm font-bold text-on-surface">{variantLabel}</p>
+                            </div>
+                            <span className="shrink-0 rounded-full bg-surface-container-high px-3 py-1 text-xs font-bold text-on-surface">
+                              +{formatCurrency(Number(variant.additional_price ?? 0))}
+                            </span>
+                          </div>
+                          {variant.color_hex ? (
+                            <div className="mt-3 flex items-center gap-2 text-xs text-secondary">
+                              <span
+                                className="h-3 w-3 rounded-full border border-outline-variant"
+                                style={{ backgroundColor: variant.color_hex }}
+                              />
+                              <span>{variant.color_hex}</span>
+                            </div>
+                          ) : null}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -181,17 +255,21 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                   </div>
 
                   <button
-                    disabled={isUnavailable}
+                    disabled={isUnavailable || (hasVariants && !selectedVariant?.id)}
                     onClick={isUnavailable ? undefined : handleAddToCart}
                     className={cn(
                       "flex h-12 flex-1 items-center justify-center gap-2 rounded-full font-bold transition-all active:scale-95",
-                      isUnavailable
+                      isUnavailable || (hasVariants && !selectedVariant?.id)
                         ? "cursor-not-allowed bg-surface-container-high text-secondary"
                         : "bg-primary text-on-primary hover:bg-primary/90"
                     )}
                   >
                     {isUnavailable ? <Bell className="h-5 w-5" /> : <ShoppingCart className="h-5 w-5" />}
-                    {isUnavailable ? "Notify me when available" : "Add to Cart"}
+                    {isUnavailable
+                      ? "Notify me when available"
+                      : hasVariants && !selectedVariant?.id
+                        ? "Select a variant"
+                        : "Add to Cart"}
                   </button>
                 </div>
               </div>

@@ -16,6 +16,10 @@ import {
   IconPalette,
   IconTag,
   IconArrowLeft,
+  IconFriends,
+  IconShoppingBag,
+  IconBrandRedhat,
+  IconCircleX,
 } from '@tabler/icons-react';
 
 import {
@@ -178,26 +182,27 @@ export default function AIStudioPage() {
 
   // Stepper State
   const [step, setStep] = useState(1);
+  const [isEditingDraft, setIsEditingDraft] = useState(false);
+  const [originalDesign, setOriginalDesign] = useState<{
+    prompt_text: string;
+    selected_colors: DesignOptions;
+  } | null>(null);
   const [productType, setProductType] = useState<'mini_figure' | 'bag' | 'hat' | null>(null);
   const [options, setOptions] = useState<DesignOptions>(DEFAULT_OPTIONS);
   const [customPrompt, setCustomPrompt] = useState('');
 
   // Dynamic pricing config states
-  const [productBasePrices, setProductBasePrices] = useState<Record<string, number>>({
-    mini_figure: 250000,
-    bag: 150000,
-    hat: 120000,
-  });
+  const [productBasePrices, setProductBasePrices] = useState<Record<string, number>>(PRODUCT_BASE_PRICES_DEFAULT);
   const [accessoriesConfig, setAccessoriesConfig] = useState<Record<string, { labelKey: string; label: string; price: number }>>({
-    pants: { labelKey: 'accessoryPants', label: 'Quần', price: 15000 },
-    shirt: { labelKey: 'accessoryShirt', label: 'Áo', price: 20000 },
-    hat: { labelKey: 'accessoryHat', label: 'Mũ phụ kiện', price: 25000 },
-    hair: { labelKey: 'accessoryHair', label: 'Tóc', price: 20000 },
-    bag: { labelKey: 'accessoryBag', label: 'Túi phụ kiện', price: 15000 },
-    scarf: { labelKey: 'accessoryScarf', label: 'Khăn', price: 10000 },
-    handAccessory: { labelKey: 'accessoryHandAccessory', label: 'Phụ kiện cầm tay', price: 30000 },
+    pants: { labelKey: ACCESSORIES_CONFIG_DEFAULT.pants.labelKey, label: 'Quần', price: ACCESSORIES_CONFIG_DEFAULT.pants.price },
+    shirt: { labelKey: ACCESSORIES_CONFIG_DEFAULT.shirt.labelKey, label: 'Áo', price: ACCESSORIES_CONFIG_DEFAULT.shirt.price },
+    hat: { labelKey: ACCESSORIES_CONFIG_DEFAULT.hat.labelKey, label: 'Mũ phụ kiện', price: ACCESSORIES_CONFIG_DEFAULT.hat.price },
+    hair: { labelKey: ACCESSORIES_CONFIG_DEFAULT.hair.labelKey, label: 'Tóc', price: ACCESSORIES_CONFIG_DEFAULT.hair.price },
+    bag: { labelKey: ACCESSORIES_CONFIG_DEFAULT.bag.labelKey, label: 'Túi phụ kiện', price: ACCESSORIES_CONFIG_DEFAULT.bag.price },
+    scarf: { labelKey: ACCESSORIES_CONFIG_DEFAULT.scarf.labelKey, label: 'Khăn', price: ACCESSORIES_CONFIG_DEFAULT.scarf.price },
+    handAccessory: { labelKey: ACCESSORIES_CONFIG_DEFAULT.handAccessory.labelKey, label: 'Phụ kiện cầm tay', price: ACCESSORIES_CONFIG_DEFAULT.handAccessory.price },
   });
-  const [illustrationPrice, setIllustrationPrice] = useState<number>(40000);
+  const [illustrationPrice, setIllustrationPrice] = useState<number>(ILLUSTRATION_PRICE_DEFAULT);
 
   // Load config on mount
   useEffect(() => {
@@ -206,7 +211,7 @@ export default function AIStudioPage() {
         const config = await getAIConfig();
         if (config) {
           if (config.productBasePrices) setProductBasePrices(config.productBasePrices);
-          if (config.accessoriesConfig) setAccessoriesConfig(config.accessoriesConfig as any);
+          if (config.accessoriesConfig) setAccessoriesConfig(config.accessoriesConfig);
           if (typeof config.illustrationPrice === 'number') setIllustrationPrice(config.illustrationPrice);
         }
       } catch (err) {
@@ -267,6 +272,18 @@ export default function AIStudioPage() {
       totalPrice: basePrice + custFee,
     };
   }, [productType, options, productBasePrices, accessoriesConfig, illustrationPrice]);
+
+  const hasChanges = useMemo(() => {
+    if (!isEditingDraft || !originalDesign) return true;
+
+    const promptChanged = customPrompt.trim() !== originalDesign.prompt_text.trim();
+    const optionsChanged = Object.keys(DEFAULT_OPTIONS).some((key) => {
+      const optKey = key as keyof DesignOptions;
+      return options[optKey] !== originalDesign.selected_colors[optKey];
+    });
+
+    return promptChanged || optionsChanged;
+  }, [isEditingDraft, originalDesign, customPrompt, options]);
 
   // Fun loading screen messages
   const loadingMessages = [
@@ -351,13 +368,17 @@ export default function AIStudioPage() {
     try {
       toast.loading('Đang tải cấu hình bản vẽ...', { id: 'preload-design' });
       const existing = await getDesignById(id);
-      const sku = existing.products?.sku || '';
-      if (sku.includes('MINI-FIGURE')) {
-        setProductType('mini_figure');
-      } else if (sku.includes('BAG')) {
-        setProductType('bag');
+      if (existing.base) {
+        setProductType(existing.base);
       } else {
-        setProductType('hat');
+        const sku = existing.products?.sku || '';
+        if (sku.includes('MINI-FIGURE')) {
+          setProductType('mini_figure');
+        } else if (sku.includes('BAG')) {
+          setProductType('bag');
+        } else {
+          setProductType('hat');
+        }
       }
 
       const mergedOptions = {
@@ -372,7 +393,12 @@ export default function AIStudioPage() {
       setMaterialSuggestions(existing.material_suggestions || []);
       setCustomizationFee(existing.customization_fee || 0);
       setAttempts(existing.generation_attempts || 0);
-      setStep(4); // Reopen result screen directly
+      setIsEditingDraft(true);
+      setOriginalDesign({
+        prompt_text: existing.prompt_text || '',
+        selected_colors: mergedOptions,
+      });
+      setStep(2); // Start editing from Step 2
       
       setShowSavedScreen(false); // Switch from pre-screen to wizard edit view
       toast.success('Đã tải bản vẽ thành công', { id: 'preload-design' });
@@ -389,13 +415,17 @@ export default function AIStudioPage() {
     const loadDesign = async () => {
       try {
         const existing = await getDesignById(editId);
-        const sku = existing.products?.sku || '';
-        if (sku.includes('MINI-FIGURE')) {
-          setProductType('mini_figure');
-        } else if (sku.includes('BAG')) {
-          setProductType('bag');
+        if (existing.base) {
+          setProductType(existing.base);
         } else {
-          setProductType('hat');
+          const sku = existing.products?.sku || '';
+          if (sku.includes('MINI-FIGURE')) {
+            setProductType('mini_figure');
+          } else if (sku.includes('BAG')) {
+            setProductType('bag');
+          } else {
+            setProductType('hat');
+          }
         }
 
         const mergedOptions = {
@@ -410,7 +440,12 @@ export default function AIStudioPage() {
         setMaterialSuggestions(existing.material_suggestions || []);
         setCustomizationFee(existing.customization_fee || 0);
         setAttempts(existing.generation_attempts || 0);
-        setStep(4); // Reopen result screen directly
+        setIsEditingDraft(true);
+        setOriginalDesign({
+          prompt_text: existing.prompt_text || '',
+          selected_colors: mergedOptions,
+        });
+        setStep(2); // Start editing from Step 2
       } catch (err: unknown) {
         console.error('Failed to preload design details:', err);
         toast.error('Không thể tải bản thiết kế lưu trữ để chỉnh sửa');
@@ -535,7 +570,6 @@ export default function AIStudioPage() {
   };
 
   const handleRegenerate = () => {
-    if (attempts >= 3) return;
     setStep(2); // Go back to customize step to update parameters if desired
   };
 
@@ -550,6 +584,16 @@ export default function AIStudioPage() {
     setCustomizationFee(0);
     setAttempts(0);
     setOptions({ ...DEFAULT_OPTIONS });
+    setIsEditingDraft(false);
+    setOriginalDesign(null);
+  };
+
+  const handleCancelEdit = () => {
+    handleRestart();
+    if (editId) {
+      router.replace('/ai-studio');
+    }
+    setShowSavedScreen(true);
   };
 
   if (loadingDesigns) {
@@ -562,8 +606,8 @@ export default function AIStudioPage() {
 
   if (showSavedScreen) {
     return (
-      <div className="flex-1 bg-background px-6 py-24 lg:px-16 animate-in fade-in duration-300">
-        <div className="mx-auto max-w-4xl space-y-8">
+      <div className={`flex-1 bg-background px-6 py-24 lg:px-16 animate-in fade-in duration-300 ${userDesigns.length === 0 ? 'min-h-screen flex flex-col justify-center' : ''}`}>
+        <div className="mx-auto max-w-4xl space-y-8 w-full">
           
           {/* Header block */}
           <div className="bg-surface-container-lowest border border-outline/5 rounded-3xl p-6 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -653,13 +697,19 @@ export default function AIStudioPage() {
   }
 
   return (
-    <div className="flex-1 bg-background px-6 py-24 lg:px-16 animate-in fade-in duration-300">
-      <div className="mx-auto max-w-4xl">
+    <div className={`flex-1 bg-background px-6 py-24 lg:px-16 animate-in fade-in duration-300 ${userDesigns.length === 0 ? 'min-h-screen flex flex-col justify-center' : ''}`}>
+      <div className="mx-auto max-w-4xl w-full">
         {/* Back to library button */}
         {userDesigns.length > 0 && (
           <button
             type="button"
-            onClick={() => setShowSavedScreen(true)}
+            onClick={() => {
+              if (isEditingDraft) {
+                handleCancelEdit();
+              } else {
+                setShowSavedScreen(true);
+              }
+            }}
             className="flex items-center gap-2 text-sm font-bold text-secondary hover:text-primary transition-colors mb-8 focus:outline-none"
           >
             <IconArrowLeft className="w-5 h-5" stroke={2.5} />
@@ -690,7 +740,10 @@ export default function AIStudioPage() {
             {[1, 2, 3, 4].map((s) => (
               <button
                 key={s}
-                disabled={s > step && !mockupImageUrl}
+                disabled={
+                  (s === 1 && isEditingDraft) ||
+                  (isEditingDraft ? s > step : s > step && !mockupImageUrl)
+                }
                 onClick={() => setStep(s)}
                 className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold transition-all duration-200 ${
                   s < step
@@ -735,7 +788,7 @@ export default function AIStudioPage() {
                   }`}
                 >
                   <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform">
-                    🧶
+                    <IconFriends className="h-8 w-8" />
                   </div>
                   <h3 className="mt-4 text-base font-bold text-on-surface">
                     {t('aiStudio.productMiniFigure')}
@@ -759,7 +812,7 @@ export default function AIStudioPage() {
                   }`}
                 >
                   <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform">
-                    👜
+                    <IconShoppingBag className="h-8 w-8" />
                   </div>
                   <h3 className="mt-4 text-base font-bold text-on-surface">
                     {t('aiStudio.productBag')}
@@ -783,7 +836,7 @@ export default function AIStudioPage() {
                   }`}
                 >
                   <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform">
-                    👒
+                    <IconBrandRedhat className="h-8 w-8" />
                   </div>
                   <h3 className="mt-4 text-base font-bold text-on-surface">
                     {t('aiStudio.productHat')}
@@ -886,6 +939,14 @@ export default function AIStudioPage() {
                   value={customPrompt}
                   onChange={(e) => handleTextChange(e.target.value)}
                   placeholder={t('aiStudio.promptPlaceholder')}
+                  onFocus={() => {
+                    toast.info(
+                      i18n.resolvedLanguage?.startsWith('vi')
+                        ? 'Lời khuyên: Bạn nên mô tả chi tiết về hình dáng (tròn, dẹt, thon dài...) cũng như kích thước chiều dài, rộng, cao mong muốn để AI phác thảo chính xác nhất nhé!'
+                        : 'Tip: You should describe in detail the shape (round, flat, elongated...) as well as the desired length, width, and height so that AI can generate the most accurate mockup!',
+                      { id: 'prompt-tip-toast', duration: 7000 }
+                    );
+                  }}
                   rows={4}
                   className="w-full rounded-2xl bg-surface-container p-4 text-sm border border-outline/15 text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary/20 resize-none"
                 />
@@ -893,20 +954,30 @@ export default function AIStudioPage() {
 
               {/* Navigation buttons */}
               <div className="flex justify-between border-t border-outline/5 pt-6">
-                <button
-                  type="button"
-                  onClick={() => setStep(1)}
-                  className="flex items-center gap-2 rounded-full border border-outline/25 px-6 py-2.5 text-sm font-bold text-secondary hover:bg-surface-container active:scale-95 transition-all"
-                >
-                  <IconChevronLeft className="h-4 w-4" /> {t('address.cancel')}
-                </button>
+                {isEditingDraft ? (
+                  <button
+                    type="button"
+                    onClick={handleCancelEdit}
+                    className="flex items-center gap-2 rounded-full border border-red-200 bg-red-50/50 text-red-600 hover:bg-red-50 hover:border-red-300 px-6 py-2.5 text-sm font-bold active:scale-95 transition-all"
+                  >
+                    <IconCircleX className="h-4 w-4" /> {i18n.resolvedLanguage?.startsWith('vi') ? 'Hủy chỉnh sửa' : 'Cancel Edit'}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setStep(1)}
+                    className="flex items-center gap-2 rounded-full border border-outline/25 px-6 py-2.5 text-sm font-bold text-secondary hover:bg-surface-container active:scale-95 transition-all"
+                  >
+                    <IconChevronLeft className="h-4 w-4" /> {i18n.resolvedLanguage?.startsWith('vi') ? 'Quay lại' : 'Back'}
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={() => setStep(3)}
                   disabled={!customPrompt.trim()}
                   className="flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-bold text-on-primary hover:bg-primary-hover active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none"
                 >
-                  {t('home.hero.buyNow')} <IconChevronRight className="h-4 w-4" />
+                  {i18n.resolvedLanguage?.startsWith('vi') ? 'Tiếp tục' : 'Next'} <IconChevronRight className="h-4 w-4" />
                 </button>
               </div>
             </div>
@@ -1000,7 +1071,7 @@ export default function AIStudioPage() {
                 <div className="flex flex-col items-center justify-center py-16 text-center">
                   <div className="relative flex h-24 w-24 items-center justify-center">
                     <div className="absolute h-full w-full rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-                    <span className="text-3xl animate-bounce">🧶</span>
+                    <IconFriends className="h-10 w-10 text-primary animate-bounce" />
                   </div>
                   <h3 className="mt-8 text-lg font-bold text-on-surface animate-pulse">
                     {loadingMessages[generationMsgIdx]}
@@ -1095,23 +1166,23 @@ export default function AIStudioPage() {
                   {/* Stepper buttons / Final Actions */}
                   <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-outline/5">
                     
-                    {/* Regenerate if attempts < 3 */}
-                    {attempts < 3 ? (
-                      <button
-                        type="button"
-                        onClick={handleRegenerate}
-                        className="flex flex-1 items-center justify-center gap-2 rounded-full border border-primary text-primary px-6 py-3 text-sm font-bold hover:bg-primary/5 transition-all active:scale-95"
-                      >
-                        <IconRotate className="h-4 w-4" />
-                        {t('aiStudio.regenerateBtn', { count: 3 - attempts })}
-                      </button>
-                    ) : null}
+                    {/* Regenerate / Redo Drawing */}
+                    <button
+                      type="button"
+                      disabled={dailyLimitData.count >= dailyLimitData.limit}
+                      onClick={handleRegenerate}
+                      className="flex flex-1 items-center justify-center gap-2 rounded-full border border-primary text-primary px-6 py-3 text-sm font-bold enabled:hover:bg-primary/5 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <IconRotate className="h-4 w-4" />
+                      {t('aiStudio.regenerateBtn')}
+                    </button>
 
                     {/* Option 1: Save Design as Draft */}
                     <button
                       type="button"
+                      disabled={!hasChanges}
                       onClick={handleSaveDraft}
-                      className="flex flex-1 items-center justify-center gap-2 rounded-full border border-outline/35 px-6 py-3 text-sm font-bold text-secondary hover:bg-surface-container transition-all active:scale-95"
+                      className="flex flex-1 items-center justify-center gap-2 rounded-full border border-outline/35 px-6 py-3 text-sm font-bold text-secondary enabled:hover:bg-surface-container transition-all enabled:active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                       <IconFolderPlus className="h-4 w-4" />
                       {t('aiStudio.saveDraftBtn').split(' (')[0]}
@@ -1142,7 +1213,7 @@ export default function AIStudioPage() {
               ) : (
                 /* Failed Generation State */
                 <div className="flex flex-col items-center justify-center py-16 text-center">
-                  <span className="text-4xl">❌</span>
+                  <IconCircleX className="h-12 w-12 text-red-500 animate-pulse" />
                   <h3 className="mt-6 text-lg font-bold">{t('aiStudio.errorTitle')}</h3>
                   <button
                     type="button"

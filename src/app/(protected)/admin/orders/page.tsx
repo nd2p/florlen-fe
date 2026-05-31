@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import Image from 'next/image';
 import {
     IconCalendar,
@@ -18,7 +19,26 @@ import {
 } from '@/lib/api/order.api';
 
 // Format status labels elegantly
-export function formatStatusLabel(status: OrderStatus): string {
+export function mapStatusToKey(status: OrderStatus): string {
+    switch (status) {
+        case 'pending_payment': return 'pendingPayment';
+        case 'confirmed': return 'confirmed';
+        case 'in_production': return 'inProduction';
+        case 'quality_check': return 'qualityCheck';
+        case 'awaiting_remaining_payment': return 'awaitingRemPayment';
+        case 'ready_to_ship': return 'readyToShip';
+        case 'shipping': return 'shipping';
+        case 'completed': return 'completed';
+        case 'cancelled': return 'cancelled';
+        default: return status;
+    }
+}
+
+// Format status labels elegantly
+export function formatStatusLabel(status: OrderStatus, t?: (key: string) => string): string {
+    if (t) {
+        return t(`adminOrders.${mapStatusToKey(status)}`);
+    }
     switch (status) {
         case 'pending_payment':
             return 'Pending Payment';
@@ -44,6 +64,7 @@ export function formatStatusLabel(status: OrderStatus): string {
 }
 
 export default function OrdersPage() {
+    const { t } = useTranslation('common');
     const router = useRouter();
     const [orders, setOrders] = useState<OrderSummary[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -97,7 +118,7 @@ export default function OrdersPage() {
     const columns: TableColumn<OrderSummary>[] = [
         {
             key: 'order_number',
-            label: 'Order',
+            label: t('adminOrders.table.order'),
             render: (value, row) => (
                 <div>
                     <span className="font-mono text-sm font-black text-primary">#{value}</span>
@@ -113,7 +134,7 @@ export default function OrdersPage() {
         },
         {
             key: 'recipient_name',
-            label: 'Customer',
+            label: t('adminOrders.table.customer'),
             render: (value, row) => (
                 <div>
                     <p className="font-bold text-on-surface">{value || 'Guest'}</p>
@@ -123,7 +144,7 @@ export default function OrdersPage() {
         },
         {
             key: 'product_name',
-            label: 'Items',
+            label: t('adminOrders.table.items'),
             render: (value, row) => {
                 const count = row.order_items?.length || 1;
                 return (
@@ -148,7 +169,7 @@ export default function OrdersPage() {
                                 {value}
                             </p>
                             <p className="text-xs text-secondary">
-                                {row.variant_label || 'Standard'} {count > 1 ? `· +${count - 1} item${count > 2 ? 's' : ''}` : ''}
+                                {row.variant_label || t('profile.orders.standard')} {count > 1 ? t('adminOrders.itemsCount', { count: count - 1 }) : ''}
                             </p>
                         </div>
                     </div>
@@ -157,20 +178,20 @@ export default function OrdersPage() {
         },
         {
             key: 'status',
-            label: 'Status',
+            label: t('adminOrders.table.status'),
             render: (value) => {
                 const status = value as OrderStatus;
                 const isActive = ['confirmed', 'in_production', 'quality_check', 'ready_to_ship', 'shipping', 'completed'].includes(status);
                 return (
                     <Badge variant={isActive ? 'active' : 'inactive'}>
-                        {formatStatusLabel(status)}
+                        {formatStatusLabel(status, t)}
                     </Badge>
                 );
             },
         },
         {
             key: 'total_amount',
-            label: 'Total',
+            label: t('adminOrders.table.total'),
             render: (value) => (
                 <p className="font-bold text-on-surface">{formatCurrency(value)}</p>
             ),
@@ -179,7 +200,7 @@ export default function OrdersPage() {
 
     const actions: TableAction<OrderSummary>[] = [
         {
-            label: 'View Details',
+            label: t('adminOrders.viewDetails'),
             icon: <IconEye className="h-4 w-4" stroke={2} />,
             onClick: (row) => {
                 router.push(`/admin/orders/${row.id}`);
@@ -189,18 +210,18 @@ export default function OrdersPage() {
     ];
 
     // Status filter options
-    const statusOptions: { value: OrderStatus | null; label: string }[] = [
-        { value: null, label: 'All Statuses' },
-        { value: 'pending_payment', label: 'Pending Payment' },
-        { value: 'confirmed', label: 'Confirmed' },
-        { value: 'in_production', label: 'In Production' },
-        { value: 'quality_check', label: 'Quality Check' },
-        { value: 'awaiting_remaining_payment', label: 'Awaiting Rem. Payment' },
-        { value: 'ready_to_ship', label: 'Ready to Ship' },
-        { value: 'shipping', label: 'Shipping' },
-        { value: 'completed', label: 'Completed' },
-        { value: 'cancelled', label: 'Cancelled' },
-    ];
+    const statusOptions = useMemo(() => [
+        { value: null, label: t('adminOrders.allStatuses') },
+        { value: 'pending_payment', label: t('adminOrders.pendingPayment') },
+        { value: 'confirmed', label: t('adminOrders.confirmed') },
+        { value: 'in_production', label: t('adminOrders.inProduction') },
+        { value: 'quality_check', label: t('adminOrders.qualityCheck') },
+        { value: 'awaiting_remaining_payment', label: t('adminOrders.awaitingRemPayment') },
+        { value: 'ready_to_ship', label: t('adminOrders.readyToShip') },
+        { value: 'shipping', label: t('adminOrders.shipping') },
+        { value: 'completed', label: t('adminOrders.completed') },
+        { value: 'cancelled', label: t('adminOrders.cancelled') },
+    ], [t]);
 
     return (
         <div className="space-y-8">
@@ -208,10 +229,10 @@ export default function OrdersPage() {
                 <div className="space-y-3">
                     <div className="space-y-2">
                         <h1 className="font-headline text-4xl font-black tracking-tight text-on-surface sm:text-5xl">
-                            Order Management
+                            {t('adminOrders.title')}
                         </h1>
                         <p className="max-w-2xl text-base text-secondary sm:text-lg">
-                            Review, update, and manage customer plushie orders.
+                            {t('adminOrders.subtitle')}
                         </p>
                     </div>
                 </div>
@@ -222,7 +243,7 @@ export default function OrdersPage() {
                         className="flex h-12 items-center gap-2 rounded-full bg-surface-container-high px-4 text-sm font-semibold text-on-surface transition-colors hover:bg-surface-container-highest"
                     >
                         <IconCalendar className="h-4 w-4 text-secondary" stroke={2} />
-                        Refresh Queue
+                        {t('adminOrders.refresh')}
                     </button>
                     <button 
                         className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-on-primary transition-colors hover:bg-primary-container" 
@@ -242,17 +263,17 @@ export default function OrdersPage() {
             <section className="space-y-4">
                 {isLoading ? (
                     <div className="flex h-40 items-center justify-center rounded-[1.5rem] bg-surface-container-low text-secondary">
-                        <span className="text-sm font-semibold">Loading orders queue...</span>
+                        <span className="text-sm font-semibold">{t('adminOrders.loading')}</span>
                     </div>
                 ) : (
                     <DataTable<OrderSummary>
                         columns={columns}
                         data={filteredOrders}
                         actions={actions}
-                        searchPlaceholder="Search by customer, order number..."
+                        searchPlaceholder={t('adminOrders.searchPlaceholder')}
                         searchableFields={['order_number', 'recipient_name', 'recipient_phone']}
                         filterOptions={{
-                            label: 'Status',
+                            label: t('adminOrders.statusFilter'),
                             options: statusOptions,
                             onFilter: (value) => setSelectedStatus(value as OrderStatus | null),
                         }}

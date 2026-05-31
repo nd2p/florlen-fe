@@ -46,6 +46,7 @@ export default function UserProfile() {
   useEffect(() => {
     const tabParam = searchParams.get('tab');
     if (tabParam && ['my_orders', 'saved_designs', 'profile_settings', 'payment_logs'].includes(tabParam)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setActiveTab(tabParam as TabType);
     }
   }, [searchParams]);

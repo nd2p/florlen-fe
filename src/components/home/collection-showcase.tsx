@@ -1,23 +1,16 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { listCollections, type Collection } from '@/lib/api/collection.api';
 import { type ProductListItem } from '@/lib/api/product.api';
-import { ChevronRight } from 'lucide-react';
 import ProductCard from '@/components/common/product-card';
 import CollectionCard from '@/components/common/collection-card';
 
 /* ------------------------------------------------------------------ */
 /* Helpers                                                              */
 /* ------------------------------------------------------------------ */
-
-function getProductImage(product: ProductListItem): string {
-  const primary = product.product_images?.find((img) => img.is_primary && img.is_active);
-  return primary?.url ?? product.product_images?.[0]?.url ?? '/placeholder-product.jpg';
-}
 
 /* ------------------------------------------------------------------ */
 /* Placeholder card                                                     */
