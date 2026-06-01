@@ -1,6 +1,8 @@
+import Link from 'next/link';
+
 export default function Footer() {
   return (
-    <footer className="w-full rounded-t-2xl bg-surface-container-low">
+    <footer className="w-full bg-surface-container-low">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-12 py-16 md:grid-cols-4">
         <div className="space-y-6">
           <a href="#" className="font-headline text-xl font-black text-on-surface">
@@ -44,20 +46,20 @@ export default function Footer() {
           <h4 className="mb-6 font-bold">Company</h4>
           <ul className="space-y-4 text-sm text-secondary">
             <li>
-              <a
+              <Link
                 className="transition-all duration-300 hover:text-primary hover:underline"
-                href="our-story"
+                href="/about/our-story"
               >
                 Our Story
-              </a>
+              </Link>
             </li>
             <li>
-              <a
+              <Link
                 className="transition-all duration-300 hover:text-primary hover:underline"
-                href="sustainability"
+                href="/about/sustainability"
               >
                 Sustainability
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
@@ -65,36 +67,36 @@ export default function Footer() {
           <h4 className="mb-6 font-bold">Support</h4>
           <ul className="space-y-4 text-sm text-secondary">
             <li>
-              <a
+              <Link
                 className="transition-all duration-300 hover:text-primary hover:underline"
-                href="care-guide"
+                href="/about/care-guide"
               >
                 Care Guide
-              </a>
+              </Link>
             </li>
             <li>
-              <a
+              <Link
                 className="transition-all duration-300 hover:text-primary hover:underline"
-                href="shipping-info"
+                href="/about/shipping-info"
               >
                 Shipping Info
-              </a>
+              </Link>
             </li>
             <li>
-              <a
+              <Link
                 className="transition-all duration-300 hover:text-primary hover:underline"
-                href="privacy-policy"
+                href="/about/privacy-policy"
               >
                 Privacy Policy
-              </a>
+              </Link>
             </li>
             <li>
-              <a
+              <Link
                 className="transition-all duration-300 hover:text-primary hover:underline"
-                href="terms-of-service"
+                href="/about/terms-of-service"
               >
                 Terms of Service
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
