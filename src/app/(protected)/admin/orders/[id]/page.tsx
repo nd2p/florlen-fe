@@ -48,8 +48,6 @@ const ORDER_STATUS_STEPS: { status: OrderStatus; label: string }[] = [
   { status: 'pending_payment', label: 'Payment Pending' },
   { status: 'confirmed', label: 'Confirmed' },
   { status: 'in_production', label: 'Production' },
-  { status: 'quality_check', label: 'Quality Check' },
-  { status: 'ready_to_ship', label: 'Ready to Ship' },
   { status: 'shipping', label: 'Shipping' },
   { status: 'completed', label: 'Completed' },
 ];
@@ -58,9 +56,6 @@ const ORDER_STATUS_OPTIONS: { value: OrderStatus; label: string }[] = [
   { value: 'pending_payment', label: 'Pending Payment' },
   { value: 'confirmed', label: 'Confirmed' },
   { value: 'in_production', label: 'In Production' },
-  { value: 'quality_check', label: 'Quality Check' },
-  { value: 'awaiting_remaining_payment', label: 'Awaiting Rem. Payment' },
-  { value: 'ready_to_ship', label: 'Ready to Ship' },
   { value: 'shipping', label: 'Shipping' },
   { value: 'completed', label: 'Completed' },
   { value: 'cancelled', label: 'Cancelled' },
@@ -131,7 +126,7 @@ export default function OrderDetailPage() {
   };
 
   if (isLoading) {
-    return <Loading variant="skeleton-detail" className="pt-8" />;
+    return <Loading variant="fullscreen" className="pt-8" />;
   }
 
   if (errorMessage || !order) {
@@ -155,7 +150,6 @@ export default function OrderDetailPage() {
   // Determine current index in status pipeline
   const currentStepIndex = ORDER_STATUS_STEPS.findIndex((step) => step.status === order.status);
   const isCancelled = order.status === 'cancelled';
-  const awaitingRemaining = order.status === 'awaiting_remaining_payment';
 
   return (
     <div className="space-y-8 pb-12">
@@ -177,14 +171,12 @@ export default function OrderDetailPage() {
               </h1>
               <Badge
                 variant={
-                  [
-                    'confirmed',
-                    'in_production',
-                    'quality_check',
-                    'ready_to_ship',
-                    'shipping',
-                    'completed',
-                  ].includes(order.status)
+                              [
+                                'confirmed',
+                                'in_production',
+                                'shipping',
+                                'completed',
+                              ].includes(order.status)
                     ? 'active'
                     : 'inactive'
                 }
@@ -266,15 +258,12 @@ export default function OrderDetailPage() {
               <div
                 className="absolute left-0 top-0 h-full bg-primary rounded-full transition-all duration-500 shadow-sm"
                 style={{
-                  width: awaitingRemaining
-                    ? `calc(20px + (4 / ${ORDER_STATUS_STEPS.length - 1}) * (100% - 72px))`
-                    : currentStepIndex === ORDER_STATUS_STEPS.length - 1
-                    ? '100%'
-                    : currentStepIndex >= 0
-                    ? `calc(20px + (${currentStepIndex} / ${
-                        ORDER_STATUS_STEPS.length - 1
-                      }) * (100% - 72px))`
-                    : '0%',
+                  width:
+                    currentStepIndex === ORDER_STATUS_STEPS.length - 1
+                      ? '100%'
+                      : currentStepIndex >= 0
+                      ? `calc(20px + (${currentStepIndex} / ${ORDER_STATUS_STEPS.length - 1}) * (100% - 72px))`
+                      : '0%',
                 }}
               />
             </div>
@@ -284,16 +273,13 @@ export default function OrderDetailPage() {
               {ORDER_STATUS_STEPS.map((step, idx) => {
                 const isCompleted = idx < currentStepIndex;
                 const isCurrent = idx === currentStepIndex;
-                const isAwaitingBalStep = step.status === 'ready_to_ship' && awaitingRemaining;
-
+                
                 return (
                   <div key={step.status} className="flex flex-col items-center">
                     <div
                       className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-4 shadow-sm transition-all duration-300 ${
                         isCurrent
                           ? 'bg-primary border-primary-container text-on-primary scale-110 font-bold'
-                          : isAwaitingBalStep
-                          ? 'bg-orange-500 border-orange-200 text-white animate-pulse font-bold'
                           : isCompleted
                           ? 'bg-primary border-primary text-on-primary'
                           : 'bg-surface-container-low border-surface-container-highest text-secondary'
@@ -303,10 +289,10 @@ export default function OrderDetailPage() {
                     </div>
                     <span
                       className={`mt-3 text-center text-xs font-black tracking-tight ${
-                        isCurrent || isAwaitingBalStep ? 'text-primary' : 'text-secondary'
+                        isCurrent ? 'text-primary' : 'text-secondary'
                       }`}
                     >
-                      {isAwaitingBalStep ? t('profile.orders.details.awaitingBalance') : formatStatusLabel(step.status, t)}
+                      {formatStatusLabel(step.status, t)}
                     </span>
                   </div>
                 );

@@ -55,10 +55,7 @@ export function Loading({
 
         <div className="space-y-1.5 text-center px-4 max-w-sm animate-bounce duration-1000">
           <p className="font-headline font-black text-lg tracking-tight text-on-surface">
-            {text || 'Loading Florlen...'}
-          </p>
-          <p className="text-xs text-secondary/80 font-medium">
-            Preparing slow-fashion handcrafted details
+            {text || 'Loading...'}
           </p>
         </div>
       </div>

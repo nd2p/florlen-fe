@@ -1,9 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { ShoppingBag } from "lucide-react";
 import type { ProductListItem } from "@/lib/api/product.api";
 import { formatCurrency, cn } from "@/lib/utils";
 import Badge from "@/components/ui/badge";
+import { useCartStore } from "@/hooks/use-cart";
 
 type ProductCardProps = {
     product: ProductListItem;
@@ -18,7 +21,25 @@ export default function ProductCard({
     className,
     imageSizes = "(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw",
 }: ProductCardProps) {
+    const addItem = useCartStore((state) => state.addItem);
     const isUnavailable = product.is_active === false;
+    const firstActiveVariant = product.product_variants?.find((variant) => variant.is_active !== false) ?? null;
+
+    const handleQuickAdd = async (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (isUnavailable) {
+            return;
+        }
+
+        await addItem({
+            item_type: "normal",
+            product_id: product.id,
+            variant_id: firstActiveVariant?.id,
+            quantity: 1,
+        });
+    };
 
     return (
         <Link
@@ -51,8 +72,9 @@ export default function ProductCard({
                 {/* Quick-add button — slides up on hover */}
                 <div className="absolute bottom-3 inset-x-3 translate-y-10 opacity-0 transition-all duration-300 ease-out group-hover/product:translate-y-0 group-hover/product:opacity-100">
                     <button
+                        type="button"
                         aria-label={`Add ${product.name} to cart`}
-                        onClick={(e) => e.preventDefault()}
+                        onClick={handleQuickAdd}
                         className="flex w-full items-center justify-center gap-2 rounded-lg bg-surface-container-lowest/90 py-2.5 text-xs font-bold text-on-surface backdrop-blur-sm transition-colors duration-200 hover:bg-primary hover:text-on-primary active:scale-95"
                     >
                         <ShoppingBag className="h-3.5 w-3.5" />

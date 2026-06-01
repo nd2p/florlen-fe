@@ -778,7 +778,7 @@
     "itemsCount_one": "· +1 item",
     "itemsCount_other": "· +{{count}} items",
     "details": {
-      "backToQueue": "Back to Queue",
+      "backToQueue": "Back",
       "progress": "Order Progress",
       "updateStatus": "Update Status:",
       "changeStatus": "Change Status",

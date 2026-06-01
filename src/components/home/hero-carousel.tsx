@@ -74,11 +74,8 @@ export function HeroCarousel() {
           {/* Default Create Your Own Page (Slide 0) */}
           <CarouselItem className="pl-0 basis-full flex items-center justify-center bg-surface-container-low">
             <div className="flex h-[750px] md:h-[850px] w-full flex-col overflow-hidden md:flex-row">
-              <div className="flex-1 flex flex-col justify-center space-y-8 p-12 md:p-24 h-full bg-surface-container-low">
+              <div className="flex-1 flex flex-col justify-center space-y-8 p-12 md:p-8 md:pl-20 h-full bg-surface-container-low">
                 <div className="space-y-4">
-                  <span className="inline-block rounded-full bg-primary-fixed px-4 py-1.5 text-sm font-bold uppercase tracking-wider text-on-primary-fixed">
-                    {t('home.hero.handmadeCollectibles')}
-                  </span>
                   <h1 className="font-headline text-5xl font-black leading-[0.9] tracking-tight text-on-surface md:text-7xl">
                     {t('home.hero.designCrochetStoryPart1')} <br />
                     <span className="text-primary">{t('home.hero.designCrochetStoryPart2')}</span>
@@ -108,7 +105,7 @@ export function HeroCarousel() {
                   priority
                   className="h-full w-full object-cover rounded-none"
                   alt={t('home.hero.altRedPanda')}
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhKKiFUzCmkeHp5InAESLgcZoStW8aGqa373rYLrgtENv5mdQUv3GyXacQKdXuT7dVaKoT9nojn1Szut-6q0FkyH5gvO67b2ps5w1rlfo3rrr5yD6EX3HcVS96cmQusXL1Cg4mmp6UQvKQTbEZPVC3p8b9y-kw4vfDYpZp0mDT8m9IXY6aO5_ndIwaIgB49bifjkEK23joL2jfjCOoxpaHtGDB4yJdp6MpgXuID3jra45aJ14IaZcazjPr5CXT7nzpnboOy1OTUmU"
+                  src="/images/ava.jpg"
                 />
               </div>
             </div>

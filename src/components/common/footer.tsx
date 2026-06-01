@@ -1,13 +1,20 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Footer() {
   return (
     <footer className="w-full bg-surface-container-low">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-12 py-16 md:grid-cols-4">
         <div className="space-y-6">
-          <a href="#" className="font-headline text-xl font-black text-on-surface">
-            Florlen
-          </a>
+          <Link href="/" className="relative flex items-center h-12 w-32">
+            <Image
+              src="/images/logo.png"
+              alt="Florlen"
+              fill
+              sizes="(max-width: 768px) 128px, 128px"
+              className="object-contain object-left"
+            />
+          </Link>
           <p className="text-sm text-secondary">
             Handcrafting the future of collectibles, one stitch at a time. Designed by you, handmade
             with love.

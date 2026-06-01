@@ -119,9 +119,16 @@ export default function Header() {
                 <div className="flex flex-1 items-center gap-6">
                     <Link
                         href="/"
-                        className="font-headline text-3xl font-extrabold tracking-tight text-primary whitespace-nowrap"
+                        className="relative flex items-center h-10 w-28"
                     >
-                        {t("header.brand")}
+                        <Image
+                            src="/images/logo.png"
+                            alt="Florlen"
+                            fill
+                            priority
+                            sizes="(max-width: 768px) 112px, 112px"
+                            className="object-contain object-left"
+                        />
                     </Link>
                     <div className="relative hidden lg:block w-full max-w-[320px]" ref={dropdownRef}>
                         <form onSubmit={handleSearch} className="relative w-full">

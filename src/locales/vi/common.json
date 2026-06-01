@@ -778,7 +778,7 @@
     "itemsCount_one": "· +1 sản phẩm",
     "itemsCount_other": "· +{{count}} sản phẩm",
     "details": {
-      "backToQueue": "Quay lại Hàng đợi",
+      "backToQueue": "Quay lại",
       "progress": "Tiến trình đơn hàng",
       "updateStatus": "Cập nhật trạng thái:",
       "changeStatus": "Thay đổi trạng thái",

@@ -10,13 +10,11 @@ import {
   IconCreditCard,
   IconPackage,
   IconUser,
-  IconLoader2,
   IconMaximize,
 } from '@tabler/icons-react';
 import { useImageLightbox } from '@/components/ui/image-lightbox';
-import { toast } from 'sonner';
 import { formatCurrency } from '@/lib/utils';
-import { getOrderById, payRemaining, type Order, type OrderStatus } from '@/lib/api/order.api';
+import { getOrderById, type Order, type OrderStatus } from '@/lib/api/order.api';
 import Badge from '@/components/ui/badge';
 import { Loading } from '@/components/ui/loading';
 
@@ -25,8 +23,6 @@ const ORDER_STATUS_STEPS: { status: OrderStatus; labelKey: string }[] = [
   { status: 'pending_payment', labelKey: 'profile.orders.status.pending_payment' },
   { status: 'confirmed', labelKey: 'profile.orders.status.confirmed' },
   { status: 'in_production', labelKey: 'profile.orders.status.in_production' },
-  { status: 'quality_check', labelKey: 'profile.orders.status.quality_check' },
-  { status: 'ready_to_ship', labelKey: 'profile.orders.status.ready_to_ship' },
   { status: 'shipping', labelKey: 'profile.orders.status.shipping' },
   { status: 'completed', labelKey: 'profile.orders.status.completed' },
 ];
@@ -40,7 +36,6 @@ export default function UserOrderDetailPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isPayingRemaining, setIsPayingRemaining] = useState(false);
   const { openLightbox, LightboxNode } = useImageLightbox();
 
   useEffect(() => {
@@ -71,34 +66,12 @@ export default function UserOrderDetailPage() {
     };
   }, [orderId]);
 
-  const handlePayRemaining = async () => {
-    if (!orderId) return;
-    setIsPayingRemaining(true);
-    const toastId = toast.loading(t('profile.orders.details.generatingLink'));
-    try {
-      const response = await payRemaining(orderId);
-      if (response.paymentLink?.checkoutUrl) {
-        toast.success(t('profile.orders.details.redirectingPayOS'), { id: toastId });
-        setTimeout(() => {
-          window.location.href = response.paymentLink.checkoutUrl;
-        }, 800);
-      } else {
-        toast.error(t('profile.orders.details.linkCreationFailed'), { id: toastId });
-      }
-    } catch (error) {
-      console.error('Pay remaining error:', error);
-      const err = error as { response?: { data?: { message?: string } } };
-      const msg = err?.response?.data?.message || 'Payment generation failed.';
-      toast.error(msg, { id: toastId });
-    } finally {
-      setIsPayingRemaining(false);
-    }
-  };
+  
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-surface pt-32 pb-24 px-4 sm:px-8 max-w-7xl mx-auto">
-        <Loading variant="skeleton-detail" className="pt-8" />
+        <Loading variant="fullscreen" className="pt-8" />
       </div>
     );
   }
@@ -127,7 +100,6 @@ export default function UserOrderDetailPage() {
   // Determine current index in status pipeline
   const currentStepIndex = ORDER_STATUS_STEPS.findIndex((step) => step.status === order.status);
   const isCancelled = order.status === 'cancelled';
-  const awaitingRemaining = order.status === 'awaiting_remaining_payment';
 
   const formatStatusLabel = (status: OrderStatus) => {
     return t(`profile.orders.status.${status}`);
@@ -156,8 +128,6 @@ export default function UserOrderDetailPage() {
                   [
                     'confirmed',
                     'in_production',
-                    'quality_check',
-                    'ready_to_ship',
                     'shipping',
                     'completed',
                   ].includes(order.status)
@@ -203,17 +173,14 @@ export default function UserOrderDetailPage() {
                 <div className="absolute inset-0 bg-surface-container-highest rounded-full" />
                 {/* Active Colored Progress Line */}
                 <div
-                  className="absolute left-0 top-0 h-full bg-primary rounded-full transition-all duration-500 shadow-sm"
+                  className="absolute left-4 top-0 h-full bg-primary rounded-full transition-all duration-500 shadow-sm"
                   style={{
-                    width: awaitingRemaining
-                      ? `calc(20px + (4 / ${ORDER_STATUS_STEPS.length - 1}) * (100% - 72px))`
-                      : currentStepIndex === ORDER_STATUS_STEPS.length - 1
-                      ? '100%'
-                      : currentStepIndex >= 0
-                      ? `calc(20px + (${currentStepIndex} / ${
-                          ORDER_STATUS_STEPS.length - 1
-                        }) * (100% - 72px))`
-                      : '0%',
+                    width:
+                      currentStepIndex === ORDER_STATUS_STEPS.length - 1
+                        ? '100%'
+                        : currentStepIndex >= 0
+                        ? `calc(20px + (${currentStepIndex} / ${ORDER_STATUS_STEPS.length - 1}) * (100% - 72px))`
+                        : '0%',
                   }}
                 />
               </div>
@@ -223,7 +190,6 @@ export default function UserOrderDetailPage() {
                 {ORDER_STATUS_STEPS.map((step, idx) => {
                   const isCompleted = idx < currentStepIndex;
                   const isCurrent = idx === currentStepIndex;
-                  const isAwaitingBalStep = step.status === 'ready_to_ship' && awaitingRemaining;
 
                   return (
                     <div key={step.status} className="flex flex-col items-center w-24">
@@ -231,8 +197,6 @@ export default function UserOrderDetailPage() {
                         className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-4 shadow-sm transition-all duration-300 ${
                           isCurrent
                             ? 'bg-primary border-primary-container text-on-primary scale-110 font-bold'
-                            : isAwaitingBalStep
-                            ? 'bg-orange-500 border-orange-200 text-white animate-pulse font-bold'
                             : isCompleted
                             ? 'bg-primary border-primary text-on-primary'
                             : 'bg-surface-container-low border-surface-container-highest text-secondary'
@@ -242,12 +206,10 @@ export default function UserOrderDetailPage() {
                       </div>
                       <span
                         className={`mt-3 text-center text-xs font-black tracking-tight ${
-                          isCurrent || isAwaitingBalStep ? 'text-primary' : 'text-secondary'
+                          isCurrent ? 'text-primary' : 'text-secondary'
                         }`}
                       >
-                        {isAwaitingBalStep
-                          ? t('profile.orders.details.awaitingBalance')
-                          : t(step.labelKey)}
+                        {t(step.labelKey)}
                       </span>
                     </div>
                   );
@@ -614,21 +576,7 @@ export default function UserOrderDetailPage() {
                 </div>
               </div>
 
-              {/* ACTION TRIGGER FOR PAY REMAINING 70% */}
-              {order.status === 'awaiting_remaining_payment' && (
-                <button
-                  onClick={handlePayRemaining}
-                  disabled={isPayingRemaining}
-                  className="w-full mt-2 px-4 py-3 bg-primary hover:bg-primary/90 text-on-primary text-xs font-bold rounded-xl shadow-md transition-all duration-200 active:scale-95 flex items-center justify-center gap-2 disabled:opacity-60"
-                >
-                  {isPayingRemaining ? (
-                    <IconLoader2 className="w-4.5 h-4.5 animate-spin" />
-                  ) : (
-                    <IconCreditCard className="w-4.5 h-4.5" />
-                  )}
-                  {t('profile.orders.payRemaining')}
-                </button>
-              )}
+              {/* Pay remaining flow removed */}
             </div>
           </aside>
         </div>
