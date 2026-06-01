@@ -49,14 +49,14 @@ export default function CollectionsPage() {
       {/* Premium Collections Hero Banner */}
       <div className="mb-16 border-b border-outline/10 pb-8 pt-6">
         <div className="space-y-3">
-          <span className="text-xs font-black uppercase tracking-widest text-primary font-headline">
-            {t('collections.label', { defaultValue: 'Collections' })}
-          </span>
           <h1 className="font-headline text-4xl sm:text-5xl font-black tracking-tight text-on-surface">
             {t('collections.title', { defaultValue: 'Our Crafted Collections' })}
           </h1>
           <p className="max-w-3xl text-secondary text-sm sm:text-base leading-relaxed">
-            {t('collections.description', { defaultValue: 'Explore curated collections of premium handcrafted slow-fashion wonders, meticulously stitched to order.' })}
+            {t('collections.description', {
+              defaultValue:
+                'Explore curated collections of premium handcrafted slow-fashion wonders, meticulously stitched to order.',
+            })}
           </p>
         </div>
       </div>

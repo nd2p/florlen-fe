@@ -847,5 +847,11 @@
         "date": "Ngày thanh toán"
       }
     }
+  },
+  "auth": {
+    "continueWithGoogle": "Tiếp tục với Google",
+    "signingIn": "Đang đăng nhập...",
+    "loginSuccess": "Chào mừng quay trở lại! Đang chuyển hướng đến hồ sơ của bạn...",
+    "callbackLoading": "Đang xác thực tài khoản Google của bạn..."
   }
 }

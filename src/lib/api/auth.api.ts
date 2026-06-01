@@ -126,3 +126,19 @@ export async function resetPassword(data: {
   const response = await client.post('/auth/reset-password', data);
   return response.data;
 }
+
+/**
+ * Get Google OAuth Login URL
+ */
+export async function getGoogleLoginUrl(): Promise<{ url: string }> {
+  const response = await client.get<{ url: string }>('/auth/oauth/google');
+  return response.data;
+}
+
+/**
+ * Exchange Google OAuth code for session
+ */
+export async function exchangeGoogleCode(code: string): Promise<LoginResponse> {
+  const response = await client.post<LoginResponse>('/auth/oauth/google/callback', { code });
+  return response.data;
+}

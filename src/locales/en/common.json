@@ -304,7 +304,7 @@
   "shop": {
     "filter": "Filters",
     "catalog": "Florlen Catalog",
-    "title": "Explore Our Collection",
+    "title": "Explore Our Products",
     "description": "Discover unique, premium, handcrafted wonders tailored to weave quality into every single thread.",
     "showing_one": "Showing {{count}} product",
     "showing_other": "Showing {{count}} products",
@@ -847,5 +847,11 @@
         "date": "Payment Date"
       }
     }
+  },
+  "auth": {
+    "continueWithGoogle": "Continue with Google",
+    "signingIn": "Signing in...",
+    "loginSuccess": "Welcome back! Redirecting to your profile...",
+    "callbackLoading": "Authenticating your Google account..."
   }
 }

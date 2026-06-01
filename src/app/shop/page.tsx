@@ -2,14 +2,14 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { 
-  SlidersHorizontal, 
-  ArrowUpDown, 
-  ChevronUp, 
-  X, 
-  RotateCcw, 
+import {
+  SlidersHorizontal,
+  ArrowUpDown,
+  ChevronUp,
+  X,
+  RotateCcw,
   Search,
-  Filter
+  Filter,
 } from 'lucide-react';
 import { listProducts, type ProductListItem } from '@/lib/api/product.api';
 import ProductCard from '@/components/common/product-card';
@@ -147,7 +147,15 @@ export default function ShopPage() {
     } finally {
       setLoadingMore(false);
     }
-  }, [loadingMore, hasMore, currentOffset, sortBy, debouncedMinPrice, debouncedMaxPrice, debouncedSearchQuery]);
+  }, [
+    loadingMore,
+    hasMore,
+    currentOffset,
+    sortBy,
+    debouncedMinPrice,
+    debouncedMaxPrice,
+    debouncedSearchQuery,
+  ]);
 
   // Intersection Observer for infinite scroll
   useEffect(() => {
@@ -196,9 +204,6 @@ export default function ShopPage() {
       <div className="mb-12 border-b border-outline/10 pb-8 pt-6">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
           <div className="space-y-3">
-            <span className="text-xs font-black uppercase tracking-widest text-primary font-headline">
-              {t('shop.catalog')}
-            </span>
             <h1 className="font-headline text-4xl sm:text-5xl font-black tracking-tight text-on-surface">
               {t('shop.title')}
             </h1>
@@ -209,7 +214,7 @@ export default function ShopPage() {
           {/* Quick Stats & Toggle */}
           <div className="flex items-center gap-4">
             <span className="text-sm font-semibold text-secondary">
-              {products.length === 1 
+              {products.length === 1
                 ? t('shop.showing_one', { count: products.length })
                 : t('shop.showing_other', { count: products.length })}
             </span>
@@ -391,9 +396,7 @@ export default function ShopPage() {
               <h3 className="font-headline text-2xl font-black text-on-surface">
                 {t('shop.noProductsTitle')}
               </h3>
-              <p className="mt-2 text-secondary text-sm max-w-sm">
-                {t('shop.noProductsDesc')}
-              </p>
+              <p className="mt-2 text-secondary text-sm max-w-sm">{t('shop.noProductsDesc')}</p>
               <Button
                 onClick={handleResetFilters}
                 variant="primary"
@@ -418,9 +421,7 @@ export default function ShopPage() {
 
                 {/* Skeletons while fetching more pages */}
                 {loadingMore &&
-                  Array.from({ length: 4 }).map((_, i) => (
-                    <SkeletonCard key={`more-skel-${i}`} />
-                  ))}
+                  Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={`more-skel-${i}`} />)}
               </div>
 
               {/* Scroll Sentinel */}
