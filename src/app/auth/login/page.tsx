@@ -57,15 +57,20 @@ export default function Login() {
 
             // Redirect to profile
             setTimeout(() => router.push("/"), 500);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Login error:", err);
             // Extract error message from response or use fallback
             let errorMessage = "Login failed. Please try again.";
-            if (err?.response?.data?.message) {
-                errorMessage = err.response.data.message;
-            } else if (err?.message) {
-                errorMessage = err.message;
+            if (
+                typeof err === "object" &&
+                err !== null &&
+                "response" in err &&
+                typeof (err as { response?: unknown }).response === "object" &&
+                (err as { response?: { data?: { message?: string } } }).response?.data?.message
+            ) {
+                errorMessage = (err as { response?: { data?: { message?: string } } }).response!.data!.message!;
+            } else if (typeof err === "object" && err !== null && "message" in err) {
+                errorMessage = String((err as { message?: unknown }).message || errorMessage);
             }
             toast.error(errorMessage, { id: "login" });
         }
@@ -81,10 +86,14 @@ export default function Login() {
             } else {
                 throw new Error("Could not retrieve Google Login URL");
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Google login initiation error:", err);
             toast.dismiss("google-login");
-            toast.error(err.message || "Failed to start Google login. Please try again.");
+            const errorMessage =
+                typeof err === "object" && err !== null && "message" in err
+                    ? String((err as { message?: unknown }).message || "Failed to start Google login. Please try again.")
+                    : "Failed to start Google login. Please try again.";
+            toast.error(errorMessage);
         }
     };
 

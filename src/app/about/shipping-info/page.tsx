@@ -11,7 +11,7 @@ export default function ShippingInfoPage() {
       </h1>
       
       <p className="mb-8">
-        Effective Date: June 1, 2026<br/>
+          Effective Date: June 1, 2026<br />
         Last Updated: June 1, 2026
       </p>
 
@@ -38,7 +38,7 @@ export default function ShippingInfoPage() {
       <section className="mb-6">
         <h2 className="mb-3 font-bold text-base">4. Tracking Your Order</h2>
         <p className="mb-3">
-          Once your order has been shipped, you will receive a confirmation email with tracking information so you can monitor your package's journey.
+          Once your order has been shipped, you will receive a confirmation email with tracking information so you can monitor your package&apos;s journey.
         </p>
       </section>
     </main>

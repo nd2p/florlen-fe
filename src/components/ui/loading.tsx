@@ -20,7 +20,7 @@ export function Loading({
     return (
       <div
         className={cn(
-          'fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background/60 backdrop-blur-md transition-all duration-300 animate-in fade-in',
+          'fixed inset-0 z-100 flex flex-col items-center justify-center bg-background/60 backdrop-blur-md transition-all duration-300 animate-in fade-in',
           className
         )}
         {...props}
@@ -79,7 +79,7 @@ export function Loading({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
           {/* Left Column: Big Image placeholder */}
           <div className="lg:col-span-6 space-y-4">
-            <div className="aspect-square w-full bg-surface-container-high rounded-[2rem]" />
+            <div className="aspect-square w-full bg-surface-container-high rounded-4xl" />
             <div className="grid grid-cols-4 gap-4">
               <div className="aspect-square bg-surface-container-high rounded-2xl" />
               <div className="aspect-square bg-surface-container-high rounded-2xl" />

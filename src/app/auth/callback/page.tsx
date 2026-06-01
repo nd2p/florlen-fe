@@ -107,13 +107,19 @@ function CallbackHandler() {
                 setTimeout(() => {
                     router.push("/");
                 }, 500);
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error("OAuth exchange error:", err);
                 let errorMessage = "Authentication failed. Please try again.";
-                if (err?.response?.data?.message) {
-                    errorMessage = err.response.data.message;
-                } else if (err?.message) {
-                    errorMessage = err.message;
+                if (
+                    typeof err === "object" &&
+                    err !== null &&
+                    "response" in err &&
+                    typeof (err as { response?: unknown }).response === "object" &&
+                    (err as { response?: { data?: { message?: string } } }).response?.data?.message
+                ) {
+                    errorMessage = (err as { response?: { data?: { message?: string } } }).response!.data!.message!;
+                } else if (typeof err === "object" && err !== null && "message" in err) {
+                    errorMessage = String((err as { message?: unknown }).message || errorMessage);
                 }
                 toast.error(errorMessage, { id: "oauth-callback" });
                 router.push("/auth/login");

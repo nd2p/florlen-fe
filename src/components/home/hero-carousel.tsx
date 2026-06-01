@@ -68,12 +68,12 @@ export function HeroCarousel() {
   const scrollNext = useCallback(() => api?.scrollNext(), [api]);
 
   return (
-    <div className="w-full relative group bg-surface-container-low min-h-[750px] md:min-h-[850px]">
+    <div className="w-full relative group bg-surface-container-low min-h-187.5 md:min-h-212.5">
       <Carousel setApi={setApi} opts={{ loop: true }} plugins={[plugin]} className="w-full">
-        <CarouselContent className="-ml-0">
+        <CarouselContent className="ml-0">
           {/* Default Create Your Own Page (Slide 0) */}
           <CarouselItem className="pl-0 basis-full flex items-center justify-center bg-surface-container-low">
-            <div className="flex h-[750px] md:h-[850px] w-full flex-col overflow-hidden md:flex-row">
+            <div className="flex h-187.5 md:h-212.5 w-full flex-col overflow-hidden md:flex-row">
               <div className="flex-1 flex flex-col justify-center space-y-8 p-12 md:p-8 md:pl-20 h-full bg-surface-container-low">
                 <div className="space-y-4">
                   <h1 className="font-headline text-5xl font-black leading-[0.9] tracking-tight text-on-surface md:text-7xl">
@@ -99,10 +99,11 @@ export function HeroCarousel() {
                   </Link>
                 </div>
               </div>
-              <div className="relative h-[450px] w-full flex-1 md:h-full bg-surface-container-high">
+              <div className="relative h-112.5 w-full flex-1 md:h-full bg-surface-container-high">
                 <Image
                   fill
                   priority
+                  sizes="(min-width: 768px) 50vw, 100vw"
                   className="h-full w-full object-cover rounded-none"
                   alt={t('home.hero.altRedPanda')}
                   src="/images/ava.jpg"
@@ -114,7 +115,7 @@ export function HeroCarousel() {
           {/* Top 5 Collections */}
           {collections.map((col) => (
             <CarouselItem key={col.id} className="pl-0 basis-full">
-              <div className="relative w-full h-[750px] md:h-[850px] overflow-hidden bg-surface-container-highest">
+              <div className="relative w-full h-187.5 md:h-212.5 overflow-hidden bg-surface-container-highest">
                 <Image
                   fill
                   src={col.banner_image_url || col.cover_image_url || '/placeholder-collection.jpg'}
@@ -122,7 +123,7 @@ export function HeroCarousel() {
                   className="w-full h-full object-cover"
                   sizes="100vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end items-center pb-24">
+                <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end items-center pb-24">
                   <h2 className="text-white text-4xl md:text-5xl font-bold tracking-wide mb-4">
                     {col.name}
                   </h2>
@@ -161,7 +162,7 @@ export function HeroCarousel() {
             {Array.from({ length: count }).map((_, index) => (
               <div
                 key={index}
-                className="h-1 flex-1 max-w-[120px] rounded-full overflow-hidden bg-white/30 cursor-pointer"
+                className="h-1 flex-1 max-w-30 rounded-full overflow-hidden bg-white/30 cursor-pointer"
                 onClick={() => api?.scrollTo(index)}
               >
                 <div

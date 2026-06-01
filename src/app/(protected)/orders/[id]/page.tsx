@@ -166,9 +166,9 @@ export default function UserOrderDetailPage() {
           </div>
         ) : (
           <div className="relative p-4 overflow-x-auto scrollbar-thin">
-            <div className="min-w-[900px] relative">
+            <div className="min-w-225 relative">
               {/* Connecting Line container */}
-              <div className="absolute left-10 right-12 top-5 h-[6px] -translate-y-1/2">
+              <div className="absolute left-10 right-12 top-5 h-1.5 -translate-y-1/2">
                 {/* Background Grey Line - solid rail */}
                 <div className="absolute inset-0 bg-surface-container-highest rounded-full" />
                 {/* Active Colored Progress Line */}
@@ -273,7 +273,7 @@ export default function UserOrderDetailPage() {
                         </p>
 
                         {item.item_type === 'ai_personalization' && item.design_summary && (
-                          <div className="mt-3 rounded-[1rem] bg-surface-container-lowest p-3 border border-surface-container-high">
+                          <div className="mt-3 rounded-lg bg-surface-container-lowest p-3 border border-surface-container-high">
                             <p className="text-[11px] font-black uppercase tracking-wider text-primary">
                               ✨ AI Personalized Design
                             </p>
@@ -426,7 +426,7 @@ export default function UserOrderDetailPage() {
                                 </p>
                               )}
                               {log.note && (
-                                <p className="mt-1 text-xs text-on-surface bg-surface-container-lowest p-2 rounded-[0.5rem] italic">
+                                <p className="mt-1 text-xs text-on-surface bg-surface-container-lowest p-2 rounded-md italic">
                                   &ldquo;{log.note}&rdquo;
                                 </p>
                               )}
@@ -485,7 +485,7 @@ export default function UserOrderDetailPage() {
                 <p className="text-xs font-bold uppercase tracking-wider text-secondary">
                   {t('profile.orders.details.shippingAddress')}
                 </p>
-                <div className="rounded-[1rem] bg-surface-container-lowest p-3 border border-surface-container-high text-sm text-on-surface space-y-1 mt-1">
+                <div className="rounded-lg bg-surface-container-lowest p-3 border border-surface-container-high text-sm text-on-surface space-y-1 mt-1">
                   {order.shipping_address?.label && (
                     <span className="inline-block bg-primary-fixed text-on-primary-fixed text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full mb-1">
                       {order.shipping_address.label}
@@ -503,7 +503,7 @@ export default function UserOrderDetailPage() {
                   <p className="text-xs font-bold uppercase tracking-wider text-secondary">
                     {t('profile.orders.details.customerNote')}
                   </p>
-                  <p className="text-sm text-on-surface bg-amber-50 dark:bg-amber-950/20 p-3 rounded-[1rem] border border-amber-100 dark:border-amber-900 leading-relaxed mt-1">
+                  <p className="text-sm text-on-surface bg-amber-50 dark:bg-amber-950/20 p-3 rounded-lg border border-amber-100 dark:border-amber-900 leading-relaxed mt-1">
                     &ldquo;{order.customer_note}&rdquo;
                   </p>
                 </div>

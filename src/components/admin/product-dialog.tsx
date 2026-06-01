@@ -625,7 +625,7 @@ export default function ProductDialog({ compact = false, product = null, open, o
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent
                                         style={{ width: "var(--radix-dropdown-menu-trigger-width)" }}
-                                        className="bg-surface-container-highest border border-outline-variant rounded-xl shadow-lg p-1 z-[100]"
+                                        className="bg-surface-container-highest border border-outline-variant rounded-xl shadow-lg p-1 z-100"
                                     >
                                         <DropdownMenuRadioGroup
                                             value={productType}
