@@ -12,7 +12,8 @@ type SupportedLanguage = "en" | "vi";
 
 const normalizeLanguage = (value?: string | null): SupportedLanguage => {
   if (value?.startsWith("vi")) return "vi";
-  return "en";
+  if (value?.startsWith("en")) return "en";
+  return "vi";
 };
 
 export default function I18nProvider({ children }: { children: ReactNode }) {

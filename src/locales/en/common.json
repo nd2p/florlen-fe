@@ -26,6 +26,27 @@
       "vi": "Vietnamese"
     }
   },
+  "footer": {
+    "tagline": "Handcrafting the future of collectibles, one stitch at a time. Designed by you, handmade with love.",
+    "sections": {
+      "shop": "Shop",
+      "company": "Company",
+      "support": "Support"
+    },
+    "links": {
+      "aiStudio": "AI Studio",
+      "collections": "All Collections",
+      "limitedEditions": "Limited Editions",
+      "ourStory": "Our Story",
+      "sustainability": "Sustainability",
+      "careGuide": "Care Guide",
+      "shippingInfo": "Shipping Info",
+      "privacyPolicy": "Privacy Policy",
+      "termsOfService": "Terms of Service"
+    },
+    "copyright": "Copyright 2024 Florlen. Handmade with love.",
+    "designedForCollectors": "Designed for collectors."
+  },
   "checkout": {
     "title": "Secure Checkout",
     "orderSummary": "Order Summary",
@@ -848,10 +869,217 @@
       }
     }
   },
+  "about": {
+    "shared": {
+      "effectiveDate": "Effective Date: June 1, 2026",
+      "lastUpdated": "Last Updated: June 1, 2026"
+    },
+    "ourStory": {
+      "title": "Our Story",
+      "sections": {
+        "beginning": {
+          "title": "1. The Beginning",
+          "paragraph1": "Florlen started with a simple idea: handcrafting the future of collectibles, one stitch at a time.",
+          "paragraph2": "We believe in slow-fashion, sustainable practices, and creating unique companions designed by you, handmade with love."
+        },
+        "craft": {
+          "title": "2. The Craft",
+          "paragraph1": "Every piece is meticulously crafted by our skilled artisans. We use only the finest organic cotton yarn and ensure every detail is perfect.",
+          "paragraph2": "We take pride in our work and strive to deliver the best quality products to our customers."
+        },
+        "vision": {
+          "title": "3. Our Vision",
+          "paragraph1": "To build a community of collectors and creators who appreciate the art of handmade goods, and to bring joy through personalized, high-quality crochet companions."
+        }
+      }
+    },
+    "careGuide": {
+      "title": "Care Guide",
+      "sections": {
+        "general": {
+          "title": "1. General Care",
+          "paragraph1": "Your Florlen companion is handmade with love and needs a little care to stay looking its best. Follow these simple instructions to keep your crochet piece clean and intact."
+        },
+        "washing": {
+          "title": "2. Washing",
+          "item1": "2.1 Hand wash only using cold or lukewarm water.",
+          "item2": "2.2 Use a mild, eco-friendly detergent.",
+          "item3": "2.3 Gently squeeze the water through the item. Do not wring or scrub."
+        },
+        "drying": {
+          "title": "3. Drying",
+          "item1": "3.1 Press out excess water gently with a clean towel.",
+          "item2": "3.2 Lay flat to dry on a dry towel in a shaded area.",
+          "item3": "3.3 Do not tumble dry or place in direct sunlight."
+        },
+        "reshaping": {
+          "title": "4. Reshaping",
+          "paragraph1": "While the item is still damp, gently pull and pat it back into its original shape. Do not iron."
+        }
+      }
+    },
+    "privacyPolicy": {
+      "title": "Privacy Policy",
+      "sections": {
+        "general": {
+          "title": "1. General Terms",
+          "paragraph1": "At Florlen, we value your privacy and are committed to protecting your personal data. This policy outlines how we collect, use, and safeguard your information.",
+          "paragraph2": "By accessing or using our website, you agree to the terms of this Privacy Policy."
+        },
+        "collecting": {
+          "title": "2. Information We Collect",
+          "paragraph1": "We collect information you provide directly to us, such as when you create an account, place an order, subscribe to our newsletter, or contact customer support. This may include your name, email address, phone number, shipping address, and payment information."
+        },
+        "usage": {
+          "title": "3. How We Use Your Information",
+          "intro": "We use your information for the following purposes:",
+          "item1": "3.1 To process and fulfill your orders.",
+          "item2": "3.2 To communicate with you about your order status.",
+          "item3": "3.3 To send you promotional emails (if you have opted in).",
+          "item4": "3.4 To improve our website and customer service."
+        },
+        "security": {
+          "title": "4. Data Security",
+          "paragraph1": "We implement reasonable security measures to protect your personal information from unauthorized access, alteration, or disclosure. However, no method of transmission over the Internet is 100% secure."
+        }
+      }
+    },
+    "shippingInfo": {
+      "title": "Shipping Info",
+      "sections": {
+        "delivery": {
+          "title": "1. General Delivery Terms",
+          "paragraph1": "We ship our handmade companions worldwide. Here is everything you need to know about our shipping and delivery processes."
+        },
+        "processing": {
+          "title": "2. Processing Time",
+          "paragraph1": "Because every item is meticulously handcrafted to order, please allow 5-10 business days for your companion to be created before it is shipped."
+        },
+        "rates": {
+          "title": "3. Shipping Rates & Times",
+          "item1": {
+            "label": "Domestic (Vietnam):",
+            "text": "2-4 business days. Standard shipping fee applies."
+          },
+          "item2": {
+            "label": "International:",
+            "text": "7-15 business days depending on the destination country. Shipping fees are calculated at checkout."
+          }
+        },
+        "tracking": {
+          "title": "4. Tracking Your Order",
+          "paragraph1": "Once your order has been shipped, you will receive a confirmation email with tracking information so you can monitor your package's journey."
+        }
+      }
+    },
+    "sustainability": {
+      "title": "Sustainability",
+      "sections": {
+        "commitment": {
+          "title": "1. Our Commitment",
+          "paragraph1": "At Florlen, sustainability is at the core of everything we do. We believe in slow-fashion, which means creating high-quality pieces that are made to last, rather than mass-produced items that end up in landfills."
+        },
+        "materials": {
+          "title": "2. Materials",
+          "paragraph1": "We use 100% organic cotton yarn and eco-friendly dyes. Our packaging is made from recycled materials and is fully recyclable or compostable."
+        },
+        "ethical": {
+          "title": "3. Ethical Practices",
+          "paragraph1": "Our artisans are paid fair wages and work in safe, comfortable conditions. We are committed to supporting our local communities and empowering women through our craft."
+        }
+      }
+    },
+    "termsOfService": {
+      "title": "Terms of Service",
+      "sections": {
+        "general": {
+          "title": "1. General",
+          "paragraph1": "Welcome to Florlen! By accessing or using our website and services, you agree to comply with and be bound by the following terms and conditions. These terms govern your use of the Florlen website and the purchase of any products from us.",
+          "paragraph2": "We reserve the right to update these terms at any time."
+        },
+        "products": {
+          "title": "2. Products and Pricing",
+          "item1": "2.1 All our products are handcrafted, which means there may be slight variations between the product images and the actual item you receive.",
+          "item2": "2.2 Prices are subject to change without notice."
+        },
+        "orders": {
+          "title": "3. Orders and Payments",
+          "paragraph1": "When you place an order, you agree to provide current, complete, and accurate purchase and account information. We reserve the right to refuse or cancel any order."
+        },
+        "returns": {
+          "title": "4. Return Policy",
+          "paragraph1": "Due to the custom, handmade nature of our products, we generally do not accept returns. However, if your item arrives damaged, please contact us within 7 days of delivery to discuss a replacement or refund."
+        }
+      }
+    }
+  },
   "auth": {
     "continueWithGoogle": "Continue with Google",
     "signingIn": "Signing in...",
     "loginSuccess": "Welcome back! Redirecting to your profile...",
-    "callbackLoading": "Authenticating your Google account..."
+    "callbackLoading": "Authenticating your Google account...",
+    "forgotPassword": "Forgot Password",
+    "forgotPasswordDesc": "Enter your email address and we'll send you a recovery link to reset your password.",
+    "sendResetLink": "Send Reset Link",
+    "backToLogin": "Back to Login",
+    "resetPassword": "Reset Password",
+    "resetPasswordDesc": "Enter and confirm your new password below.",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "updatingPassword": "Updating password...",
+    "passwordResetSuccess": "Your password has been reset successfully! Redirecting to login...",
+    "emailResetSuccess": "If an account with this email exists, a password reset link has been sent. Please check your spam/junk folder if you don't see it in your inbox.",
+    "invalidResetLink": "Invalid Reset Link",
+    "invalidResetLinkDesc": "This password reset link is invalid or has expired. Please request a new recovery link.",
+    "requestNewLink": "Request New Link",
+    "layout": {
+      "tagline": "Join our exclusive circle of artfully crocheted collectibles and designer plushies.",
+      "featureTitle": "World of Craftsmanship",
+      "featureDesc": "Discover a curated collection of meticulously handcrafted crochet patterns and plushies, designed by artisans and collectors alike.",
+      "imageAlt": "Macro close-up of crimson red crochet patterns"
+    },
+    "login": {
+      "title": "Welcome back.",
+      "subtitle": "Sign in to manage your collection and discover new limited edition crochet patterns.",
+      "orEmail": "or use email",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "hello@artisan.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "signIn": "Enter Gallery",
+      "signingIn": "Signing in...",
+      "welcomeBack": "Welcome back! Redirecting to your profile...",
+      "failed": "Login failed. Please try again.",
+      "googleFailed": "Failed to start Google login. Please try again.",
+      "newPrompt": "New to the crochet world?",
+      "createAccount": "Create Account"
+    },
+    "register": {
+      "title": "Create your account.",
+      "subtitle": "Start building your crochet collection and unlock exclusive handmade drops.",
+      "orEmail": "or register with email",
+      "fullNameLabel": "Full Name",
+      "fullNamePlaceholder": "Arielle Bloom",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "hello@artisan.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Create a password",
+      "confirmPasswordLabel": "Confirm Password",
+      "confirmPasswordPlaceholder": "Re-enter your password",
+      "termsAgreement": "By creating an account, you agree to our Terms of Service and Privacy Policy.",
+      "join": "Join Florlen",
+      "creating": "Creating account...",
+      "creatingLoading": "Creating your account...",
+      "createdSuccess": "Account created successfully! Redirecting to sign in...",
+      "failed": "Registration failed. Please try again.",
+      "alreadyHaveAccount": "Already have an account?",
+      "signIn": "Sign in"
+    },
+    "errors": {
+      "invalidEmail": "Invalid email address",
+      "passwordMin": "Password must be at least 8 characters",
+      "fullNameRequired": "Full name is required",
+      "passwordsDoNotMatch": "Passwords do not match"
+    }
   }
 }

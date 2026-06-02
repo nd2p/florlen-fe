@@ -1,5 +1,8 @@
+"use client";
+
 import { ReactNode } from "react";
 import Image from "next/image";
+import { useTranslation } from "react-i18next";
 import FeatureCard from "./feature-card";
 
 interface AuthLayoutProps {
@@ -8,6 +11,8 @@ interface AuthLayoutProps {
 }
 
 export default function AuthLayout({ children, showBranding = true }: AuthLayoutProps) {
+    const { t } = useTranslation('common');
+
     return (
         <main className="flex min-h-screen pt-16 flex-col lg:flex-row overflow-hidden">
             {/* Left Side: Visual Showcase */}
@@ -19,7 +24,7 @@ export default function AuthLayout({ children, showBranding = true }: AuthLayout
                             Florlen
                         </h1>
                         <p className="text-on-primary font-body text-xl max-w-xs opacity-90 leading-relaxed">
-                            Join our exclusive circle of artfully crocheted collectibles and designer plushies.
+                            {t('auth.layout.tagline')}
                         </p>
                     </div>
 
@@ -27,8 +32,8 @@ export default function AuthLayout({ children, showBranding = true }: AuthLayout
                     <div className="relative z-10 space-y-6">
                         <FeatureCard
                             icon="verified_user"
-                            title="World of Craftsmanship"
-                            description="Discover a curated collection of meticulously handcrafted crochet patterns and plushies, designed by artisans and collectors alike."
+                            title={t('auth.layout.featureTitle')}
+                            description={t('auth.layout.featureDesc')}
                         />
                     </div>
 
@@ -39,7 +44,7 @@ export default function AuthLayout({ children, showBranding = true }: AuthLayout
                     {/* Background Image */}
                     <div className="absolute inset-0 z-0 opacity-40 mix-blend-overlay">
                         <Image
-                            alt="Macro close-up of crimson red crochet patterns"
+                            alt={t('auth.layout.imageAlt')}
                             className="object-cover"
                             fill
                             sizes="50vw"

@@ -26,6 +26,27 @@
       "vi": "Tiếng Việt"
     }
   },
+  "footer": {
+    "tagline": "Tạo nên tương lai của sưu tầm bằng từng mũi len, từng sản phẩm một. Được thiết kế bởi bạn, làm thủ công bằng cả yêu thương.",
+    "sections": {
+      "shop": "Mua sắm",
+      "company": "Công ty",
+      "support": "Hỗ trợ"
+    },
+    "links": {
+      "aiStudio": "AI Studio",
+      "collections": "Tất cả bộ sưu tập",
+      "limitedEditions": "Phiên bản giới hạn",
+      "ourStory": "Câu chuyện của chúng tôi",
+      "sustainability": "Phát triển bền vững",
+      "careGuide": "Hướng dẫn bảo quản",
+      "shippingInfo": "Thông tin giao hàng",
+      "privacyPolicy": "Chính sách bảo mật",
+      "termsOfService": "Điều khoản dịch vụ"
+    },
+    "copyright": "Bản quyền 2024 Florlen. Làm thủ công bằng cả yêu thương.",
+    "designedForCollectors": "Thiết kế dành cho những người yêu sưu tầm."
+  },
   "checkout": {
     "title": "Thanh Toán Bảo Mật",
     "orderSummary": "Tóm Tắt Đơn Hàng",
@@ -848,10 +869,217 @@
       }
     }
   },
+  "about": {
+    "shared": {
+      "effectiveDate": "Ngày hiệu lực: 1 tháng 6, 2026",
+      "lastUpdated": "Cập nhật lần cuối: 1 tháng 6, 2026"
+    },
+    "ourStory": {
+      "title": "Câu chuyện của chúng tôi",
+      "sections": {
+        "beginning": {
+          "title": "1. Khởi đầu",
+          "paragraph1": "Florlen bắt đầu từ một ý tưởng đơn giản: thủ công hóa tương lai của đồ sưu tầm, từng mũi len một.",
+          "paragraph2": "Chúng tôi tin vào thời trang chậm, thực hành bền vững, và tạo ra những người bạn độc đáo do chính bạn thiết kế, được làm thủ công bằng cả yêu thương."
+        },
+        "craft": {
+          "title": "2. Nghề thủ công",
+          "paragraph1": "Mỗi sản phẩm đều được các nghệ nhân lành nghề của chúng tôi chế tác tỉ mỉ. Chúng tôi chỉ sử dụng sợi cotton hữu cơ tốt nhất và đảm bảo mọi chi tiết đều hoàn hảo.",
+          "paragraph2": "Chúng tôi tự hào về công việc của mình và luôn nỗ lực mang đến cho khách hàng những sản phẩm chất lượng tốt nhất."
+        },
+        "vision": {
+          "title": "3. Tầm nhìn",
+          "paragraph1": "Xây dựng một cộng đồng người sưu tầm và người sáng tạo yêu thích nghệ thuật đồ thủ công, đồng thời mang lại niềm vui qua những người bạn móc len cá nhân hoá, chất lượng cao."
+        }
+      }
+    },
+    "careGuide": {
+      "title": "Hướng dẫn bảo quản",
+      "sections": {
+        "general": {
+          "title": "1. Chăm sóc chung",
+          "paragraph1": "Người bạn Florlen của bạn được làm thủ công bằng cả yêu thương và cần được chăm sóc một chút để luôn giữ vẻ đẹp tốt nhất. Hãy làm theo những hướng dẫn đơn giản này để giữ cho sản phẩm móc len luôn sạch sẽ và nguyên vẹn."
+        },
+        "washing": {
+          "title": "2. Giặt rửa",
+          "item1": "2.1 Chỉ giặt tay bằng nước lạnh hoặc nước ấm nhẹ.",
+          "item2": "2.2 Sử dụng chất giặt tẩy dịu nhẹ, thân thiện với môi trường.",
+          "item3": "2.3 Nhẹ nhàng bóp nước xuyên qua sản phẩm. Không vắt hoặc chà xát."
+        },
+        "drying": {
+          "title": "3. Làm khô",
+          "item1": "3.1 Ép nhẹ để loại bỏ nước thừa bằng khăn sạch.",
+          "item2": "3.2 Trải phẳng để khô trên khăn khô ở nơi râm mát.",
+          "item3": "3.3 Không sấy bằng máy hoặc phơi dưới ánh nắng trực tiếp."
+        },
+        "reshaping": {
+          "title": "4. Định hình lại",
+          "paragraph1": "Khi sản phẩm còn ẩm, hãy nhẹ nhàng kéo và vuốt nó trở lại hình dạng ban đầu. Không là ủi."
+        }
+      }
+    },
+    "privacyPolicy": {
+      "title": "Chính sách bảo mật",
+      "sections": {
+        "general": {
+          "title": "1. Điều khoản chung",
+          "paragraph1": "Tại Florlen, chúng tôi coi trọng quyền riêng tư của bạn và cam kết bảo vệ dữ liệu cá nhân của bạn. Chính sách này nêu rõ cách chúng tôi thu thập, sử dụng và bảo vệ thông tin của bạn.",
+          "paragraph2": "Bằng việc truy cập hoặc sử dụng website của chúng tôi, bạn đồng ý với các điều khoản của Chính sách Bảo mật này."
+        },
+        "collecting": {
+          "title": "2. Thông tin chúng tôi thu thập",
+          "paragraph1": "Chúng tôi thu thập những thông tin mà bạn cung cấp trực tiếp cho chúng tôi, chẳng hạn khi bạn tạo tài khoản, đặt hàng, đăng ký nhận bản tin hoặc liên hệ hỗ trợ khách hàng. Thông tin này có thể bao gồm tên, email, số điện thoại, địa chỉ giao hàng và thông tin thanh toán của bạn."
+        },
+        "usage": {
+          "title": "3. Cách chúng tôi sử dụng thông tin của bạn",
+          "intro": "Chúng tôi sử dụng thông tin của bạn cho các mục đích sau:",
+          "item1": "3.1 Để xử lý và hoàn tất đơn hàng của bạn.",
+          "item2": "3.2 Để liên lạc với bạn về trạng thái đơn hàng.",
+          "item3": "3.3 Để gửi email khuyến mãi cho bạn (nếu bạn đã đăng ký).",
+          "item4": "3.4 Để cải thiện website và dịch vụ khách hàng của chúng tôi."
+        },
+        "security": {
+          "title": "4. Bảo mật dữ liệu",
+          "paragraph1": "Chúng tôi áp dụng các biện pháp bảo mật hợp lý để bảo vệ thông tin cá nhân của bạn khỏi truy cập, thay đổi hoặc tiết lộ trái phép. Tuy nhiên, không có phương thức truyền dữ liệu nào qua Internet là an toàn tuyệt đối 100%."
+        }
+      }
+    },
+    "shippingInfo": {
+      "title": "Thông tin giao hàng",
+      "sections": {
+        "delivery": {
+          "title": "1. Điều khoản giao hàng chung",
+          "paragraph1": "Chúng tôi giao hàng cho các sản phẩm thủ công của mình trên toàn thế giới. Dưới đây là mọi thông tin bạn cần biết về quy trình giao và nhận hàng của chúng tôi."
+        },
+        "processing": {
+          "title": "2. Thời gian xử lý",
+          "paragraph1": "Vì mỗi sản phẩm đều được làm thủ công theo đơn đặt hàng, vui lòng cho phép 5-10 ngày làm việc để sản phẩm của bạn được hoàn thiện trước khi giao đi."
+        },
+        "rates": {
+          "title": "3. Phí và thời gian giao hàng",
+          "item1": {
+            "label": "Trong nước (Việt Nam):",
+            "text": "2-4 ngày làm việc. Áp dụng phí giao hàng tiêu chuẩn."
+          },
+          "item2": {
+            "label": "Quốc tế:",
+            "text": "7-15 ngày làm việc tùy theo quốc gia nhận hàng. Phí giao hàng sẽ được tính tại bước thanh toán."
+          }
+        },
+        "tracking": {
+          "title": "4. Theo dõi đơn hàng",
+          "paragraph1": "Sau khi đơn hàng được giao, bạn sẽ nhận được email xác nhận kèm thông tin theo dõi để có thể cập nhật hành trình của kiện hàng."
+        }
+      }
+    },
+    "sustainability": {
+      "title": "Phát triển bền vững",
+      "sections": {
+        "commitment": {
+          "title": "1. Cam kết của chúng tôi",
+          "paragraph1": "Tại Florlen, tính bền vững là cốt lõi trong mọi hoạt động của chúng tôi. Chúng tôi tin vào thời trang chậm, nghĩa là tạo ra những sản phẩm chất lượng cao, bền lâu thay vì các mặt hàng sản xuất hàng loạt rồi bị thải bỏ."
+        },
+        "materials": {
+          "title": "2. Chất liệu",
+          "paragraph1": "Chúng tôi sử dụng sợi cotton hữu cơ 100% và thuốc nhuộm thân thiện với môi trường. Bao bì của chúng tôi được làm từ vật liệu tái chế và có thể tái chế hoặc phân hủy sinh học hoàn toàn."
+        },
+        "ethical": {
+          "title": "3. Thực hành đạo đức",
+          "paragraph1": "Các nghệ nhân của chúng tôi được trả lương công bằng và làm việc trong môi trường an toàn, thoải mái. Chúng tôi cam kết hỗ trợ cộng đồng địa phương và trao quyền cho phụ nữ thông qua nghề thủ công của mình."
+        }
+      }
+    },
+    "termsOfService": {
+      "title": "Điều khoản dịch vụ",
+      "sections": {
+        "general": {
+          "title": "1. Điều khoản chung",
+          "paragraph1": "Chào mừng đến với Florlen! Khi truy cập hoặc sử dụng website và dịch vụ của chúng tôi, bạn đồng ý tuân thủ và bị ràng buộc bởi các điều khoản và điều kiện dưới đây. Những điều khoản này điều chỉnh việc bạn sử dụng website Florlen và việc mua bất kỳ sản phẩm nào từ chúng tôi.",
+          "paragraph2": "Chúng tôi có quyền cập nhật các điều khoản này bất kỳ lúc nào."
+        },
+        "products": {
+          "title": "2. Sản phẩm và giá cả",
+          "item1": "2.1 Tất cả sản phẩm của chúng tôi đều được làm thủ công, vì vậy có thể có những khác biệt nhỏ giữa hình ảnh sản phẩm và sản phẩm thực tế bạn nhận được.",
+          "item2": "2.2 Giá có thể thay đổi mà không cần thông báo trước."
+        },
+        "orders": {
+          "title": "3. Đơn hàng và thanh toán",
+          "paragraph1": "Khi bạn đặt hàng, bạn đồng ý cung cấp thông tin mua hàng và tài khoản đầy đủ, chính xác, và cập nhật. Chúng tôi có quyền từ chối hoặc hủy bất kỳ đơn hàng nào."
+        },
+        "returns": {
+          "title": "4. Chính sách hoàn trả",
+          "paragraph1": "Do tính chất đặt làm riêng và làm thủ công của sản phẩm, chúng tôi thường không chấp nhận hoàn trả. Tuy nhiên, nếu sản phẩm của bạn bị hư hại khi nhận, vui lòng liên hệ với chúng tôi trong vòng 7 ngày kể từ ngày giao hàng để trao đổi về việc đổi hoặc hoàn tiền."
+        }
+      }
+    }
+  },
   "auth": {
     "continueWithGoogle": "Tiếp tục với Google",
     "signingIn": "Đang đăng nhập...",
     "loginSuccess": "Chào mừng quay trở lại! Đang chuyển hướng đến hồ sơ của bạn...",
-    "callbackLoading": "Đang xác thực tài khoản Google của bạn..."
+    "callbackLoading": "Đang xác thực tài khoản Google của bạn...",
+    "forgotPassword": "Quên mật khẩu",
+    "forgotPasswordDesc": "Nhập địa chỉ email của bạn và chúng tôi sẽ gửi liên kết khôi phục để đặt lại mật khẩu.",
+    "sendResetLink": "Gửi liên kết đặt lại",
+    "backToLogin": "Quay lại Đăng nhập",
+    "resetPassword": "Đặt lại mật khẩu",
+    "resetPasswordDesc": "Nhập và xác nhận mật khẩu mới của bạn dưới đây.",
+    "newPassword": "Mật khẩu mới",
+    "confirmPassword": "Xác nhận mật khẩu",
+    "updatingPassword": "Đang cập nhật mật khẩu...",
+    "passwordResetSuccess": "Mật khẩu của bạn đã được đặt lại thành công! Đang chuyển hướng...",
+    "emailResetSuccess": "Nếu tài khoản này tồn tại, liên kết đặt lại mật khẩu đã được gửi đi. Vui lòng kiểm tra cả thư mục thư rác (Spam/Junk) nếu không tìm thấy trong hộp thư đến.",
+    "invalidResetLink": "Liên kết không hợp lệ",
+    "invalidResetLinkDesc": "Liên kết đặt lại mật khẩu này không hợp lệ hoặc đã hết hạn. Vui lòng yêu cầu một liên kết khôi phục mới.",
+    "requestNewLink": "Yêu cầu liên kết mới",
+    "layout": {
+      "tagline": "Gia nhập thế giới độc quyền của những tác phẩm len nghệ thuật và thú bông thủ công cao cấp.",
+      "featureTitle": "Thế giới của Sự tinh xảo",
+      "featureDesc": "Khám phá bộ sưu tập chọn lọc các mẫu móc len và thú bông được chế tác tỉ mỉ bởi nghệ nhân và các nhà sưu tầm.",
+      "imageAlt": "Cận cảnh các mũi móc len màu đỏ thẫm"
+    },
+    "login": {
+      "title": "Chào mừng quay lại.",
+      "subtitle": "Đăng nhập để quản lý bộ sưu tập và khám phá các mẫu móc len phiên bản giới hạn mới.",
+      "orEmail": "hoặc sử dụng email",
+      "emailLabel": "Địa chỉ Email",
+      "emailPlaceholder": "hello@artisan.com",
+      "passwordLabel": "Mật khẩu",
+      "passwordPlaceholder": "••••••••",
+      "signIn": "Vào Phòng Trưng Bày",
+      "signingIn": "Đang đăng nhập...",
+      "welcomeBack": "Chào mừng quay trở lại! Đang chuyển hướng đến hồ sơ của bạn...",
+      "failed": "Đăng nhập thất bại. Vui lòng thử lại.",
+      "googleFailed": "Đăng nhập bằng Google thất bại. Vui lòng thử lại.",
+      "newPrompt": "Mới bước vào thế giới móc len?",
+      "createAccount": "Tạo tài khoản"
+    },
+    "register": {
+      "title": "Tạo tài khoản mới.",
+      "subtitle": "Bắt đầu xây dựng bộ sưu tập len của riêng bạn và nhận thông tin phát hành độc quyền.",
+      "orEmail": "hoặc đăng ký bằng email",
+      "fullNameLabel": "Họ và Tên",
+      "fullNamePlaceholder": "Nguyễn Văn A",
+      "emailLabel": "Địa chỉ Email",
+      "emailPlaceholder": "hello@artisan.com",
+      "passwordLabel": "Mật khẩu",
+      "passwordPlaceholder": "Nhập mật khẩu",
+      "confirmPasswordLabel": "Xác nhận mật khẩu",
+      "confirmPasswordPlaceholder": "Nhập lại mật khẩu",
+      "termsAgreement": "Bằng việc tạo tài khoản, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật của chúng tôi.",
+      "join": "Tham Gia Florlen",
+      "creating": "Đang tạo tài khoản...",
+      "creatingLoading": "Đang khởi tạo tài khoản của bạn...",
+      "createdSuccess": "Đăng ký tài khoản thành công! Đang chuyển hướng đăng nhập...",
+      "failed": "Đăng ký thất bại. Vui lòng thử lại.",
+      "alreadyHaveAccount": "Đã có tài khoản?",
+      "signIn": "Đăng nhập"
+    },
+    "errors": {
+      "invalidEmail": "Địa chỉ email không hợp lệ",
+      "passwordMin": "Mật khẩu phải chứa ít nhất 8 ký tự",
+      "fullNameRequired": "Họ và tên là bắt buộc",
+      "passwordsDoNotMatch": "Mật khẩu xác nhận không trùng khớp"
+    }
   }
 }

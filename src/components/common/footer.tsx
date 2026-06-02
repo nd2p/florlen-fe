@@ -1,7 +1,12 @@
+"use client";
+
 import Link from 'next/link';
 import Image from 'next/image';
+import { useTranslation } from 'react-i18next';
 
 export default function Footer() {
+  const { t } = useTranslation('common');
+
   return (
     <footer className="w-full bg-surface-container-low">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-12 py-16 md:grid-cols-4">
@@ -15,49 +20,46 @@ export default function Footer() {
               className="object-contain object-left"
             />
           </Link>
-          <p className="text-sm text-secondary">
-            Handcrafting the future of collectibles, one stitch at a time. Designed by you, handmade
-            with love.
-          </p>
+          <p className="text-sm text-secondary">{t('footer.tagline')}</p>
         </div>
         <div>
-          <h4 className="mb-6 font-bold">Shop</h4>
+          <h4 className="mb-6 font-bold">{t('footer.sections.shop')}</h4>
           <ul className="space-y-4 text-sm text-secondary">
             <li>
-              <a
+              <Link
                 className="transition-all duration-300 hover:text-primary hover:underline"
-                href="ai-studio"
+                href="/ai-studio"
               >
-                AI Studio
-              </a>
+                {t('footer.links.aiStudio')}
+              </Link>
             </li>
             <li>
-              <a
+              <Link
                 className="transition-all duration-300 hover:text-primary hover:underline"
-                href="collections"
+                href="/collections"
               >
-                All Collections
-              </a>
+                {t('footer.links.collections')}
+              </Link>
             </li>
             <li>
-              <a
+              <Link
                 className="transition-all duration-300 hover:text-primary hover:underline"
-                href="shop"
+                href="/shop"
               >
-                Limited Editions
-              </a>
+                {t('footer.links.limitedEditions')}
+              </Link>
             </li>
           </ul>
         </div>
         <div>
-          <h4 className="mb-6 font-bold">Company</h4>
+          <h4 className="mb-6 font-bold">{t('footer.sections.company')}</h4>
           <ul className="space-y-4 text-sm text-secondary">
             <li>
               <Link
                 className="transition-all duration-300 hover:text-primary hover:underline"
                 href="/about/our-story"
               >
-                Our Story
+                {t('footer.links.ourStory')}
               </Link>
             </li>
             <li>
@@ -65,20 +67,20 @@ export default function Footer() {
                 className="transition-all duration-300 hover:text-primary hover:underline"
                 href="/about/sustainability"
               >
-                Sustainability
+                {t('footer.links.sustainability')}
               </Link>
             </li>
           </ul>
         </div>
         <div>
-          <h4 className="mb-6 font-bold">Support</h4>
+          <h4 className="mb-6 font-bold">{t('footer.sections.support')}</h4>
           <ul className="space-y-4 text-sm text-secondary">
             <li>
               <Link
                 className="transition-all duration-300 hover:text-primary hover:underline"
                 href="/about/care-guide"
               >
-                Care Guide
+                {t('footer.links.careGuide')}
               </Link>
             </li>
             <li>
@@ -86,7 +88,7 @@ export default function Footer() {
                 className="transition-all duration-300 hover:text-primary hover:underline"
                 href="/about/shipping-info"
               >
-                Shipping Info
+                {t('footer.links.shippingInfo')}
               </Link>
             </li>
             <li>
@@ -94,7 +96,7 @@ export default function Footer() {
                 className="transition-all duration-300 hover:text-primary hover:underline"
                 href="/about/privacy-policy"
               >
-                Privacy Policy
+                {t('footer.links.privacyPolicy')}
               </Link>
             </li>
             <li>
@@ -102,15 +104,15 @@ export default function Footer() {
                 className="transition-all duration-300 hover:text-primary hover:underline"
                 href="/about/terms-of-service"
               >
-                Terms of Service
+                {t('footer.links.termsOfService')}
               </Link>
             </li>
           </ul>
         </div>
       </div>
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 border-t border-surface-container-high px-12 py-8 text-sm text-secondary md:flex-row">
-        <p>Copyright 2024 Florlen. Handmade with love.</p>
-        <p>Designed for collectors.</p>
+        <p>{t('footer.copyright')}</p>
+        <p>{t('footer.designedForCollectors')}</p>
       </div>
     </footer>
   );
