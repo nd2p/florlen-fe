@@ -73,8 +73,16 @@ export function HeroCarousel() {
         <CarouselContent className="ml-0">
           {/* Default Create Your Own Page (Slide 0) */}
           <CarouselItem className="pl-0 basis-full flex items-center justify-center bg-surface-container-low">
-            <div className="flex h-187.5 md:h-212.5 w-full flex-col overflow-hidden md:flex-row">
-              <div className="flex-1 flex flex-col justify-center space-y-8 p-12 md:p-8 md:pl-20 h-full bg-surface-container-low">
+            <div className="relative h-187.5 md:h-212.5 w-full overflow-hidden flex flex-col justify-center p-12 md:p-8 md:pl-20">
+              <Image
+                fill
+                priority
+                src="/images/allbg.png"
+                alt="Hero Background"
+                className="object-cover rounded-none"
+                sizes="100vw"
+              />
+              <div className="relative z-10 space-y-8 max-w-lg md:max-w-2xl">
                 <div className="space-y-4">
                   <h1 className="font-headline text-5xl font-black leading-[0.9] tracking-tight text-on-surface md:text-7xl">
                     {t('home.hero.designCrochetStoryPart1')} <br />
@@ -98,16 +106,6 @@ export function HeroCarousel() {
                     {t('home.hero.viewGallery')}
                   </Link>
                 </div>
-              </div>
-              <div className="relative h-112.5 w-full flex-1 md:h-full bg-surface-container-high">
-                <Image
-                  fill
-                  priority
-                  sizes="(min-width: 768px) 50vw, 100vw"
-                  className="h-full w-full object-cover rounded-none"
-                  alt={t('home.hero.altRedPanda')}
-                  src="/images/ava.jpg"
-                />
               </div>
             </div>
           </CarouselItem>
