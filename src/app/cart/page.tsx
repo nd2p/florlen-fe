@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import Badge from '@/components/ui/badge';
 import { IconMinus, IconPlus, IconTrash, IconTruck } from '@tabler/icons-react';
@@ -12,6 +13,7 @@ import { Loading } from '@/components/ui/loading';
 
 export default function CartPage() {
     const router = useRouter();
+    const { t } = useTranslation('common');
     const { items, updateQuantity, removeItem, totalAmount, isLoading, fetchCart } = useCartStore();
 
     const subtotal = totalAmount;
@@ -25,12 +27,12 @@ export default function CartPage() {
             await fetchCart();
             const newTotal = useCartStore.getState().totalAmount;
             if (newTotal !== oldTotal) {
-                toast.info("Product prices have changed. Your summary has been updated.");
+                toast.info(t("cart.toastPriceChanged"));
                 return;
             }
             router.push('/checkout');
         } catch {
-            toast.error("Failed to verify current prices. Please try again.");
+            toast.error(t("cart.toastPriceVerifyFailed"));
         }
     };
 
@@ -41,10 +43,10 @@ export default function CartPage() {
                     {/* Cart Header */}
                     <header className="mb-12">
                         <h1 className="font-headline text-5xl font-black tracking-tight text-on-surface mb-2">
-                            Your Bag
+                            {t('cart.title')}
                         </h1>
                         <p className="text-secondary text-lg">
-                            {items.length} curated collectible{items.length !== 1 ? 's' : ''} waiting for their new home.
+                            {t('cart.subtitle', { count: items.length })}
                         </p>
                     </header>
 
@@ -53,10 +55,10 @@ export default function CartPage() {
                         {/* Items Section */}
                         <section className="lg:col-span-8 space-y-6">
                             {isLoading && items.length === 0 ? (
-                                <Loading text="Loading your bag..." className="py-20" />
+                                <Loading text={t('cart.loading')} className="py-20" />
                             ) : items.length === 0 ? (
                                 <div className="rounded-lg bg-surface-container-low p-12 text-center">
-                                    <p className="text-secondary text-lg">Your cart is empty</p>
+                                    <p className="text-secondary text-lg">{t('cart.empty')}</p>
                                 </div>
                             ) : (
                                 items.map((item) => {
@@ -83,7 +85,7 @@ export default function CartPage() {
                                                 />
                                                 {isUnavailable && (
                                                     <div className="absolute left-3 top-3">
-                                                        <Badge variant="default">Unavailable</Badge>
+                                                        <Badge variant="default">{t('cart.unavailable')}</Badge>
                                                     </div>
                                                 )}
                                             </div>
@@ -97,7 +99,7 @@ export default function CartPage() {
                                                         </h3>
                                                         <div className="flex gap-2 mt-2 flex-wrap">
                                                             <span className="px-3 py-1 text-xs font-bold rounded-full bg-surface-container-highest text-secondary">
-                                                                {item.item_type === 'ai_personalization' ? 'AI Personalization' : 'Standard'}
+                                                                {item.item_type === 'ai_personalization' ? t('cart.aiPersonalization') : t('cart.standard')}
                                                             </span>
                                                             {item.product_snapshot.variant_label && (
                                                                 <span className="px-3 py-1 text-xs font-bold rounded-full bg-surface-container-highest text-secondary">
@@ -151,7 +153,7 @@ export default function CartPage() {
                                                         aria-label={`Remove ${item.product_name}`}
                                                     >
                                                         <IconTrash className="w-5 h-5" stroke={2} />
-                                                        Remove
+                                                        {t('cart.remove')}
                                                     </button>
                                                 </div>
                                             </div>
@@ -165,24 +167,24 @@ export default function CartPage() {
                         <aside className="lg:col-span-4">
                             <div className="bg-surface-container-high rounded-xl p-8 sticky top-32">
                                 <h2 className="font-headline text-2xl font-black text-on-surface mb-8">
-                                    Summary
+                                    {t('cart.summary')}
                                 </h2>
 
                                 <div className="space-y-4 mb-8">
                                     <div className="flex justify-between text-secondary">
-                                        <span>Subtotal</span>
+                                        <span>{t('cart.subtotal')}</span>
                                         <span className="font-semibold text-on-surface">
                                             {formatCurrency(subtotal)}
                                         </span>
                                     </div>
                                     <div className="flex justify-between text-secondary">
-                                        <span>Shipping</span>
+                                        <span>{t('cart.shipping')}</span>
                                         <span className="font-semibold text-on-surface">
                                             {formatCurrency(shipping)}
                                         </span>
                                     </div>
                                     <div className="flex justify-between text-secondary">
-                                        <span>Handmade Fee</span>
+                                        <span>{t('cart.handmadeFee')}</span>
                                         <span className="font-semibold text-on-surface">
                                             {formatCurrency(handmadeFee)}
                                         </span>
@@ -191,7 +193,7 @@ export default function CartPage() {
                                     <div className="h-px bg-outline-variant opacity-15 my-4" />
 
                                     <div className="flex justify-between text-xl font-black text-on-surface">
-                                        <span>Total</span>
+                                        <span>{t('cart.total')}</span>
                                         <span className="text-primary">{formatCurrency(total)}</span>
                                     </div>
                                 </div>
@@ -203,14 +205,14 @@ export default function CartPage() {
                                         onClick={handleProceedToCheckout}
                                         disabled={items.length === 0 || isLoading}
                                     >
-                                        Proceed to checkout
+                                        {t('cart.proceedToCheckout')}
                                     </Button>
                                     <Button
                                         variant="secondary"
                                         size="lg"
                                         onClick={() => router.push('/shop')}
                                     >
-                                        Continue Shopping
+                                        {t('cart.continueShopping')}
                                     </Button>
                                 </div>
 
@@ -219,10 +221,10 @@ export default function CartPage() {
                                     <IconTruck className="w-6 h-6 text-primary shrink-0" stroke={2} />
                                     <div>
                                         <p className="text-xs font-bold text-on-surface">
-                                            Arrives in 5-7 business days
+                                            {t('cart.shippingEstimate')}
                                         </p>
                                         <p className="text-xs text-secondary">
-                                            Each piece is handmade to order.
+                                            {t('cart.handmadeNotice')}
                                         </p>
                                     </div>
                                 </div>

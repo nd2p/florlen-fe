@@ -79,6 +79,7 @@ export default function AIManagementPage() {
       setIsLoading(true);
       try {
         const data = await getAdminAIConfig();
+        console.log('data', data);
         if (data) {
           setConfig(data);
           setGeminiApiKey(data.geminiApiKey || '');
@@ -224,9 +225,7 @@ export default function AIManagementPage() {
               {t('adminAI.title')}
             </h1>
           </div>
-          <p className="max-w-2xl text-base text-secondary">
-            {t('adminAI.subtitle')}
-          </p>
+          <p className="max-w-2xl text-base text-secondary">{t('adminAI.subtitle')}</p>
         </div>
 
         <Button
@@ -250,10 +249,10 @@ export default function AIManagementPage() {
         <div className="lg:col-span-1 space-y-8">
           {/* Gemini API Key Card */}
           <div className="rounded-3xl border border-outline/10 bg-surface-container-lowest p-6 shadow-md transition-all duration-300 hover:shadow-lg">
-            <h2 className="text-lg font-bold text-on-surface mb-4">{t('adminAI.apiIntegration')}</h2>
-            <p className="text-xs text-secondary mb-4 leading-relaxed">
-              {t('adminAI.apiDesc')}
-            </p>
+            <h2 className="text-lg font-bold text-on-surface mb-4">
+              {t('adminAI.apiIntegration')}
+            </h2>
+            <p className="text-xs text-secondary mb-4 leading-relaxed">{t('adminAI.apiDesc')}</p>
             <div className="relative">
               <Input
                 type={showApiKey ? 'text' : 'password'}
@@ -433,7 +432,7 @@ export default function AIManagementPage() {
                   ) : (
                     accessories.map((item) => (
                       <tr
-                         key={item.key}
+                        key={item.key}
                         className="text-sm hover:bg-surface-container-low transition-colors"
                       >
                         <td className="py-4 px-4 font-mono font-bold text-secondary text-xs">
@@ -563,7 +562,9 @@ export default function AIManagementPage() {
 
           <AlertDialogFooter>
             <AlertDialogCancel>{t('adminAI.cancel')}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteAccessory}>{t('adminAI.deleteConfirm')}</AlertDialogAction>
+            <AlertDialogAction onClick={handleDeleteAccessory}>
+              {t('adminAI.deleteConfirm')}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

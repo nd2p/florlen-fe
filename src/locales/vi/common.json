@@ -1081,5 +1081,27 @@
       "fullNameRequired": "Họ và tên là bắt buộc",
       "passwordsDoNotMatch": "Mật khẩu xác nhận không trùng khớp"
     }
+  },
+  "cart": {
+    "title": "Giỏ Hàng Của Bạn",
+    "subtitle_one": "Có 1 sản phẩm độc bản đang chờ về nhà mới.",
+    "subtitle_other": "Có {{count}} sản phẩm độc bản đang chờ về nhà mới.",
+    "loading": "Đang tải giỏ hàng của bạn...",
+    "empty": "Giỏ hàng của bạn đang trống",
+    "unavailable": "Không khả dụng",
+    "aiPersonalization": "Thiết kế AI",
+    "standard": "Tiêu chuẩn",
+    "remove": "Xóa bỏ",
+    "summary": "Tóm Tắt Đơn Hàng",
+    "subtotal": "Tạm tính",
+    "shipping": "Phí vận chuyển",
+    "handmadeFee": "Phí làm tay",
+    "total": "Tổng tiền",
+    "proceedToCheckout": "Tiến tới thanh toán",
+    "continueShopping": "Tiếp tục mua sắm",
+    "shippingEstimate": "Dự kiến giao hàng sau 5-7 ngày làm việc",
+    "handmadeNotice": "Mỗi sản phẩm đều được làm thủ công theo đơn đặt hàng.",
+    "toastPriceChanged": "Giá sản phẩm đã thay đổi. Bảng tóm tắt của bạn đã được cập nhật.",
+    "toastPriceVerifyFailed": "Không thể xác minh giá hiện tại. Vui lòng thử lại."
   }
 }

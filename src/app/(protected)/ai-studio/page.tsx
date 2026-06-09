@@ -16,9 +16,6 @@ import {
   IconPalette,
   IconTag,
   IconArrowLeft,
-  IconFriends,
-  IconShoppingBag,
-  IconBrandRedhat,
   IconCircleX,
 } from '@tabler/icons-react';
 
@@ -787,8 +784,9 @@ export default function AIStudioPage() {
                       : 'border-outline/10 hover:border-primary/50'
                   }`}
                 >
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform">
-                    <IconFriends className="h-8 w-8" />
+                  <div className="h-20 w-20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/images/mini.png" alt="Mini Figure" className="h-full w-full object-contain" />
                   </div>
                   <h3 className="mt-4 text-base font-bold text-on-surface">
                     {t('aiStudio.productMiniFigure')}
@@ -811,8 +809,9 @@ export default function AIStudioPage() {
                       : 'border-outline/10 hover:border-primary/50'
                   }`}
                 >
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform">
-                    <IconShoppingBag className="h-8 w-8" />
+                  <div className="h-20 w-20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/images/bag.png" alt="Bag" className="h-full w-full object-contain" />
                   </div>
                   <h3 className="mt-4 text-base font-bold text-on-surface">
                     {t('aiStudio.productBag')}
@@ -835,8 +834,9 @@ export default function AIStudioPage() {
                       : 'border-outline/10 hover:border-primary/50'
                   }`}
                 >
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform">
-                    <IconBrandRedhat className="h-8 w-8" />
+                  <div className="h-20 w-20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/images/hat.png" alt="Hat" className="h-full w-full object-contain" />
                   </div>
                   <h3 className="mt-4 text-base font-bold text-on-surface">
                     {t('aiStudio.productHat')}
@@ -1071,7 +1071,12 @@ export default function AIStudioPage() {
                 <div className="flex flex-col items-center justify-center py-16 text-center">
                   <div className="relative flex h-24 w-24 items-center justify-center">
                     <div className="absolute h-full w-full rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-                    <IconFriends className="h-10 w-10 text-primary animate-bounce" />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img 
+                      src={`/images/${productType === 'mini_figure' ? 'mini' : productType}.png`}
+                      alt={productType || 'mini'}
+                      className="h-12 w-12 object-contain animate-bounce"
+                    />
                   </div>
                   <h3 className="mt-8 text-lg font-bold text-on-surface animate-pulse">
                     {loadingMessages[generationMsgIdx]}

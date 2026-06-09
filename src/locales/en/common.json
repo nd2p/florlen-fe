@@ -1081,5 +1081,27 @@
       "fullNameRequired": "Full name is required",
       "passwordsDoNotMatch": "Passwords do not match"
     }
+  },
+  "cart": {
+    "title": "Your Bag",
+    "subtitle_one": "1 curated collectible waiting for their new home.",
+    "subtitle_other": "{{count}} curated collectibles waiting for their new home.",
+    "loading": "Loading your bag...",
+    "empty": "Your cart is empty",
+    "unavailable": "Unavailable",
+    "aiPersonalization": "AI Personalization",
+    "standard": "Standard",
+    "remove": "Remove",
+    "summary": "Summary",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "handmadeFee": "Handmade Fee",
+    "total": "Total",
+    "proceedToCheckout": "Proceed to checkout",
+    "continueShopping": "Continue Shopping",
+    "shippingEstimate": "Arrives in 5-7 business days",
+    "handmadeNotice": "Each piece is handmade to order.",
+    "toastPriceChanged": "Product prices have changed. Your summary has been updated.",
+    "toastPriceVerifyFailed": "Failed to verify current prices. Please try again."
   }
 }
