@@ -11,8 +11,10 @@ import { toast } from "sonner";
 import { useCartStore } from "@/hooks/use-cart";
 import ProductCard from "@/components/common/product-card";
 import { Loading } from "@/components/ui/loading";
+import { useTranslation } from "react-i18next";
 
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { t } = useTranslation("common");
   const { id } = use(params);
   const [product, setProduct] = useState<ProductListItem | null>(null);
   const [recommendedProducts, setRecommendedProducts] = useState<ProductListItem[]>([]);
@@ -64,7 +66,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
       } catch (err) {
         console.error("Failed to fetch product", err);
-        toast.error("Product not found");
+        toast.error(t("productDetail.notFound"));
       } finally {
         setLoading(false);
       }
@@ -93,8 +95,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   if (!product) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center pt-32 text-center">
-        <h1 className="text-2xl font-bold text-on-surface">Product not found</h1>
-        <Link href="/" className="mt-4 text-primary hover:underline">Back to Home</Link>
+        <h1 className="text-2xl font-bold text-on-surface">{t("productDetail.notFound")}</h1>
+        <Link href="/" className="mt-4 text-primary hover:underline">{t("productDetail.backToHome")}</Link>
       </div>
     );
   }
@@ -103,7 +105,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     if (!product) return;
 
     if (hasVariants && !selectedVariant?.id) {
-      toast.error("Please select a variant");
+      toast.error(t("productDetail.selectVariantToast"));
       return;
     }
 
@@ -164,11 +166,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 <div className="mt-2 space-y-1">
                   <p className="text-2xl font-black text-primary">{formatCurrency(displayPrice)}</p>
                   <p className="text-sm text-secondary">
-                    {formatCurrency(basePrice)} base
+                    {formatCurrency(basePrice)} {t("productDetail.base")}
                     {hasVariants ? (
                       <>
                         <span className="mx-2">+</span>
-                        {formatCurrency(selectedVariantPrice)} variant price
+                        {formatCurrency(selectedVariantPrice)} {t("productDetail.variantPrice")}
                       </>
                     ) : null}
                   </p>
@@ -178,18 +180,18 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               <div className="h-px bg-outline-variant" />
 
               <div className="space-y-4">
-                <h3 className="text-sm font-bold uppercase tracking-widest text-secondary">Description</h3>
+                <h3 className="text-sm font-bold uppercase tracking-widest text-secondary">{t("productDetail.description")}</h3>
                 <p className="text-on-surface/80 leading-relaxed">
-                  {product.description || product.short_description || "No description available."}
+                  {product.description || product.short_description || t("productDetail.noDescription")}
                 </p>
               </div>
 
               {hasVariants && (
                 <div className="space-y-4 pt-4">
                   <div className="flex items-end justify-between gap-4">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-secondary">Choose a variant</h3>
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-secondary">{t("productDetail.chooseVariant")}</h3>
                     {selectedVariantLabel ? (
-                      <span className="text-xs font-semibold text-secondary">Selected: {selectedVariantLabel}</span>
+                      <span className="text-xs font-semibold text-secondary">{t("productDetail.selected")} {selectedVariantLabel}</span>
                     ) : null}
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2">
@@ -266,10 +268,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                   >
                     {isUnavailable ? <Bell className="h-5 w-5" /> : <ShoppingCart className="h-5 w-5" />}
                     {isUnavailable
-                      ? "Notify me when available"
+                      ? t("productDetail.notifyMe")
                       : hasVariants && !selectedVariant?.id
-                        ? "Select a variant"
-                        : "Add to Cart"}
+                        ? t("productDetail.selectVariant")
+                        : t("productDetail.addToCart")}
                   </button>
                 </div>
               </div>
@@ -281,8 +283,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         <section className="mt-32">
           <div className="mb-8 flex items-end justify-between">
             <div className="space-y-2">
-              <h2 className="font-headline text-3xl font-black tracking-tight text-on-surface">You Might Also Like</h2>
-              <p className="text-secondary text-sm">Recommended handcrafted companions based on your interests.</p>
+              <h2 className="font-headline text-3xl font-black tracking-tight text-on-surface">{t("productDetail.youMightAlsoLike")}</h2>
+              <p className="text-secondary text-sm">{t("productDetail.recommendedDesc")}</p>
             </div>
           </div>
 
@@ -300,7 +302,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 ))
               ) : (
                 <div className="flex h-48 w-full items-center justify-center rounded-2xl bg-surface-container-low text-secondary italic">
-                  Looking for more treasures...
+                  {t("productDetail.lookingForTreasures")}
                 </div>
               )}
             </div>

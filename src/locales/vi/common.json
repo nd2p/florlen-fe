@@ -349,6 +349,23 @@
     "resetFilters": "Đặt Lại Bộ Lọc",
     "apply": "Áp Dụng"
   },
+  "productDetail": {
+    "notFound": "Không tìm thấy sản phẩm",
+    "backToHome": "Quay lại Trang Chủ",
+    "base": "gốc",
+    "variantPrice": "giá biến thể",
+    "description": "Mô tả",
+    "noDescription": "Không có mô tả sản phẩm.",
+    "chooseVariant": "Chọn một phân loại",
+    "selected": "Đã chọn:",
+    "notifyMe": "Thông báo cho tôi khi có hàng",
+    "selectVariant": "Chọn phân loại sản phẩm",
+    "addToCart": "Thêm vào Giỏ hàng",
+    "youMightAlsoLike": "Sản Phẩm Tương Tự",
+    "recommendedDesc": "Gợi ý những người bạn đồng hành thủ công dựa trên sở thích của bạn.",
+    "lookingForTreasures": "Đang tìm kiếm thêm sản phẩm phù hợp...",
+    "selectVariantToast": "Vui lòng chọn phân loại sản phẩm"
+  },
   "collections": {
     "label": "Bộ Sưu Tập",
     "title": "Bộ Sưu Tập Của Chúng Tôi",

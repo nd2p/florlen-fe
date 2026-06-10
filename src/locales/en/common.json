@@ -349,6 +349,23 @@
     "resetFilters": "Reset Filters",
     "apply": "Apply"
   },
+  "productDetail": {
+    "notFound": "Product not found",
+    "backToHome": "Back to Home",
+    "base": "base",
+    "variantPrice": "variant price",
+    "description": "Description",
+    "noDescription": "No description available.",
+    "chooseVariant": "Choose a variant",
+    "selected": "Selected:",
+    "notifyMe": "Notify me when available",
+    "selectVariant": "Select a variant",
+    "addToCart": "Add to Cart",
+    "youMightAlsoLike": "You Might Also Like",
+    "recommendedDesc": "Recommended handcrafted companions based on your interests.",
+    "lookingForTreasures": "Looking for more treasures...",
+    "selectVariantToast": "Please select a variant"
+  },
   "collections": {
     "label": "Collections",
     "title": "Our Crafted Collections",
