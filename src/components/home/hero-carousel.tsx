@@ -84,7 +84,7 @@ export function HeroCarousel() {
               />
               <div className="relative z-10 space-y-8 max-w-lg md:max-w-2xl">
                 <div className="space-y-4">
-                  <h1 className="font-headline text-5xl font-black leading-[0.9] tracking-tight text-on-surface md:text-7xl">
+                  <h1 className="font-headline text-5xl font-black leading-[1.15] tracking-tight text-on-surface md:text-7xl">
                     {t('home.hero.designCrochetStoryPart1')} <br />
                     <span className="text-primary">{t('home.hero.designCrochetStoryPart2')}</span>
                   </h1>
