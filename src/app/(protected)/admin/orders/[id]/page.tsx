@@ -623,22 +623,26 @@ export default function OrderDetailPage() {
                     {formatCurrency(Number(order.total_amount))}
                   </span>
                 </div>
-                <div className="flex justify-between py-2 text-sm">
-                  <span className="text-secondary">{t('profile.orders.details.depositAmount')}</span>
-                  <span className="font-bold text-on-surface">
-                    {formatCurrency(Number(order.deposit_amount))}
-                  </span>
-                </div>
-                <div className="flex justify-between py-2 text-sm">
-                  <span className="text-secondary">{t('profile.orders.details.remainingAmount')}</span>
-                  <span
-                    className={`font-bold ${
-                      Number(order.remaining_amount) > 0 ? 'text-rose-500' : 'text-emerald-600'
-                    }`}
-                  >
-                    {formatCurrency(Number(order.remaining_amount))}
-                  </span>
-                </div>
+                {order.payment_option === 'deposit' && (
+                  <>
+                    <div className="flex justify-between py-2 text-sm">
+                      <span className="text-secondary">{t('profile.orders.details.depositAmount')}</span>
+                      <span className="font-bold text-on-surface">
+                        {formatCurrency(Number(order.deposit_amount))}
+                      </span>
+                    </div>
+                    <div className="flex justify-between py-2 text-sm">
+                      <span className="text-secondary">{t('profile.orders.details.remainingAmount')}</span>
+                      <span
+                        className={`font-bold ${
+                          Number(order.remaining_amount) > 0 ? 'text-rose-500' : 'text-emerald-600'
+                        }`}
+                      >
+                        {formatCurrency(Number(order.remaining_amount))}
+                      </span>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* TRANSACTION RECORDS */}
