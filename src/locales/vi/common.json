@@ -845,7 +845,7 @@
       "revenue": "Tổng doanh thu",
       "orders": "Tổng đơn hàng",
       "completed": "Đơn hoàn thành",
-      "customers": "Tổng khách hàng",
+      "customers": "Tổng người dùng",
       "succeededPayments": "Thanh toán thành công",
       "createdOrdersExcludeDrafts": "Đã tạo (loại trừ bản nháp)",
       "completionRate": "{{percent}}% Tỷ lệ hoàn thành",

@@ -845,7 +845,7 @@
       "revenue": "Total Revenue",
       "orders": "Total Orders",
       "completed": "Completed Orders",
-      "customers": "Total Customers",
+      "customers": "Total Users",
       "succeededPayments": "Succeeded payments",
       "createdOrdersExcludeDrafts": "Created (excluding drafts)",
       "completionRate": "{{percent}}% Completion rate",

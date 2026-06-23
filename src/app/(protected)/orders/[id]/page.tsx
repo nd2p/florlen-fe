@@ -14,9 +14,10 @@ import {
 } from '@tabler/icons-react';
 import { useImageLightbox } from '@/components/ui/image-lightbox';
 import { formatCurrency } from '@/lib/utils';
-import { getOrderById, type Order, type OrderStatus } from '@/lib/api/order.api';
+import { getOrderById, payRemaining, type Order, type OrderStatus } from '@/lib/api/order.api';
 import Badge from '@/components/ui/badge';
 import { Loading } from '@/components/ui/loading';
+import { toast } from 'sonner';
 
 // Sequence of order statuses for the visual progress tracker line
 const ORDER_STATUS_STEPS: { status: OrderStatus; labelKey: string }[] = [
@@ -36,7 +37,32 @@ export default function UserOrderDetailPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isPayingRemaining, setIsPayingRemaining] = useState(false);
   const { openLightbox, LightboxNode } = useImageLightbox();
+
+  const handlePayRemainingSubmit = async () => {
+    if (!orderId) return;
+    setIsPayingRemaining(true);
+    const toastId = toast.loading(t('profile.orders.details.generatingLink'));
+    try {
+      const response = await payRemaining(orderId);
+      if (response.paymentLink?.checkoutUrl) {
+        toast.success(t('profile.orders.details.redirectingPayOS'), { id: toastId });
+        setTimeout(() => {
+          window.location.href = response.paymentLink.checkoutUrl;
+        }, 800);
+      } else {
+        toast.error(t('profile.orders.details.linkCreationFailed'), { id: toastId });
+        setIsPayingRemaining(false);
+      }
+    } catch (error) {
+      console.error('Pay remaining error:', error);
+      const msg =
+        error instanceof Error ? error.message : t('profile.orders.details.linkCreationFailed');
+      toast.error(msg, { id: toastId });
+      setIsPayingRemaining(false);
+    }
+  };
 
   useEffect(() => {
     if (!orderId) return;
@@ -66,8 +92,6 @@ export default function UserOrderDetailPage() {
     };
   }, [orderId]);
 
-  
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-surface pt-32 pb-24 px-4 sm:px-8 max-w-7xl mx-auto">
@@ -91,14 +115,24 @@ export default function UserOrderDetailPage() {
         </button>
         <div className="rounded-[1.5rem] bg-error/10 border border-error/20 p-6 text-error">
           <h2 className="text-lg font-black">{t('profile.orders.details.errorTitle')}</h2>
-          <p className="mt-2 text-sm">{errorMessage || t('profile.orders.details.errorNotFound')}</p>
+          <p className="mt-2 text-sm">
+            {errorMessage || t('profile.orders.details.errorNotFound')}
+          </p>
         </div>
       </div>
     );
   }
 
   // Determine current index in status pipeline
-  const currentStepIndex = ORDER_STATUS_STEPS.findIndex((step) => step.status === order.status);
+  const getMappedStatus = (status: OrderStatus): OrderStatus => {
+    if (['quality_check', 'awaiting_remaining_payment', 'ready_to_ship'].includes(status)) {
+      return 'in_production';
+    }
+    return status;
+  };
+  const currentStepIndex = ORDER_STATUS_STEPS.findIndex(
+    (step) => step.status === getMappedStatus(order.status)
+  );
   const isCancelled = order.status === 'cancelled';
 
   const formatStatusLabel = (status: OrderStatus) => {
@@ -125,12 +159,7 @@ export default function UserOrderDetailPage() {
               </h1>
               <Badge
                 variant={
-                  [
-                    'confirmed',
-                    'in_production',
-                    'shipping',
-                    'completed',
-                  ].includes(order.status)
+                  ['confirmed', 'in_production', 'shipping', 'completed'].includes(order.status)
                     ? 'active'
                     : 'inactive'
                 }
@@ -179,7 +208,9 @@ export default function UserOrderDetailPage() {
                       currentStepIndex === ORDER_STATUS_STEPS.length - 1
                         ? '100%'
                         : currentStepIndex >= 0
-                        ? `calc(20px + (${currentStepIndex} / ${ORDER_STATUS_STEPS.length - 1}) * (100% - 72px))`
+                        ? `calc(20px + (${currentStepIndex} / ${
+                            ORDER_STATUS_STEPS.length - 1
+                          }) * (100% - 72px))`
                         : '0%',
                   }}
                 />
@@ -446,9 +477,7 @@ export default function UserOrderDetailPage() {
                     </li>
                   ))
                 ) : (
-                  <p className="text-sm text-secondary">
-                    {t('profile.orders.details.noHistory')}
-                  </p>
+                  <p className="text-sm text-secondary">{t('profile.orders.details.noHistory')}</p>
                 )}
               </ul>
             </div>
@@ -549,9 +578,7 @@ export default function UserOrderDetailPage() {
 
               <div className="border-t border-surface-container-high pt-3 divide-y divide-surface-container-high">
                 <div className="flex justify-between py-2 text-sm">
-                  <span className="text-secondary">
-                    {t('profile.orders.details.totalAmount')}
-                  </span>
+                  <span className="text-secondary">{t('profile.orders.details.totalAmount')}</span>
                   <span className="font-bold text-on-surface">
                     {formatCurrency(Number(order.total_amount))}
                   </span>
@@ -559,7 +586,9 @@ export default function UserOrderDetailPage() {
                 {order.payment_option === 'deposit' && (
                   <>
                     <div className="flex justify-between py-2 text-sm">
-                      <span className="text-secondary">{t('profile.orders.details.depositAmount')}</span>
+                      <span className="text-secondary">
+                        {t('profile.orders.details.depositAmount')}
+                      </span>
                       <span className="font-bold text-on-surface">
                         {formatCurrency(Number(order.deposit_amount))}
                       </span>
@@ -580,7 +609,97 @@ export default function UserOrderDetailPage() {
                 )}
               </div>
 
-              {/* Pay remaining flow removed */}
+              {order.payment_option === 'deposit' && order.payment_stage === 'deposit_paid' && (
+                <div className="mt-4 p-4 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 space-y-3">
+                  <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300">
+                    <p className="text-xs font-bold uppercase tracking-wider">
+                      {t('profile.orders.details.remainingUnpaid', 'Còn 70% chưa được thanh toán')}
+                    </p>
+                  </div>
+                  <p className="text-xs text-secondary leading-relaxed">
+                    {isVi
+                      ? 'Vui lòng thanh toán số tiền còn lại để đơn hàng chuyển sang trạng thái sẵn sàng giao hàng.'
+                      : 'Please pay the remaining amount so that the order can transition to ready to ship status.'}
+                  </p>
+                  {!['completed', 'cancelled'].includes(order.status) && (
+                    <button
+                      onClick={handlePayRemainingSubmit}
+                      disabled={isPayingRemaining}
+                      className="w-full flex items-center justify-center gap-2 h-10 rounded-xl bg-primary text-on-primary text-xs font-black uppercase tracking-wider transition-all hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isPayingRemaining ? (
+                        <>
+                          <span className="animate-spin text-sm">🌀</span>
+                          {t('profile.orders.details.generatingLink')}
+                        </>
+                      ) : (
+                        t('profile.orders.payRemaining')
+                      )}
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* TRANSACTION RECORDS */}
+              <div className="border-t border-surface-container-high pt-4 space-y-3">
+                <p className="text-xs font-bold uppercase tracking-wider text-secondary">
+                  {t('profile.payments.title', 'Lịch sử giao dịch')}
+                </p>
+                {order.payments && order.payments.length > 0 ? (
+                  order.payments.map((payment) => (
+                    <div
+                      key={payment.id}
+                      className="rounded-lg bg-surface-container-lowest p-3 border border-surface-container-high text-xs space-y-1 leading-relaxed"
+                    >
+                      <div className="flex justify-between items-center">
+                        <span className="font-bold text-on-surface capitalize">
+                          {t(
+                            `profile.payments.types.${payment.payment_type}`,
+                            payment.payment_type
+                          )}
+                        </span>
+                        <span
+                          className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest ${
+                            payment.status === 'succeeded' || payment.status === 'PAID'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : payment.status === 'pending'
+                              ? 'bg-amber-100 text-amber-800'
+                              : 'bg-rose-100 text-rose-800'
+                          }`}
+                        >
+                          {payment.status === 'succeeded' || payment.status === 'PAID'
+                            ? isVi
+                              ? 'THÀNH CÔNG'
+                              : 'SUCCESSFUL'
+                            : payment.status}
+                        </span>
+                      </div>
+                      <p className="text-secondary">
+                        {t('profile.orders.total')}:{' '}
+                        <span className="font-bold text-on-surface">
+                          {formatCurrency(Number(payment.amount))}
+                        </span>
+                      </p>
+                      {payment.paid_at ? (
+                        <p className="text-secondary">
+                          {t('profile.payments.table.date')}:{' '}
+                          <span className="font-semibold text-on-surface">
+                            {new Date(payment.paid_at).toLocaleString(locale)}
+                          </span>
+                        </p>
+                      ) : (
+                        <p className="text-amber-600 font-bold">
+                          {isVi ? 'Chờ thanh toán' : 'Awaiting payment'}
+                        </p>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-xs text-secondary">
+                    {isVi ? 'Chưa có giao dịch nào.' : 'No transactions yet.'}
+                  </p>
+                )}
+              </div>
             </div>
           </aside>
         </div>

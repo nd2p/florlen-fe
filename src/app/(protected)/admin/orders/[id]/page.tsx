@@ -56,6 +56,9 @@ const ORDER_STATUS_OPTIONS: { value: OrderStatus; label: string }[] = [
   { value: 'pending_payment', label: 'Pending Payment' },
   { value: 'confirmed', label: 'Confirmed' },
   { value: 'in_production', label: 'In Production' },
+  { value: 'quality_check', label: 'Quality Check' },
+  { value: 'awaiting_remaining_payment', label: 'Awaiting Balance' },
+  { value: 'ready_to_ship', label: 'Ready to Ship' },
   { value: 'shipping', label: 'Shipping' },
   { value: 'completed', label: 'Completed' },
   { value: 'cancelled', label: 'Cancelled' },
@@ -148,7 +151,13 @@ export default function OrderDetailPage() {
   }
 
   // Determine current index in status pipeline
-  const currentStepIndex = ORDER_STATUS_STEPS.findIndex((step) => step.status === order.status);
+  const getMappedStatus = (status: OrderStatus): OrderStatus => {
+    if (['quality_check', 'awaiting_remaining_payment', 'ready_to_ship'].includes(status)) {
+      return 'in_production';
+    }
+    return status;
+  };
+  const currentStepIndex = ORDER_STATUS_STEPS.findIndex((step) => step.status === getMappedStatus(order.status));
   const isCancelled = order.status === 'cancelled';
 
   return (
@@ -662,12 +671,12 @@ export default function OrderDetailPage() {
                         </span>
                         <span
                           className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest ${
-                            payment.status === 'PAID'
+                            payment.status === 'PAID' || payment.status === 'succeeded'
                               ? 'bg-emerald-100 text-emerald-800'
                               : 'bg-amber-100 text-amber-800'
                           }`}
                         >
-                          {payment.status}
+                          {payment.status === 'PAID' || payment.status === 'succeeded' ? 'PAID' : payment.status}
                         </span>
                       </div>
                       <p className="text-secondary">

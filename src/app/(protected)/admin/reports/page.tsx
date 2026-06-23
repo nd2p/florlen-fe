@@ -119,17 +119,37 @@ export default function AdminReportsPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'succeeded':
-        return <Badge variant="active" className="font-bold">{t('profile.payments.statuses.succeeded')}</Badge>;
+        return (
+          <Badge variant="active" className="font-bold">
+            {t('profile.payments.statuses.succeeded')}
+          </Badge>
+        );
       case 'pending':
       case 'processing':
-        return <Badge variant="inactive" className="bg-amber-100 text-amber-800 border-none font-bold">{t('profile.payments.statuses.pending')}</Badge>;
+        return (
+          <Badge variant="inactive" className="bg-amber-100 text-amber-800 border-none font-bold">
+            {t('profile.payments.statuses.pending')}
+          </Badge>
+        );
       case 'failed':
-        return <Badge variant="inactive" className="bg-red-100 text-red-800 border-none font-bold">{t('profile.payments.statuses.failed')}</Badge>;
+        return (
+          <Badge variant="inactive" className="bg-red-100 text-red-800 border-none font-bold">
+            {t('profile.payments.statuses.failed')}
+          </Badge>
+        );
       case 'refunded':
       case 'partially_refunded':
-        return <Badge variant="secondary" className="font-bold">{t('profile.payments.statuses.refunded')}</Badge>;
+        return (
+          <Badge variant="secondary" className="font-bold">
+            {t('profile.payments.statuses.refunded')}
+          </Badge>
+        );
       default:
-        return <Badge variant="outline" className="font-bold">{status}</Badge>;
+        return (
+          <Badge variant="outline" className="font-bold">
+            {status}
+          </Badge>
+        );
     }
   };
 
@@ -156,7 +176,9 @@ export default function AdminReportsPage() {
         <div>
           <p className="font-mono text-sm font-bold text-on-surface">#{value}</p>
           {row.orders?.order_number ? (
-            <p className="text-[10px] text-secondary font-bold">{t('adminOrders.table.order')}: {row.orders.order_number}</p>
+            <p className="text-[10px] text-secondary font-bold">
+              {t('adminOrders.table.order')}: {row.orders.order_number}
+            </p>
           ) : null}
         </div>
       ),
@@ -184,9 +206,13 @@ export default function AdminReportsPage() {
             </div>
             <div>
               <p className="font-bold text-on-surface text-sm">
-                {row.profiles?.full_name || row.profiles?.display_name || t('adminReports.transactions.guestCustomer')}
+                {row.profiles?.full_name ||
+                  row.profiles?.display_name ||
+                  t('adminReports.transactions.guestCustomer')}
               </p>
-              {row.email ? <p className="text-[10px] text-secondary font-semibold">{row.email}</p> : null}
+              {row.email ? (
+                <p className="text-[10px] text-secondary font-semibold">{row.email}</p>
+              ) : null}
             </div>
           </div>
         );
@@ -196,9 +222,7 @@ export default function AdminReportsPage() {
       key: 'payment_type',
       label: t('adminReports.transactions.table.type'),
       render: (value) => (
-        <span className="text-xs font-bold text-on-surface">
-          {getPaymentTypeLabel(value)}
-        </span>
+        <span className="text-xs font-bold text-on-surface">{getPaymentTypeLabel(value)}</span>
       ),
     },
     {
@@ -323,7 +347,9 @@ export default function AdminReportsPage() {
             </h3>
             <p className="text-[10px] text-sky-800 font-bold">
               {totalOrders > 0
-                ? t('adminReports.metrics.completionRate', { percent: Math.round((completedOrders / totalOrders) * 100) })
+                ? t('adminReports.metrics.completionRate', {
+                    percent: Math.round((completedOrders / totalOrders) * 100),
+                  })
                 : t('adminReports.metrics.completionRate', { percent: 0 })}
             </p>
           </div>
@@ -391,8 +417,13 @@ export default function AdminReportsPage() {
                     tickFormatter={(val) => `${Number(val) / 1000}k`}
                   />
                   <Tooltip
-                    formatter={(value) => [formatCurrency(Number(value)), t('adminReports.charts.sales')]}
-                    labelFormatter={(label) => i18n.language === 'vi' ? `Ngày ${label}` : `Date ${label}`}
+                    formatter={(value) => [
+                      formatCurrency(Number(value)),
+                      t('adminReports.charts.sales'),
+                    ]}
+                    labelFormatter={(label) =>
+                      i18n.language === 'vi' ? `Ngày ${label}` : `Date ${label}`
+                    }
                     contentStyle={{
                       backgroundColor: 'rgba(255,255,255,0.95)',
                       borderRadius: '12px',
@@ -427,7 +458,9 @@ export default function AdminReportsPage() {
           </h3>
           <div className="h-56 w-full flex items-center justify-center relative">
             {isLoadingSummary ? (
-              <div className="text-sm text-secondary animate-pulse">{t('adminReports.charts.loadingBreakdown')}</div>
+              <div className="text-sm text-secondary animate-pulse">
+                {t('adminReports.charts.loadingBreakdown')}
+              </div>
             ) : statusPieData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -449,7 +482,10 @@ export default function AdminReportsPage() {
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(value) => [t('adminReports.charts.orderCount', { count: value }), t('adminReports.charts.qty')]}
+                    formatter={(value) => [
+                      t('adminReports.charts.orderCount', { count: value }),
+                      t('adminReports.charts.qty'),
+                    ]}
                     contentStyle={{
                       backgroundColor: '#fff',
                       borderRadius: '8px',
@@ -483,56 +519,6 @@ export default function AdminReportsPage() {
       </section>
 
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Payment Methods Distribution */}
-        <div className="rounded-[1.5rem] bg-surface-container-low p-6 shadow-sm space-y-4">
-          <h3 className="text-lg font-black font-headline text-on-surface">
-            {t('adminReports.charts.methodTitle')}
-          </h3>
-          <div className="h-60 w-full flex items-center justify-center">
-            {isLoadingSummary ? (
-              <div className="text-sm text-secondary animate-pulse">{t('adminReports.charts.loadingMethods')}</div>
-            ) : methodBarData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={methodBarData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <XAxis
-                    dataKey="method"
-                    stroke="#888888"
-                    fontSize={9}
-                    tickLine={false}
-                    axisLine={false}
-                    tickFormatter={(val) => t('profile.payments.methods.' + val) || String(val).replace('_', ' ').toUpperCase()}
-                  />
-                  <YAxis
-                    stroke="#888888"
-                    fontSize={10}
-                    tickLine={false}
-                    axisLine={false}
-                    tickFormatter={(val) => `${Number(val) / 1000}k`}
-                  />
-                  <Tooltip
-                    formatter={(value) => [formatCurrency(Number(value)), t('adminReports.charts.amount')]}
-                    contentStyle={{
-                      backgroundColor: '#fff',
-                      borderRadius: '8px',
-                      border: 'none',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                    }}
-                  />
-                  <Bar dataKey="amount" radius={[4, 4, 0, 0]}>
-                    {methodBarData.map((entry, index) => {
-                      const methodKey = entry.method as keyof typeof METHOD_COLORS;
-                      const fill = METHOD_COLORS[methodKey] || METHOD_COLORS.other;
-                      return <Cell key={`cell-${index}`} fill={fill} />;
-                    })}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="text-sm text-secondary">{t('adminReports.charts.noTransactions')}</div>
-            )}
-          </div>
-        </div>
-
         {/* Top Selling Products List */}
         <div className="rounded-[1.5rem] bg-surface-container-low p-6 shadow-sm lg:col-span-2 space-y-4 flex flex-col justify-between">
           <h3 className="text-lg font-black font-headline text-on-surface">
@@ -570,7 +556,9 @@ export default function AdminReportsPage() {
                 );
               })
             ) : (
-              <div className="text-sm text-secondary text-center py-10">{t('adminReports.charts.noItemsSold')}</div>
+              <div className="text-sm text-secondary text-center py-10">
+                {t('adminReports.charts.noItemsSold')}
+              </div>
             )}
           </div>
         </div>
@@ -598,31 +586,51 @@ export default function AdminReportsPage() {
         <span>{t('adminOrders.statusFilter')}</span>
         <button
           onClick={() => setSelectedStatus(null)}
-          className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${!selectedStatus ? 'bg-primary text-on-primary shadow-md' : 'bg-surface-container-high hover:bg-surface-container-highest text-on-surface'}`}
+          className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
+            !selectedStatus
+              ? 'bg-primary text-on-primary shadow-md'
+              : 'bg-surface-container-high hover:bg-surface-container-highest text-on-surface'
+          }`}
         >
           {t('adminReports.transactions.all')}
         </button>
         <button
           onClick={() => setSelectedStatus('succeeded')}
-          className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${selectedStatus === 'succeeded' ? 'bg-emerald-600 text-white shadow-md' : 'bg-surface-container-high hover:bg-surface-container-highest text-on-surface'}`}
+          className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
+            selectedStatus === 'succeeded'
+              ? 'bg-emerald-600 text-white shadow-md'
+              : 'bg-surface-container-high hover:bg-surface-container-highest text-on-surface'
+          }`}
         >
           {t('profile.payments.statuses.succeeded')}
         </button>
         <button
           onClick={() => setSelectedStatus('pending')}
-          className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${selectedStatus === 'pending' ? 'bg-amber-600 text-white shadow-md' : 'bg-surface-container-high hover:bg-surface-container-highest text-on-surface'}`}
+          className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
+            selectedStatus === 'pending'
+              ? 'bg-amber-600 text-white shadow-md'
+              : 'bg-surface-container-high hover:bg-surface-container-highest text-on-surface'
+          }`}
         >
           {t('profile.payments.statuses.pending')}
         </button>
         <button
           onClick={() => setSelectedStatus('failed')}
-          className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${selectedStatus === 'failed' ? 'bg-red-600 text-white shadow-md' : 'bg-surface-container-high hover:bg-surface-container-highest text-on-surface'}`}
+          className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
+            selectedStatus === 'failed'
+              ? 'bg-red-600 text-white shadow-md'
+              : 'bg-surface-container-high hover:bg-surface-container-highest text-on-surface'
+          }`}
         >
           {t('profile.payments.statuses.failed')}
         </button>
       </div>
 
-      {isLoadingTxns ? <div className="text-sm text-secondary text-center py-6 animate-pulse">{t('adminReports.transactions.loading')}</div> : null}
+      {isLoadingTxns ? (
+        <div className="text-sm text-secondary text-center py-6 animate-pulse">
+          {t('adminReports.transactions.loading')}
+        </div>
+      ) : null}
     </div>
   );
 }
