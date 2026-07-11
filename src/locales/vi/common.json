@@ -875,6 +875,7 @@
       "all": "Tất cả",
       "guestCustomer": "Khách vãng lai",
       "loading": "Đang tải lịch sử giao dịch...",
+      "exportExcel": "Xuất Excel",
       "table": {
         "id": "Mã giao dịch",
         "user": "Khách hàng",

@@ -875,6 +875,7 @@
       "all": "All",
       "guestCustomer": "Guest Customer",
       "loading": "Loading transaction logs...",
+      "exportExcel": "Export Excel",
       "table": {
         "id": "Transaction ID",
         "user": "Customer",

@@ -8,7 +8,9 @@ import {
   IconUsers,
   IconChartBar,
   IconCash,
+  IconDownload,
 } from '@tabler/icons-react';
+import * as XLSX from 'xlsx';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -114,6 +116,71 @@ export default function AdminReportsPage() {
   const filteredTransactions = selectedStatus
     ? transactions.filter((t) => t.status === selectedStatus)
     : transactions;
+
+  const handleExportExcel = () => {
+    if (filteredTransactions.length === 0) return;
+
+    const dataToExport = filteredTransactions.map((tx) => {
+      const customerName =
+        tx.profiles?.full_name ||
+        tx.profiles?.display_name ||
+        t('adminReports.transactions.guestCustomer');
+      const paymentType = getPaymentTypeLabel(tx.payment_type);
+
+      // Map payment method
+      let paymentMethod = tx.payment_method;
+      const methodTranslationKey = 'profile.payments.methods.' + tx.payment_method;
+      const translatedMethod = t(methodTranslationKey);
+      if (translatedMethod && translatedMethod !== methodTranslationKey) {
+        paymentMethod = translatedMethod;
+      } else {
+        paymentMethod = String(tx.payment_method).replace('_', ' ').toUpperCase();
+      }
+
+      // Map status
+      const statusTranslationKey = 'profile.payments.statuses.' + tx.status;
+      const translatedStatus = t(statusTranslationKey);
+      const status =
+        translatedStatus && translatedStatus !== statusTranslationKey
+          ? translatedStatus
+          : tx.status;
+
+      // Date
+      const paymentDate = formatDate(tx.paid_at || tx.created_at);
+
+      return {
+        [t('adminReports.transactions.table.id')]: tx.payment_intent_id,
+        [t('adminOrders.table.order')]: tx.orders?.order_number || '-',
+        [t('adminReports.transactions.table.user')]: customerName,
+        'Email': tx.email || '-',
+        [t('adminReports.transactions.table.type')]: paymentType,
+        [t('adminReports.transactions.table.method')]: paymentMethod,
+        [t('adminReports.transactions.table.amount')]: formatCurrency(Number(tx.amount)),
+        [t('adminReports.transactions.table.status')]: status,
+        [t('adminReports.transactions.table.date')]: paymentDate,
+      };
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, t('adminReports.transactions.title'));
+
+    // Adjust column widths automatically
+    const maxW = dataToExport.reduce((acc, row) => {
+      Object.keys(row).forEach((key, idx) => {
+        const val = String(row[key as keyof typeof row] || '');
+        acc[idx] = Math.max(acc[idx] || 10, val.length + 4, key.length + 4);
+      });
+      return acc;
+    }, [] as number[]);
+    worksheet['!cols'] = maxW.map((w) => ({ wch: w }));
+
+    // Generate filename
+    const dateSuffix = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const filename = `${t('adminReports.transactions.title').replace(/\s+/g, '_')}_${dateSuffix}.xlsx`;
+
+    XLSX.writeFile(workbook, filename);
+  };
 
   // Render Status Badge
   const getStatusBadge = (status: string) => {
@@ -566,10 +633,18 @@ export default function AdminReportsPage() {
 
       {/* Transaction Logs Table */}
       <section className="space-y-4">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <h3 className="text-xl font-black font-headline text-on-surface">
             {t('adminReports.transactions.title')}
           </h3>
+          <button
+            onClick={handleExportExcel}
+            disabled={isLoadingTxns || filteredTransactions.length === 0}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 disabled:cursor-not-allowed text-white shadow-md hover:shadow-lg active:scale-95 self-start sm:self-auto"
+          >
+            <IconDownload className="h-4 w-4" />
+            {t('adminReports.transactions.exportExcel')}
+          </button>
         </div>
 
         <DataTable<AdminTransactionListItem>
