@@ -9,7 +9,15 @@ import {
   IconChartBar,
   IconCash,
   IconDownload,
+  IconChevronDown,
 } from '@tabler/icons-react';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import * as XLSX from 'xlsx';
 import {
   ResponsiveContainer,
@@ -63,6 +71,7 @@ export default function AdminReportsPage() {
   const [summary, setSummary] = useState<ReportsSummaryResponse | null>(null);
   const [transactions, setTransactions] = useState<AdminTransactionListItem[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const [selectedPaymentType, setSelectedPaymentType] = useState<string | null>(null);
   const [isLoadingSummary, setIsLoadingSummary] = useState(true);
   const [isLoadingTxns, setIsLoadingTxns] = useState(true);
   const [errorText, setErrorText] = useState<string | null>(null);
@@ -112,10 +121,12 @@ export default function AdminReportsPage() {
     });
   };
 
-  // Filtered transactions by status
-  const filteredTransactions = selectedStatus
-    ? transactions.filter((t) => t.status === selectedStatus)
-    : transactions;
+  // Filtered transactions by status and payment type
+  const filteredTransactions = transactions.filter((tx) => {
+    const matchesStatus = selectedStatus ? tx.status === selectedStatus : true;
+    const matchesPaymentType = selectedPaymentType ? tx.payment_type === selectedPaymentType : true;
+    return matchesStatus && matchesPaymentType;
+  });
 
   const handleExportExcel = () => {
     if (filteredTransactions.length === 0) return;
@@ -647,6 +658,109 @@ export default function AdminReportsPage() {
           </button>
         </div>
 
+        {/* Dropdown Filters */}
+        <div className="flex flex-wrap items-center gap-4 bg-surface-container-low/40 p-4 rounded-2xl border border-outline/5">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-black uppercase tracking-wider text-secondary">
+              {t('adminReports.transactions.table.type')}
+            </span>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  className="rounded-full bg-surface-container-high px-4 py-2 text-xs font-bold hover:bg-surface-container-highest flex items-center gap-1.5"
+                >
+                  <span className="text-on-surface">
+                    {selectedPaymentType ? getPaymentTypeLabel(selectedPaymentType) : t('adminReports.transactions.all')}
+                  </span>
+                  <IconChevronDown className="h-3.5 w-3.5 text-secondary" stroke={2.5} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="bg-surface-container-low border-surface-container-high">
+                <DropdownMenuItem
+                  onClick={() => setSelectedPaymentType(null)}
+                  className="cursor-pointer text-xs text-on-surface hover:bg-surface-container-high font-bold"
+                >
+                  {t('adminReports.transactions.all')}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setSelectedPaymentType('deposit')}
+                  className="cursor-pointer text-xs text-on-surface hover:bg-surface-container-high font-bold"
+                >
+                  {t('profile.payments.types.deposit')}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setSelectedPaymentType('remaining_balance')}
+                  className="cursor-pointer text-xs text-on-surface hover:bg-surface-container-high font-bold"
+                >
+                  {t('profile.payments.types.remaining_balance')}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setSelectedPaymentType('full_payment')}
+                  className="cursor-pointer text-xs text-on-surface hover:bg-surface-container-high font-bold"
+                >
+                  {t('profile.payments.types.full_payment')}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-black uppercase tracking-wider text-secondary">
+              {t('adminReports.transactions.table.status')}
+            </span>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  className="rounded-full bg-surface-container-high px-4 py-2 text-xs font-bold hover:bg-surface-container-highest flex items-center gap-1.5"
+                >
+                  <span className="text-on-surface">
+                    {selectedStatus ? t(`profile.payments.statuses.${selectedStatus}`) : t('adminReports.transactions.all')}
+                  </span>
+                  <IconChevronDown className="h-3.5 w-3.5 text-secondary" stroke={2.5} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="bg-surface-container-low border-surface-container-high">
+                <DropdownMenuItem
+                  onClick={() => setSelectedStatus(null)}
+                  className="cursor-pointer text-xs text-on-surface hover:bg-surface-container-high font-bold"
+                >
+                  {t('adminReports.transactions.all')}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setSelectedStatus('succeeded')}
+                  className="cursor-pointer text-xs text-on-surface hover:bg-surface-container-high font-bold"
+                >
+                  {t('profile.payments.statuses.succeeded')}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setSelectedStatus('pending')}
+                  className="cursor-pointer text-xs text-on-surface hover:bg-surface-container-high font-bold"
+                >
+                  {t('profile.payments.statuses.pending')}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setSelectedStatus('failed')}
+                  className="cursor-pointer text-xs text-on-surface hover:bg-surface-container-high font-bold"
+                >
+                  {t('profile.payments.statuses.failed')}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setSelectedStatus('refunded')}
+                  className="cursor-pointer text-xs text-on-surface hover:bg-surface-container-high font-bold"
+                >
+                  {t('profile.payments.statuses.refunded')}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+
         <DataTable<AdminTransactionListItem>
           columns={columns}
           data={filteredTransactions}
@@ -655,51 +769,6 @@ export default function AdminReportsPage() {
           itemsPerPage={10}
         />
       </section>
-
-      {/* Secondary filter by status */}
-      <div className="flex items-center gap-2 mt-[-1rem] text-sm text-secondary font-semibold pl-1">
-        <span>{t('adminOrders.statusFilter')}</span>
-        <button
-          onClick={() => setSelectedStatus(null)}
-          className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
-            !selectedStatus
-              ? 'bg-primary text-on-primary shadow-md'
-              : 'bg-surface-container-high hover:bg-surface-container-highest text-on-surface'
-          }`}
-        >
-          {t('adminReports.transactions.all')}
-        </button>
-        <button
-          onClick={() => setSelectedStatus('succeeded')}
-          className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
-            selectedStatus === 'succeeded'
-              ? 'bg-emerald-600 text-white shadow-md'
-              : 'bg-surface-container-high hover:bg-surface-container-highest text-on-surface'
-          }`}
-        >
-          {t('profile.payments.statuses.succeeded')}
-        </button>
-        <button
-          onClick={() => setSelectedStatus('pending')}
-          className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
-            selectedStatus === 'pending'
-              ? 'bg-amber-600 text-white shadow-md'
-              : 'bg-surface-container-high hover:bg-surface-container-highest text-on-surface'
-          }`}
-        >
-          {t('profile.payments.statuses.pending')}
-        </button>
-        <button
-          onClick={() => setSelectedStatus('failed')}
-          className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
-            selectedStatus === 'failed'
-              ? 'bg-red-600 text-white shadow-md'
-              : 'bg-surface-container-high hover:bg-surface-container-highest text-on-surface'
-          }`}
-        >
-          {t('profile.payments.statuses.failed')}
-        </button>
-      </div>
 
       {isLoadingTxns ? (
         <div className="text-sm text-secondary text-center py-6 animate-pulse">
